@@ -1,0 +1,65 @@
+<!-- HOME PAGE -->
+
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+    	<title>fixuSystem - Fisioterapia</title>
+
+    {% endblock title %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+		<!-- Menú principal con imágenes -->
+        <section class="sect-home-page-menu">
+
+            <div class="div-cabecera-menu">Menú Principal</div>
+
+            <br/>
+
+            <div class="div-cuerpo-menu">
+				<div>
+                    <a href="{%url 'menu-pacientes' %}">
+                        <img width="190" src="{% static "img/gest_pacientes.png" %}" alt="Gestion de pacientes">
+                    </a>
+                </div>
+                <div>
+                    <a href="{%url 'menu-citas' %}">
+                        <img width="190" src="{% static "img/gest_citas.png" %}" alt="Gestion de citas">
+                    </a>
+                </div>
+                <div>
+                    <a href="{%url 'menu-consultas' %}">
+                        <img width="190" src="{% static "img/gest_consultas.png" %}" alt="Gestion de consultas">
+                    </a>
+                </div>
+                <div>
+                    <a href={%url 'menu-clinica' %}>
+                        <img width="190" src="{% static "img/gest_clinica.png" %}" alt="Gestion de clínica">
+                    </a>
+                </div>
+                <div>
+                    <a href={%url 'menu-consultas' %}>
+                        <img width="190" src="{% static "img/gest_almacen.png" %}" alt="Gestion de almacén">
+                    </a>
+                </div>
+                <div>
+                    <a href={%url 'menu-consultas' %}>
+                        <img width="190" src="{% static "img/gest_proveedores.png" %}" alt="Gestion de proveedores">
+                    </a>
+                </td>
+            </div>
+
+        </section>
+
+    {% endblock content %}

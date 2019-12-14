@@ -1,0 +1,131 @@
+<!-- ********************** -->
+<!--   create_pacients_tpl  -->
+<!-- ********************** -->
+
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+    	<title>fixuSystem - Fisioterapia - Gestión de pacientes</title>
+
+    {% endblock %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+		<!-- Menú principal con imágenes -->
+        <section class="sect-home-page-menu">
+
+            <!-- Formularion de nuevo paciente -->
+            <!-- enctype="multipart/form-data se usa para poder subir imagenes binarias -->
+	        <form method="post" enctype="multipart/form-data">
+
+    	    	{% csrf_token %}
+
+             	<!-- Tabla del paciente -->
+                <table class="tbl-general tbl-forms tbl-70 table-striped">
+
+                    <!-- Texto con el contenido -->
+                    <caption class="tbl-capt">Nuevo paciente</caption>
+
+                    <!-- Errores en el form -->
+                    {% include 'errors_pacientes.html' %}
+
+                    <!-- Datos personales -->
+		   	        <tr>
+	    		        <th class="tbl-th" colspan="6">Datos personales</th>
+                    </tr>
+                    <tr>
+        			    <td>Nombre:</td><td>{{ form.name.as_widget }}</td>
+            		    <td>Apellidos:</td><td>{{ form.familyname.as_widget }}</td>
+                    </tr>
+	            	<tr>
+		    		    <td>DNI:</td><td>{{ form.dni.as_widget }}</td>
+			    	    <td>Fecha de nacimiento:</td><td>{{ form.birthdate.as_widget }}
+                    </tr>
+	    		    <tr>
+                        <td>Sexo:</td><td>{{ form.sex.as_widget }}
+                        <td>Ocupación:</td><td>{{ form.job.as_widget }}</td>
+
+       				</tr>
+	    		    <tr>
+		    		    <td>Archivo de foto:</td><td colspan="5">{{ form.picturefile.as_widget }}</td>
+   			    	</tr>
+        		</table>
+
+    		    <br>
+
+                <table class="tbl-general tbl-forms tbl-70 table-striped">
+
+                    <!-- Domicilio -->
+		       	    <tr>
+	    	    	    <th class="tbl-th" colspan="4">Domicilio</th>
+                    </tr>
+    	    		<tr>
+	    	    		<td>Dirección:</td><td>{{ form.address.as_widget }}</td>
+		        		<td>Localidad:</td><td>{{ form.city.as_widget }}</td>
+                    </tr>
+                    <tr>
+                        <td>Código postal:</td><td>{{ form.postcode.as_widget }}</td>
+		    	    	<td>Provincia:</td><td>{{ form.province.as_widget }}</td>
+        			</tr>
+                    <tr>
+			    	    <td>País:</td><td colspan="4">{{ form.country.as_widget }}</td>
+       				</tr>
+
+        		</table>
+
+	    	    <br>
+
+                <table class="tbl-general tbl-forms tbl-70 table-striped">
+
+                    <!-- Datos de contacto -->
+	    	   	    <tr>
+	        		    <th class="tbl-th" colspan="6">Datos de contacto</th>
+                    </tr>
+    	    		<tr>
+	    	    		<td>E-mail:</td><td>{{ form.email.as_widget }}</td>
+		    	    	<td>Teléfono principal:</td><td>{{ form.phone1.as_widget }}</td>
+			    	    <td>Teléfono alternativo:</td><td>{{ form.phone2.as_widget }}</td>
+       				</tr>
+        			<tr>
+	        			<td>Notificar cita:</td><td>{{ form.notifyappoint.as_widget }}</td>
+		        		<td>Notificar vía:</td><td>{{ form.notifyvia.as_widget }}</td>
+    			    </tr>
+
+        		</table>
+
+                <br>
+
+                <table class="tbl-general tbl-forms tbl-70 table-striped">
+
+                    <!-- Notas -->
+	    	   	    <tr>
+	        		    <th class="tbl-th">Notas</th>
+                    </tr>
+	    		    <tr>
+    				    <td class="tbl-td-centro">{{ form.notes.as_widget }}</td>
+    			    </tr>
+
+                </table>
+
+    	    	<!-- Botones -->
+                <div class="div-botones">
+		        	<input type="submit" class="btn btn-info" value="Aceptar">
+	    	    	<a href={% url 'menu-pacientes' %}><input type="button" class="btn btn-info" value="Menu de pacientes"></a>
+                </div
+
+	        </form>
+
+        </section>
+
+    {% endblock %}

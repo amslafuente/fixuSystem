@@ -1,0 +1,39 @@
+<!-- ************************************
+ERRORES DE LOS CAMPOS DEL MODELO PACIENTE
+************************************* -->
+
+<!-- Errores en el form -->
+{{ form.non_field_errors }}
+
+<!-- Error en dni -->
+{% if form.dni.errors %}
+<tr>
+    <th colspan="6" class ="field-errors">
+        {% for error in form.dni.errors %}
+            {{ form.dni.label }} : {{ error }}
+        {% endfor %}
+    </th>
+</tr>
+{% endif %}
+
+<!-- Error en birthdate -->
+{% if form.birthdate.errors %}
+<tr>
+    <th colspan="6" class ="field-errors">
+        {% for error in form.birthdate.errors %}
+            {{ form.birthdate.label }} : {{ error }}
+        {% endfor %}
+    </th>
+</tr>
+{% endif %}
+
+<!-- Error en modifiedby -->
+{% if form.modifiedby.errors %}
+<tr>
+    <th colspan="6" class ="field-errors">
+        {% for error in form.modifiedby.errors %}
+            {{ form.modifiedby.label }} : {{ error }}
+        {% endfor %}
+    </th>
+</tr>
+{% endif %}

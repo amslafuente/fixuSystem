@@ -1,0 +1,50 @@
+<!-- ************************************
+ERRORES DE LOS CAMPOS DEL MODELO CITA
+************************************* -->
+
+<!-- Errores en el form -->
+{{ form.non_field_errors }}
+
+<!-- Error en fk_Paciente -->
+{% if form.fk_Paciente.errors %}
+<tr>
+    <th colspan="2" class ="field-errors">
+        {% for error in form.fk_Paciente.errors %}
+            {{ form.fk_Paciente.label }} : {{ error }}
+        {% endfor %}
+    </th>
+</tr>
+{% endif %}
+
+<!-- Error en fecha de la cita -->
+{% if form.appdate.errors %}
+<tr>
+    <th colspan="2" class ="field-errors">
+        {% for error in form.appdate.errors %}
+            {{ form.appdate.label }} : {{ error }}
+        {% endfor %}
+    </th>
+</tr>
+{% endif %}
+
+<!-- Error en hora de la cita -->
+{% if form.apptime.errors %}
+<tr>
+    <th colspan="2" class ="field-errors">
+        {% for error in form.apptime.errors %}
+            {{ form.apptime.label }} : {{ error }}
+        {% endfor %}
+    </th>
+</tr>
+{% endif %}
+
+<!-- Error en estatus de la cita -->
+{% if form.status.errors %}
+<tr>
+    <th colspan="2" class ="field-errors">
+        {% for error in form.status.errors %}
+            {{ form.status.label }} : {{ error }}
+        {% endfor %}
+    </th>
+</tr>
+{% endif %}

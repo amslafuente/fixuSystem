@@ -1,0 +1,90 @@
+<!-- ********************* -->
+<!--   show_pacientes_tpl  -->
+<!-- ********************* -->
+
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+		<title>fixuSystem - Fisioterapia  - Gestión de pacientes</title>
+
+    {% endblock title %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+        <section class="sect-home-page-menu">
+
+        <!-- Tabla mostrando pacientes -->
+        <table class="tbl-general tbl-forms tbl-70 table-striped">
+
+            <!-- Texto con el contenido -->
+	    	<caption class="tbl-capt">Listado de pacientes
+                {% if is_paginated %}
+                    <span> - Página {{ page_obj.number }}</span>
+                {% endif %}
+            </caption>
+
+            <!-- Cabecera de la tabla -->
+	    	<tr>
+		        <th class="tbl-th">DNI</th>
+           		<th class="tbl-th-izq">Nombre</th>
+                <th class="tbl-th tbl-td-15">Acciones</th>
+            </tr>
+
+            <!-- NO devuelve ningun paciente avisa y cierra la tabla -->
+            {% if not pacientes %}
+	    	    <tr>
+                    <th colspan="3" class="field-errors">
+                        <span>Ningún paciente con esos datos</span>
+                    </th>
+                </tr>
+
+            <!-- SI devuelve algun paciente muestra y cierra la tabla -->
+            {% else %}
+
+                <!-- Devuelve los pacientes en un querySet llamada pacientes -->
+                {% for paciente in pacientes %}
+               		<tr>
+			       	    <td class="tbl-td-centro">{{ paciente.dni }}</td>
+    		   	    {% if head_order == 'A' %}
+		    	        <td>{{ paciente.familyname }}, {{ paciente.name }}</td>
+		            {% else %}
+    			   		<td>{{ paciente.name }} {{ paciente.familyname }}</td>
+                    {% endif %}
+                        <!-- Enlaces a abrir, edit y crear cita -->
+                        <td>
+                            <div class="div-fechas">
+                                <a href={% url 'id-pacientes' paciente.idPaciente %}><input type="button" class="btn btn-info btn-sm" value="Abrir"></a>&nbsp;
+                                <a href={% url 'edit-id-pacientes' paciente.idPaciente %}><input type="button" class="btn btn-info btn-sm" value="Editar"></a>&nbsp;
+                                <a href={% url 'citas-paciente-desdefecha' paciente.idPaciente desde_fecha %}><input type="button" class="btn btn-info btn-sm" value="Citas"></a>&nbsp;
+                                <a href={% url 'menu-pacientes' %}><input type="button" class="btn btn-info btn-sm" value="Consultas"></a>
+                            </div>
+                        </td>
+                   </tr>
+                {% endfor %}
+
+      		{% endif%}
+
+        </table>
+
+        <!-- Incluye PAGINADOR-->
+        {% include 'paginador.html' %}
+
+    	<!-- Botones de acción -->
+        <div class="div-botones">
+		    <a href={% url 'menu-pacientes' %}><input type="button" class="btn btn-info" value="Menu de pacientes"></a>
+        </div>
+
+        </section>
+
+    {% endblock content %}

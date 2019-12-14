@@ -1,0 +1,99 @@
+
+<!-- ************************ -->
+<!--   create_citas_grid_tpl  -->
+<!-- ************************ -->
+
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+		<title>fixuSystem - Fisioterapia  - Gestión de citas</title>
+
+    {% endblock title %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+		<!-- Tabka principal con imágenes -->
+        <section class="sect-home-page-menu">
+
+            <!-- Formularion de nueva cita -->
+	        <form method="post">
+
+    	    	{% csrf_token %}
+
+             	<!-- Campos de  citas -->
+                <table class="tbl-general tbl-35 table-striped table-dark">
+
+                    <!-- Texto con el contenido -->
+                    <caption class="tbl-capt">Nueva cita</caption>
+
+                    <!-- Errores en el form -->
+                    {% include 'errors_citas.html' %}
+
+                    <!-- Datos -->
+		   	        <tr>
+	    		        <th class="tbl-th-dark" colspan="2">Datos preseleccionados</th>
+                    </tr>
+                    <tr>
+		    		    <td class="tbl-td-30">Fecha de la cita:</td><td>{{ form.appdate.as_widget }}</td>
+                    </tr>
+                    <tr>
+			    	    <td>Hora de la cita:</td><td>{{ form.apptime.as_widget }}
+                    </tr>
+                    <tr>
+                        <td class="tbl-td-centro grid-smalltxt" colspan="2">Puede modificar los minutos dentro de la franja horaria seleccionada</td>
+                    </tr>
+        		</table>
+
+    		    <br>
+
+                <table class="tbl-general tbl-forms tbl-35 table-striped">
+                    <tr>
+                        <th class="tbl-th" colspan="2">Datos de la cita</th>
+                    </tr>
+                    <tr>
+        			    <td>Paciente:</td><td>{{ form.fk_Paciente.as_widget }}</td>
+                    </tr>
+                    <tr>
+        			    <td>Citado/a por:</td><td>{{ form.fk_Profesional.as_widget }}</td>
+    		        </tr>
+                    <tr>
+        			    <td>Consultorio:</td><td>{{ form.fk_Consultorio.as_widget }}</td>
+    		        </tr>
+                    <tr>
+        			    <td>Estado:</td><td>{{ form.status.as_widget }}</td>
+    		        </tr>
+                </table>
+
+                <br>
+
+                <table class="tbl-general tbl-forms tbl-35 table-striped">
+	    	   	    <tr>
+	        		    <th class="tbl-th">Notas</th>
+                    </tr>
+	    		    <tr>
+    				    <td class="tbl-td-centro">{{ form.notes.as_widget }}</td>
+    			    </tr>
+                </table>
+
+            	<!-- Botones de acción -->
+                <div class="div-botones">
+		        	<input type="submit" class="btn btn-info" value="Aceptar">
+                    <a href={% url 'citas-hoy' %}><input type="button" class="btn btn-info" value="Citas para hoy"></a>
+                    <a href={% url 'menu-citas' %}><input type="button" class="btn btn-info" value="Menu de citas"></a>
+                </div>
+            </form>
+
+        </section>
+
+    {% endblock content %}

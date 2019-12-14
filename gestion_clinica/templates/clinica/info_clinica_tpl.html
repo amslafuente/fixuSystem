@@ -1,0 +1,137 @@
+<!-- ******************* -->
+<!--   info_clinica_tpl  -->
+<!-- ******************* -->
+
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+    	<title>fixuSystem - Fisioterapia - Gestión de cĺínica</title>
+
+    {% endblock %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+		<!-- Menú principal con imágenes -->
+        <section class="sect-home-page-menu">
+
+
+       		<!-- SI EXISTEN DATOS los muestra -->
+        	{% if clinica %}
+
+           		<!-- Tabla del clinica -->
+                <table class="tbl-general tbl-forms tbl-70 table-striped">
+
+                    <!-- Texto con el contenido -->
+                    <caption class="tbl-capt">EMPRESA <br/> {{ clinica.clinicname }}</caption>
+
+    		        <tr>
+    		    	    <td class="tbl-td tbl-td-20">Titular:</td>
+                        <td colspan="2">{{ clinica.ownerfullname }}</td>
+    		    	    <td class="tbl-td tbl-td-20">Núm. Colegiado/a:</td>
+                        <td colspan="2">{{ clinica.numcolegiado }}</td>
+                    </tr>
+                    <tr>
+                    	<td class="tbl-td  tbl-td-20">DNI:</td>
+                        <td colspan="2">{{ clinica.dni }}</td>
+                        <td class="tbl-td  tbl-td-20">NIF:</td>
+                        <td colspan="2">{{ clinica.nif }}</td>
+                    </tr>
+                </table>
+
+                <!-- Direccion -->
+                <table class="tbl-general tbl-forms tbl-70 table-striped">
+
+                    <caption class="tbl-capt">Dirección</caption>
+
+                    <tr>
+		    	        <td class="tbl-td tbl-td-20">Dirección:</td>
+                        <td colspan="2">{{ clinica.fulladdress }}</td>
+		    	        <td class="tbl-td tbl-td-20">Localidad:</td>
+                        <td colspan="2">{{ clinica.city }}</td>
+                    </tr>
+                    <tr>
+		    	        <td class="tbl-td tbl-td-20">Cód. Postal:</td>
+                        <td colspan="2">{{ clinica.postcode }}</td>
+		    	        <td class="tbl-td tbl-td-20">Provincia:</td>
+                        <td colspan="2">{{ clinica.province }}</td>
+            		</tr>
+                </table>
+
+                <!-- Datos de contacto -->
+                <table class="tbl-general tbl-forms tbl-70 table-striped">
+
+                    <caption class="tbl-capt">Datos de contacto</caption>
+
+                    <tr>
+    	    	    	<td class="tbl-td tbl-td-20">Teléfono 1:</td>
+                        <td class="tbl-td">{{ clinica.phone1 }}</td>
+    	    	    	<td class="tbl-td tbl-td-20">Teléfono 2:</td>
+                        <td class="tbl-td">{{ clinica.phone2 }}</td>
+    			    </tr>
+                    <tr>
+    	    	    	<td class="tbl-td tbl-td-20">E-mail:</td>
+                        <td class="tbl-td">{{ clinica.email }}</td>
+    	    	    	<td class="tbl-td tbl-td-20">Notas</td>
+	    	    	    <td class="tbl-td">{{ clinica.notes }}</td>
+                    </tr>
+        	    </table>
+
+                <!-- Datos de control -->
+                <table class="tbl-general tbl-70 table-striped table-dark">
+
+                    <caption class="tbl-capt">Datos de control</caption>
+
+        	        <tr>
+	            	    <th class="tbl-td-centro">idClínica</th>
+	            	    <th class="tbl-td-centro">Fecha registro</th>
+    	        		<th class="tbl-td-centro">Ultima modificación</th>
+	    	        	<th class="tbl-td-centro">Modificado por</th>
+        	        </tr>
+                    <tr>
+    	    	       	<td class="tbl-td-centro">{{ clinica.idClinica }}</td>
+                        <td class="tbl-td-centro">{{ clinica.firstupdated|date:'d/m/Y H:i' }}</td>
+        	    	   	<td class="tbl-td-centro">{{ clinica.lastupdated|date:'d/m/Y H:i' }}</td>
+	        	       	<td class="tbl-td-centro">{{ clinica.modifiedby }}</td>
+    		        </tr>
+	    	    </table>
+
+
+		        <!-- Botones de acción -->
+                <div class="div-botones">
+                    <a href={% url 'edit-info-clinica' clinica.idClinica %}><input type="button" class="btn btn-info" value="Editar datos"></a>
+                    <a href={% url 'menu-clinica' %}><input type="button" class="btn btn-info" value="Menú de clinica"></a>
+                </div>
+
+    		{% else %}
+
+           		<!-- Informa de que no existen datos -->
+                <table class="tbl-general tbl-forms tbl-40 table-striped">
+                    <!-- Texto con el contenido -->
+                    <caption class="tbl-capt">SIN DATOS DE LA CLINICA</caption>
+                    <tr>
+    	    	       	<td class="tbl-td-centro">¿ Desea introducir la información ahora ?</td>
+    		        </tr>
+                </table>
+
+		        <!-- Botones de acción -->
+                <div class="div-botones">
+                    <a href={% url 'init-clinica' %}><input type="button" class="btn btn-info" value="Si"></a>
+                    <a href={% url 'home-page' %}><input type="button" class="btn btn-info" value="No"></a>
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    {% endblock %}

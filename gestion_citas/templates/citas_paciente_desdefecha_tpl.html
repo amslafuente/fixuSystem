@@ -1,0 +1,132 @@
+
+<!-- ******************************** -->
+<!--   citas_paciente_desdefecha_tpl  -->
+<!-- ******************************** -->
+
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+		<title>fixuSystem - Fisioterapia  - Gestión de citas</title>
+
+    {% endblock title %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        <section class="sect-home-page-menu">
+
+        {% load static %}
+
+        <!-- Tabla mostrando pacientes -->
+        <table class="tbl-general tbl-forms tbl-85 table-striped">
+
+            <!-- Texto con el contenido -->
+	    	<caption class="tbl-capt">Paciente: {{ paciente }} - Citas pendientes
+                {% if is_paginated %}
+                    <span> - Página {{ page_obj.number }}</span>
+                {% endif %}
+            </caption>
+
+            <!-- Cabecera de la tabla -->
+	    	<tr>
+        		<th class="tbl-th">Día</th>
+        		<th class="tbl-th">Hora</th>
+		       	<th class="tbl-th-izq">Citado/a por</th>
+        		<th class="tbl-th">Consultorio</th>
+                <th class="tbl-th-izq tbl-td-20">Notas</th>
+                <th class="tbl-th-izq">Estado</th>
+                <th class="tbl-th-izq">Acciones</th>
+            </tr>
+
+            <!-- NO devuelve ningun paciente avisa y cierra la tabla -->
+            {% if not citas %}
+	    	    <tr>
+                    <th colspan="7" class="field-errors">
+                        <span>Ningún cita pendiente</span>
+                    </th>
+                </tr>
+
+            <!-- SI devuelve alguna cita muestra y cierra la tabla -->
+            {% else %}
+
+                <!-- Devuelve las citas en un querySet llamado cita_list (nombre del modelo_list -->
+                {% for cita in citas %}
+               		<tr>
+		    	        <td class="tbl-td-centro">{{ cita.appdate|date:'d/M/Y' }}
+                        <td class="tbl-td-centro">{{ cita.apptime|date:'H:i' }}</td>
+                        <td>{{ cita.fk_Profesional }}</td>
+                        <td class="tbl-td-centro">{{ cita.fk_Consultorio }}</td>
+
+                        <!-- Notas -->
+                        <td>{{ cita.notes }}</td>
+
+                        <!-- Estatus -->
+                        {% if cita.status == "Pendiente" %}
+                            <td>
+                                <button type="button" class="btn btn-success btn-sm">P</button>
+                                <a href={% url 'modif-citas' cita.idCita 'Acude' %}>
+                                    <button type="button" class="btn btn-outline-danger btn-sm">A</button>
+                                </a>
+                            </td>
+                        {% elif cita.status == "Acude" %}
+                            <td>
+                                <button type="button" class="btn btn-outline-success btn-sm">P</button>
+                                <button type="button" class="btn btn-success btn-sm">A</button>
+                                <a href={% url 'modif-citas' cita.idCita 'Pasa a consulta' %}>
+                                    <button type="button" class="btn btn-outline-danger btn-sm">C</button>
+                                </a>
+                            </td>
+                        {% elif cita.status == "Pasa a consulta" %}
+                            <td>
+                                <button type="button" class="btn btn-outline-success btn-sm">P</button>
+                                <button type="button" class="btn btn-outline-success btn-sm">A</button>
+                                <a href={% url 'menu-citas' %}>
+                                    <button type="button" class="btn btn-success btn-sm">C</button>
+                                </a>
+                            </td>
+                        {% elif cita.status == "Cancelada" %}
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm">Cancelada</button>
+                            </td>
+                        {% endif %}
+
+                        <!-- Acciones -->
+                        {% if cita.status == "Pendiente" or  cita.status == "Acude" %}
+                            <td><a href={% url 'cancel-citas' cita.idCita %}><input type="button" class="btn btn-danger btn-sm" value="Cancelar cita"></a></td>
+                        {% elif cita.status == "Pasa a consulta" %}
+                            <td>
+                                <a href="{% url 'id-consultas' cita.idCita %}">
+                                    <input type="button" class="btn btn-info btn-sm" value="Ver consulta">
+                                </a>
+                            </td>
+                        {% endif %}
+                   </tr>
+                {% endfor %}
+
+      		{% endif%}
+
+        </table>
+
+        <!-- Incluye PAGINADOR-->
+        {% include 'paginador.html' %}
+
+    	<!-- Botones de acción -->
+        <div class="div-botones">
+            <a href={% url 'citas-paciente-hastafecha' idPaciente hasta_fecha %}><input type="button" class="btn btn-info" value="Citas anteriores"></a>
+            <a href={% url 'citas-paciente-todas' idPaciente %}><input type="button" class="btn btn-info" value="Todas las citas"></a>
+            <a href={% url 'menu-pacientes' %}><input type="button" class="btn btn-info" value="Menu de pacientes"></a>
+            <a href={% url 'menu-citas' %}><input type="button" class="btn btn-info" value="Menu de citas"></a>
+            <a href={% url 'citas-dia-grid' idPaciente fecha_cita %}><input type="button" class="btn btn-danger" value="Nueva cita"></a>
+        </div>
+
+        </section>
+
+    {% endblock content %}

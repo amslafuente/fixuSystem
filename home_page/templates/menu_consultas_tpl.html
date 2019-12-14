@@ -1,0 +1,50 @@
+<!-- MENU CITAS -->
+
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+    	<title>fixuSystem - Fisioterapia - Consultas</title>
+
+    {% endblock title %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+		<!-- Menú principal con imágenes -->
+        <section class="sect-home-page-menu">
+
+            <div class="div-cabecera-menu">Gestión de Consultas</div>
+
+            <br/>
+
+            <div class="div-cuerpo-menu">
+                <div>
+                    <a href={% url 'citas-hoy' %}>
+                        <img width="200" src="{% static "img/menu_citas_hoy.png" %}" alt="Citas para hoy">
+                    </a>
+                </div>
+                <div>
+                    <a href={% url 'citas-mes' 1 1 %}>
+                        <img width="200" src="{% static "img/menu_citas_mes.png" %}" alt="Calendario mensual">
+                    </a>
+                </div>
+                <div>
+                    <a href={% url 'menu-citas' %}>
+                        <img width="200" src="{% static "img/menu_citas_actualiz.png" %}" alt="Procesar/Actualizar">
+                    </a>
+                </div>
+            </div>
+
+        </section>
+
+    {% endblock content %}

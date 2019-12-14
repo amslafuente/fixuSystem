@@ -1,0 +1,85 @@
+<!-- ********************** -->
+<!--   id_consultorio_tpl  -->
+<!-- ********************** -->
+
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!--     Script JS    -->
+    <!-- **************** -->
+
+    {% block JS %}
+
+    {% endblock %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+    	<title>fixuSystem - Fisioterapia - Gestión de clínica</title>
+
+    {% endblock %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+		<!-- Menú principal con imágenes -->
+        <section class="sect-home-page-menu">
+
+            <!-- Tabla del consultorio -->
+            <table class="tbl-general tbl-forms tbl-40 table-striped">
+
+                <!-- Texto con el contenido -->
+                <caption class="tbl-capt">Consultorio: {{consultorios.officeID }}</caption>
+
+                <!-- Datos personales -->
+		        <tr>
+	                <th class="tbl-th" colspan="4">Descripción</th>
+                </tr>
+                <tr>
+            	    <td colspan="4">{{ consultorios.officeDesc }}</td>
+                </tr>
+		   	    <tr>
+	    		    <th class="tbl-th" colspan="4">Situación y disponibilidad</th>
+                </tr>
+	            <tr>
+		    	    <td class="tbl-td-40">Situación (edif./planta):</td><td colspan="3">{{ consultorios.officeLocation }}</td>
+                </tr>
+                <tr>
+			        <td class="tbl-td-40">Departamento:</td><td colspan="3">{{ consultorios.officeDepartment }}
+                </tr>
+	    		<tr>
+                    <td class="tbl-td tbl-td-40">Teléfono:</td><td>{{ consultorios.officePhone }}</td>
+                        {% if consultorios.officeIsavail %}
+                            <td class="tbl-td avail">Disponible:</td><td class="avail">Si</td>
+                        {% else %}
+                            <td class="tbl-td not-avail">Disponible:</td><td class="not-avail">No</td>
+                        {% endif %}
+		   	    <tr>
+	    		    <th class="tbl-th" colspan="4">Equipamiento y notas</th>
+                </tr>
+                <tr>
+                    <td class="tbl-td-40">Equipamiento:</td><td colspan="3">{{ consultorios.officeEquipment }}
+   			    </tr>
+	    		<tr>
+                    <td class="tbl-td-40">Notas:</td><td colspan="3">{{ consultorios.officeNotes }}
+   			    </tr>
+
+        	</table>
+
+    	    <!-- Botones -->
+            <div class="div-botones">
+                <a href={% url 'listado-consultorios' %}><input type="button" class="btn btn-info" value="Aceptar"></a>
+	    	    <a href={% url 'menu-clinica' %}><input type="button" class="btn btn-info" value="Menu de clínica"></a>
+            </div
+
+        </section>
+
+    {% endblock %}

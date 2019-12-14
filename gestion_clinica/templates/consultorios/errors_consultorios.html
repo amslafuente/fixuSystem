@@ -1,0 +1,17 @@
+<!-- ************************************
+ERRORES DE LOS CAMPOS DEL MODELO CONSULTORIO
+************************************* -->
+
+<!-- Errores en el form -->
+{{ form.non_field_errors }}
+
+<!-- Error en la identif del consultorio -->
+{% if form.officeID.errors %}
+<tr>
+    <th colspan="4" class ="field-errors">
+        {% for error in form.officeID.errors %}
+            {{ form.officeID.label }} : {{ error }}
+        {% endfor %}
+    </th>
+</tr>
+{% endif %}

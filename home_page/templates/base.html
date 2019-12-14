@@ -1,0 +1,129 @@
+<!-- PLANTILLA BASE -->
+
+<!DOCTYPE html>
+
+<html lang="es">
+
+    <!-- Carga la ruta static y el time zone-->
+    {% load static %}
+
+    <!-- Cabecera de la página -->
+    <head>
+
+    	<!-- Block de titulo de pagina -->
+        {% block title %}
+
+        {% endblock title %}
+
+    	<!-- Required meta tags -->
+    	<meta charset="utf-8">
+    	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    	<!-- Bootstrap CSS -->
+    	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+    	<!-- Local CSS -->
+		<link rel="stylesheet" type="text/css" href="{% static "css/style.css" %}" />
+
+    	<!-- Block de JS -->
+        {% block JS %}
+
+        {% endblock JS %}
+
+	</head>
+    <!-- Fin de cabecera de la página -->
+
+	<!-- Contenido de la pagina -->
+    <body>
+
+    	<!-- Sección - Cabecera del contenido -->
+     	<section class="sect-home-page-header">
+
+    	    <table class="tbl-general tbl-sinborde tbl-85">
+	    	    <tr>
+				    <!-- Logo -->
+                    <td>
+                        <img class="img-logo-size" src="{{ clinica.picturefile.url }}" alt="Logo Clínica" />
+                    </td>
+                    <!-- Informacion sobre fixuSystem -->
+                    <td class="tbl-td-40 tbl-td-der">
+                        <img width="400px" src="{% static "img/fixuSystem-logo.png" %}" alt="fixuSystem Logo" />
+                    </td>
+			    </tr>
+
+                <tr>
+                    <!-- Informacion de usuario -->
+                    <td class="info-base">
+                        {% if usr != '' %}
+                            Usuario/a en línea: {{ usr }}&nbsp;
+                            {% if usr.is_superuser %}
+                                [su]&nbsp;
+                            {% elif usr.is_staff %}
+                                [st]&nbsp;
+                            {% endif %}
+                            (<a class="link-red" href="{% url 'user-logout' %}">Desconectar</a>)
+                        {% endif %}
+                    </td>
+                    <!-- Informacion de fecha -->
+                    <td class="info-base-der">
+                        <time>{% now "D, d/M/Y H:i A" %}</time> - Vers. {{ progvers }}
+                    </td>
+                </tr>
+		    </table>
+
+		</section>
+
+        <!-- Seccion - Block del contenido -->
+        {% block content %}
+
+        {% endblock content %}
+
+		<!-- Sección - Barra de navegacion -->
+		<div class="div-home-page-nav">
+
+			<div>
+				<a class="link-nav" href={% url 'home-page' %}>Inicio</a> |
+                <a class="link-nav" href={% url 'menu-pacientes' %}>Gestión de pacientes</a> |
+  				<a class="link-nav" href={% url 'menu-citas' %}>Gestión de citas</a> |
+	  			<a class="link-nav" href={% url 'menu-consultas' %}>Gestión de consultas</a> |
+                <a class="link-nav" href={% url 'menu-clinica' %}>Gestión de clinica</a> |
+				<a class="link-nav" href={% url 'menu-almacen' %}>Gestión de almacén</a> |
+  				<a class="link-nav" href={% url 'menu-proveedores' %}>Gestión de proveedores</a>
+    		</div>
+
+    	</div>
+
+		<!-- Sección - Pie de página -->
+        <div class="div-home-page-footer">
+
+            <div>
+                <a href="https://www.djangoproject.com/">
+                    <img width="150" src="{% static "img/django-icon.png" %}" alt="Powered by Django" />
+                </a><br>
+                    Powered by Django
+            </div>
+
+            <div>
+                {% if clinica != None %}
+                    {{ clinica.clinicname }} ({{ clinica.ownerfullname }}
+                    {% if clinica.numcolegiado %}
+                        &nbsp;- Coleg. {{ clinica.numcolegiado }}
+                    {% endif %}
+                    )<br/>
+                    {{ clinica.fulladdress }}, {{ clinica.postcode }} - {{ clinica.city }}
+                    {% if clinica.province %}
+                        , {{ clinica.province }}
+                    {% endif %}
+                    {% if clinica.country %}
+                        , {{ clinica.country }}
+                    {% endif %}
+                    <br/>
+                    Tel. {{ clinica.phone1 }} / email: {{ clinica.email }}
+                {% endif %}
+            </div>
+
+        </div>
+
+	</body>
+
+    <!-- Fin del contenido de la página -->
+
+</html>

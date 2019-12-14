@@ -1,0 +1,75 @@
+
+<!-- ************************ -->
+<!--   create_citas_grid_tpl  -->
+<!-- ************************ -->
+
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+		<title>fixuSystem - Fisioterapia  - Gestión de citas</title>
+
+    {% endblock title %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+		<!-- Tabka principal con imágenes -->
+        <section class="sect-home-page-menu">
+
+            <!-- Formularion de nueva cita -->
+	        <form method="post">
+
+    	    	{% csrf_token %}
+
+             	<!-- Campos de  citas -->
+                <table class="tbl-general tbl-forms tbl-30 table-striped">
+
+                    <!-- Texto con el contenido -->
+                    <caption class="tbl-capt">Confirme la modificación del estado</caption>
+
+                    <!-- Errores en el form -->
+                    {% include 'errors_citas.html' %}
+
+                    <!-- Datos -->
+                    {% if citas %}
+                        <tr>
+                            <td>Id Cita:</td><td>{{ citas.idCita }}</td>
+                        </tr>
+                        <tr>
+                            <td>Paciente:</td><td>{{ citas.fk_Paciente }}</td>
+                        </tr>
+                        <tr>
+                            <td>Fecha de la cita:</td><td>{{ citas.appdate }}</td>
+                        </tr>
+                        <tr>
+                            <td>Hora de la cita:</td><td>{{ citas.apptime }}</td>
+                        </tr>
+                        <tr>
+                            <td>Nuevo estado:</td><td><span class="grid-naranja-estado">{{ status }}</span></td>
+                        </tr>
+                    {% endif %}
+
+                </table>
+
+            	<!-- Botones de acción -->
+                <div class="div-botones">
+		        	<input type="submit" class="btn btn-danger" value="Confirmar modificación">
+                    <input type="hidden" name="next" value={{ next }}>
+                    <a href="{{ next|safe }}"><input type="button" class="btn btn-info" value="Volver"></a>
+                    <a href={% url 'menu-citas' %}><input type="button" class="btn btn-info" value="Menú de citas"></a>
+                </div>
+            </form>
+
+        </section>
+
+    {% endblock content %}

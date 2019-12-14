@@ -1,0 +1,73 @@
+<!-- *********************** -->
+<!--   select_pacientes_tpl  -->
+<!-- *********************** -->
+
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+		<title>fixuSystem - Fisioterapia  - Gestión de pacientes</title>
+
+    {% endblock %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        <section class="sect-home-page-menu">
+
+        {% load static %}
+
+	    <!-- Formulario de entrada de criterios -->
+        <form method="post">
+
+		    {% csrf_token %}
+
+            <table class="tbl-general tbl-forms tbl-30 table-striped">
+
+                <!-- Texto con el contenido -->
+        	    <caption class="tbl-capt">Criterios de selección</caption>
+
+                <!-- Si hay mensajes pendientes -->
+                {% for message in messages %}
+                    <th colspan="2" style="text-align: center; font-family: serif; font-variant: small-caps; padding: 5px; color: white; background-color: rgb(224, 89, 36);">
+                        {{ message }}
+                    </th>
+                {% endfor %}
+
+                <!-- Campos para el contenido -->
+                <tr>
+                    <td class="tbl-td-der">DNI:</td>
+                    <td>{{ form.dni.as_widget }}</td>
+                </tr>
+                <tr>
+                    <td class="tbl-td-der">Nombre:</td>
+                    <td>{{ form.name.as_widget }}</td>
+                </tr>
+                <tr>
+                    <td class="tbl-td-der">Apellidos:</td>
+                    <td>{{ form.familyname.as_widget }}</td>
+                </tr>
+                <tr>
+                    <td class="tbl-td-der">Ordenar por:</td>
+                    <td>{{ form.orderby.as_widget }}</td>
+                </tr>
+
+                </table>
+
+                <!-- Botones -->
+                <div class="div-botones">
+				    <input type="submit" class="btn btn-info" value="Enviar">
+				    <a href={% url 'menu-pacientes' %}><input type="button" class="btn btn-info" value="Menu de pacientes"></a>
+                </div>
+	    </form>
+
+        </section>
+
+    {% endblock %}

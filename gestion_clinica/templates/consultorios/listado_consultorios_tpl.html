@@ -1,0 +1,105 @@
+<!-- *************************** -->
+<!--   listado_consultorios_tpl  -->
+<!-- *************************** -->
+
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+		<title>fixuSystem - Fisioterapia  - Gestión de clínica</title>
+
+    {% endblock title %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+        <section class="sect-home-page-menu">
+
+        <!-- Tabla mostrando consultorios -->
+        <table class="tbl-general tbl-forms tbl-70 table-striped">
+
+            <!-- Texto con el contenido -->
+	    	<caption class="tbl-capt">Listado de consultorios
+                {% if is_paginated %}
+                    <span> - Página {{ page_obj.number }}</span>
+                {% endif %}
+            </caption>
+
+            <!-- Cabecera de la tabla -->
+	    	<tr>
+		        <th class="tbl-th">ID</th>
+           		<th class="tbl-th">Identif.</th>
+                <th class="tbl-th-izq">Situación</th>
+                <th class="tbl-th-izq">Departamento</th>
+                <th class="tbl-th">Disponible</th>
+                <th class="tbl-th">Teléfono</th>
+                <th class="tbl-th">Acciones</th>
+            </tr>
+
+            <!-- NO devuelve ningun consultorio avisa y cierra la tabla -->
+            {% if not consultorios %}
+	    	    <tr>
+                    <th colspan="7" class="field-errors">
+                        <span>Ningún consultorio devuelto</span>
+                    </th>
+                </tr>
+
+            <!-- SI devuelve algun consultorio muestra y cierra la tabla -->
+            {% else %}
+
+                <!-- Devuelve los consultorios en un querySet llamada consultorios -->
+                {% for consultorio in consultorios %}
+               		<tr>
+			       	    <td class="tbl-td-centro">{{ consultorio.idConsultorio }}</td>
+                        <td class="tbl-td-centro">{{ consultorio.officeID }}</td>
+                        <td class="tbl-td">{{ consultorio.officeLocation }}</td>
+                        <td class="tbl-td">{{ consultorio.officeDepartment }}</td>
+
+                        {% if consultorio.officeIsavail %}
+                            <td class="tbl-td-centro avail">Si</td>
+                        {% else %}
+                            <td class="tbl-td-centro not-avail">No</td>
+                        {% endif %}
+
+                        {% if not consultorio.officePhone %}
+                            <td class="tbl-td-centro">No</td>
+                        {% else %}
+                            <td class="tbl-td-centro">{{ consultorio.officePhone }}</td>
+                        {% endif %}
+
+                        <!-- Enlaces a abrir, editar y borrar consultorio -->
+                        <td>
+                            <div class="div-fechas">
+                                <a href={% url 'id-consultorios' consultorio.idConsultorio %}><input type="button" class="btn btn-info btn-sm" value="Ver"></a>&nbsp;
+                                <a href={% url 'edit-consultorios' consultorio.idConsultorio %}><input type="button" class="btn btn-info btn-sm" value="Editar"></a>&nbsp;
+                                <a href={% url 'delete-consultorios' consultorio.idConsultorio %}><input type="button" class="btn btn-danger btn-sm" value="Borrar"></a>&nbsp;
+                            </div>
+                        </td>
+                   </tr>
+                {% endfor %}
+
+      		{% endif%}
+
+        </table>
+
+        <!-- Incluye PAGINADOR-->
+        {% include 'paginador.html' %}
+
+    	<!-- Botones de acción -->
+        <div class="div-botones">
+            <a href={% url 'create-consultorios' %}><input type="button" class="btn btn-info" value="Nuevo consultorio"></a>
+		    <a href={% url 'menu-clinica' %}><input type="button" class="btn btn-info" value="Menu de clínica"></a>
+        </div>
+
+        </section>
+
+    {% endblock content %}

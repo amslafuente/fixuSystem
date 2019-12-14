@@ -1,0 +1,59 @@
+<!-- *********************** -->
+<!--     user_logout_tpl     -->
+<!-- *********************** -->
+
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+		<title>fixuSystem - Fisioterapia - LOGOUT</title>
+
+    {% endblock %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        <section class="sect-home-page-menu">
+
+        {% load static %}
+
+	    <!-- Formulario de entrada de criterios -->
+
+        <table class="tbl-general tbl-forms tbl-30 table-striped">
+
+            <!-- Texto con el contenido -->
+        	<caption class="tbl-capt">CONFIRME DESCONEXION</caption>
+
+            <!-- Si hay mensajes pendientes -->
+            {% for message in messages %}
+                <th colspan="2" style="text-align: center; font-family: serif; font-variant: small-caps; padding: 5px; color: white; background-color: rgb(224, 89, 36);">
+                    {{ message }}
+                </th>
+            {% endfor %}
+
+            <tr>
+                <td>
+                    <!-- Botones -->
+                    <div class="div-botones">
+
+                        <form method="post">
+		                    {% csrf_token %}
+				            <input type="submit" class="btn btn-info" value="Desconectar">
+				            <a href={% url 'home-page' %}><input type="button" class="btn btn-info" value="Cancelar"></a>
+	                    </form>
+                    </div>
+                </td>
+            </tr>
+
+        </table>
+
+        </section>
+
+    {% endblock %}
