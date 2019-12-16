@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 from .secrets import SECRET_KEY_PROD
-from .secrets import MYSQL_PASSWORD
+from .secrets import MYSQL_USER, MYSQL_PASSWORD
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,10 +23,20 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = SECRET_KEY_PROD
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
+
+##### CHANGES FOR PRODUCION ENVIRONMENT #####
+
+# SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG = True
+DEBUG = False
+
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+
+#############################################
+
+
 
 # Application definition
 
@@ -99,7 +109,7 @@ DATABASES = {
     'default': {
         'ENGINE':   'django.db.backends.mysql',
         'NAME':     'fixuDB',
-        'USER':     'root',
+        'USER':     MYSQL_USER,
         'PASSWORD': MYSQL_PASSWORD,
         'HOST':     'localhost',
         'PORT':     '3306',
@@ -149,15 +159,16 @@ DATE_TIME_FORMAT = ['%d/%m/%Y %H:%M',
                     '%Y/%m/%d %H:%M',
                     '%Y-%m-%d %H:%M']
 
+# Login URL
+
+LOGIN_URL = '/fixuSystem/access/login/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-LOGIN_URL = '/fixusystem/access/login/'
+# STATIC_URL = '/static/'
 
-STATIC_URL = '/static/'
-
-MEDIA_URL = '/media/'
+# MEDIA_URL = '/media/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),

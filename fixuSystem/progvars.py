@@ -1,11 +1,11 @@
 """
-Program variables to be used in different apps.
+Variables to be used in different apps.
 
 """
 
 ##### VERSION DEL PROGRAMA #####
 
-PROG_VERS = '0.52'
+PROG_VERS = '0.60'
 
 ##### CONFIG: VARIABLES DE LA APP GESTION_PACIENTES #####
 
