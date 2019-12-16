@@ -357,8 +357,8 @@ td { /* --- Padding por defecto ---*/
     text-align: center;
     min-height: 240px;
     max-height: 244px;
-    min-width: 90px;
-    max-width: 94px;
+    min-width: 120px;
+    max-width: 124px;
     background-color:rgb(230, 219, 209);
     font-weight: bold;
 }

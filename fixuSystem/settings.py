@@ -77,9 +77,6 @@ TEMPLATES = [
                 'gestion_login/templates',
                 'gestion_pacientes/templates',
                 'gestion_clinica/templates',
-                'gestion_clinica/templates/clinica',
-                'gestion_clinica/templates/consultorios',
-                'gestion_clinica/templates/profesionales',
                 'gestion_citas/templates',
                 'gestion_consultas/templates',
 
@@ -166,9 +163,9 @@ LOGIN_URL = '/fixuSystem/access/login/'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-# STATIC_URL = '/static/'
+STATIC_URL = '/static/'
 
-# MEDIA_URL = '/media/'
+MEDIA_URL = '/media/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
