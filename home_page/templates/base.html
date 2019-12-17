@@ -45,18 +45,18 @@
                     </td>
                     <!-- Informacion sobre fixuSystem -->
                     <td class="tbl-td-40 tbl-td-der">
-                        <img width="400px" src="{% static "img/fixuSystem-logo.png" %}" alt="fixuSystem Logo" />
+                        <img width="320px" src="{% static "img/fixuSystem-logo.png" %}" alt="fixuSystem Logo" />
                     </td>
 			    </tr>
 
                 <tr>
                     <!-- Informacion de usuario -->
                     <td class="info-base">
-                        {% if usr != '' %}
-                            Usuario/a en línea: {{ usr }}&nbsp;
-                            {% if usr.is_superuser %}
+                        {% if user.is_authenticated %}
+                            Usuario/a en línea: {{ user }}&nbsp;
+                            {% if user.is_superuser %}
                                 [su]&nbsp;
-                            {% elif usr.is_staff %}
+                            {% elif user.is_staff %}
                                 [st]&nbsp;
                             {% endif %}
                             (<a class="link-red" href="{% url 'user-logout' %}">Desconectar</a>)
