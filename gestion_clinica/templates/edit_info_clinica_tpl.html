@@ -32,7 +32,7 @@
     	    	{% csrf_token %}
 
                 <!-- Tabla del paciente -->
-                <table class="tbl-general tbl-forms tbl-85 table-striped">
+                <table class="tbl-general tbl-forms tbl-60 table-striped">
 
                     <!-- Texto con el contenido -->
                     <caption class="tbl-capt">Editar datos de la clinica</caption>
@@ -60,30 +60,23 @@
                		    <td>Núm. Colegiado/a:</td>
                         <td>{{ form.numcolegiado.as_widget }}</td>
    			    	</tr>
-        		</table>
-
-    		    <br/>
-
-                <table class="tbl-general tbl-forms tbl-85 table-striped">
 
                     <!-- Domicilio -->
 		       	    <tr>
 	    	    	    <th class="tbl-th" colspan="4">Domicilio</th>
                     </tr>
     	    		<tr>
-	    	    		<td>Dirección:</td><td>{{ form.fulladdress.as_widget }}</td>
-                        <td>Localidad:</td><td>{{ form.city.as_widget }}</td>
+	    	    		<td>Dirección:</td>
+                        <td>{{ form.fulladdress.as_widget }}</td>
+                        <td>Localidad:</td>
+                        <td>{{ form.city.as_widget }}</td>
                     </tr>
                     <tr>
-                        <td>Código postal:</td><td>{{ form.postcode.as_widget }}</td>
-		    	    	<td>Provincia:</td><td>{{ form.province.as_widget }}</td>
+                        <td>Código postal:</td>
+                        <td>{{ form.postcode.as_widget }}</td>
+		    	    	<td>Provincia:</td>
+                        <td>{{ form.province.as_widget }}</td>
         			</tr>
-
-        		</table>
-
-	    	    <br/>
-
-                <table class="tbl-general tbl-forms tbl-85 table-striped">
 
                     <!-- Datos de contacto -->
 	    	   	    <tr>
@@ -99,18 +92,13 @@
                         <td>E-mail:</td>
                         <td colspan="3">{{ form.email }}</td>
                     </tr>
-        		</table>
-
-                <br>
-
-                <table class="tbl-general tbl-forms tbl-85 table-striped">
 
                     <!-- Notas -->
 	    	   	    <tr>
-	        		    <th class="tbl-th">Notas</th>
+	        		    <th class="tbl-th" colspan="4" >Notas</th>
                     </tr>
 	    		    <tr>
-    				    <td class="tbl-td-centro">{{ form.notes }}</td>
+    				    <td class="tbl-td-centro" colspan="4">{{ form.notes }}</td>
     			    </tr>
 
                 </table>
