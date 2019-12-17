@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 from .secrets import SECRET_KEY_PROD
-from .secrets import MYSQL_USER, MYSQL_PASSWORD
+from .secrets import DB_USR, DB_PASSWD
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -29,7 +29,7 @@ SECRET_KEY = SECRET_KEY_PROD
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
-DEBUG = False
+DEBUG = True
 
 # ALLOWED_HOSTS = []
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
@@ -106,8 +106,8 @@ DATABASES = {
     'default': {
         'ENGINE':   'django.db.backends.mysql',
         'NAME':     'fixuDB',
-        'USER':     MYSQL_USER,
-        'PASSWORD': MYSQL_PASSWORD,
+        'USER':     DB_USR,
+        'PASSWORD': DB_PASSWD,
         'HOST':     'localhost',
         'PORT':     '3306',
     }
@@ -156,9 +156,15 @@ DATE_TIME_FORMAT = ['%d/%m/%Y %H:%M',
                     '%Y/%m/%d %H:%M',
                     '%Y-%m-%d %H:%M']
 
-# Login URL
+# Login y logout URL
 
 LOGIN_URL = '/fixuSystem/access/login/'
+LOGOUT_REDIRECT_URL = '/'
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Session expiration on close
+SESSION_COOKIE_AGE = 3600 # User logs out after 60 minutes (3600 secs) of inactivity but...
+SESSION_SAVE_EVERY_REQUEST = True # timer may be reset in every request
+# AUTO_LOGOUT_DELAY = 60  # User logout after 60 minutes
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
