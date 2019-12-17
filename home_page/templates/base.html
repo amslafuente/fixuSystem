@@ -41,8 +41,12 @@
 	    	    <tr>
 				    <!-- Logo -->
                     <td>
-                        <img class="img-logo-size" src="{{ clinica.picturefile.url }}" alt="Logo Clínica" />
-                    </td>
+                        {% if clinica.picturefile.url != '' %}
+                            <img class="img-logo-size" src="{{ clinica.picturefile.url }}" alt="Logo Clínica" />
+                        {% else %}
+                            Logo Clínica
+                        {% endif %}
+                        </td>
                     <!-- Informacion sobre fixuSystem -->
                     <td class="tbl-td-40 tbl-td-der">
                         <img width="320px" src="{% static "img/fixuSystem-logo.png" %}" alt="fixuSystem Logo" />
