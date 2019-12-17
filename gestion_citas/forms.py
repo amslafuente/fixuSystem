@@ -1,7 +1,7 @@
 ########## Forms de gestion_citas ##########
 
 from django import forms
-from django.forms import ModelForm, Textarea, DateInput, TimeInput
+from django.forms import ModelForm, Textarea, DateInput, TimeInput, Select
 from .models import Cita
 from gestion_clinica.models import Consultorio
 

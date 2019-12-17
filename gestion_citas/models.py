@@ -39,5 +39,5 @@ class Cita(models.Model):
     class Meta:
         verbose_name = 'Cita'
         verbose_name_plural = 'Citas'
-        ordering = ['idCita']
+        ordering = ['appdate', 'apptime']
 

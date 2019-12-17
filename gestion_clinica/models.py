@@ -73,14 +73,14 @@ class Profesional(models.Model):
     class Meta:
         verbose_name = 'Profesional'
         verbose_name_plural = 'Profesionales'
-        ordering = ['oto_Profesional']
+        ordering = ['fullname']
 
 ########## TABLA DE GESTION DE CONSULTORIOS ##########
 
 class Consultorio(models.Model):
 
     idConsultorio = models.AutoField(primary_key = True, unique = True)
-    officeID = models.CharField("Número/Identificación", max_length = 10, unique = True)
+    officeID = models.CharField("Número/Identificación", max_length = 10)
     officeDesc = models.CharField("Descripción", max_length = 100, blank = True)
     officeIsavail = models.BooleanField("Disponible", default = True)                               # Disponible o no para consultas
     officeLocation = models.CharField("Localización", max_length = 50, blank = True)
@@ -103,4 +103,4 @@ class Consultorio(models.Model):
     class Meta:
         verbose_name = 'Consultorio'
         verbose_name_plural = 'Consultorios'
-        ordering =['idConsultorio']
+        ordering =['officeID']
