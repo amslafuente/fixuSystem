@@ -81,7 +81,14 @@ class citas_dia_view(ListView):
         # La fecha indicada en el GET a traves de kwargs la prepara para pasar al contexto
         kwarg_date = datetime.datetime.strptime(self.kwargs['date'], '%d_%m_%Y').date()
         context['ctx_dias'] = contexto_dias(kwarg_date)
-
+       
+        # Si el kwarg_date ya ha pasado, no permite otras acciones que no sea ver la ficha de la consulta
+        kwarg_today = datetime.date.today()       
+        if (kwarg_date < kwarg_today):
+            context['hoy_o_posterior'] = False
+        else:
+            context['hoy_o_posterior'] = True
+        
         return context
 
 ########## RELACION COMPLETA DE CITAS PARA UN DIA CONCRETO EN FORMATO REJILLA ##########
@@ -121,6 +128,13 @@ class citas_dia_grid_view(ListView):
 
         # Contexto que genera las fechas actuales, anteriores y siguentes
         context['ctx_dias'] = contexto_dias(kwarg_date)
+
+        # Si el kwarg_date ya ha pasado, no permite otras acciones que no sea ver la ficha de la consulta
+        kwarg_today = datetime.date.today()       
+        if (kwarg_date < kwarg_today):
+            context['hoy_o_posterior'] = False
+        else:
+            context['hoy_o_posterior'] = True    
 
         # Contexto con las citas
         context['rejilla'] = app_timegrid(citas, kwarg_date)
@@ -348,9 +362,12 @@ class create_citas_paciente_view(View):
 
             # Limpia y guarda el registro
             cita.save()
-
-            # Regresa a citas hoy
-            return HttpResponseRedirect(reverse('citas-hoy'))
+            
+            # Devuelve a las pagina de citas del dia elegido
+            ctx = dict()
+            ctx['idPaciente'] = idPaciente
+            ctx['date'] = date
+            return HttpResponseRedirect(reverse('citas-dia', kwargs = ctx))
 
         # Si no es válido muestra los errores
         else:
@@ -397,6 +414,14 @@ class create_citas_paciente_view(View):
         ctx['ctx_dias'] = contexto_dias(kwarg_date)
 
         return render(request, 'create_citas_paciente_tpl.html', ctx)
+
+
+######  EDIT THE NOTES OF AN APPOINTMENT #######
+######  Any other change: cancel and create a new one ######
+
+@method_decorator(login_required, name='dispatch')
+class edit_notas_citas_view(UpdateView):
+    pass
 
 ######  CANCELA CITA SIN BORRARLA #######
 

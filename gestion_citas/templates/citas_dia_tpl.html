@@ -59,13 +59,13 @@
                 <th class="tbl-th">Consultorio</th>
                 <th class="tbl-th-izq tbl-td-15">Notas</th>
                 <th class="tbl-th-izq">Estado</th>
-                <th class="tbl-th">Acciones</th>
+                <th class="tbl-th" colspan="2">Acciones</th>
             </tr>
 
             <!-- NO devuelve ningun paciente avisa y cierra la tabla -->
             {% if not citas %}
 	    	    <tr>
-                    <th colspan="8" class="field-errors">
+                    <th colspan="9" class="field-errors">
                         <span>Ningún cita pendiente</span>
                     </th>
                 </tr>
@@ -113,12 +113,18 @@
                         {% endif %}
 
                         <!-- Acciones -->
-                        {% if cita.status == "Pendiente" or  cita.status == "Acude" %}
-                            <td class="tbl-td-centro"><a href="{% url 'cancel-citas' cita.idCita %}"><input type="button" class="btn btn-danger btn-sm" value="Cancelar cita"></a></td>
-                        {% elif cita.status == "Pasa a consulta" %}
-                            <td class="tbl-td-centro"><a href="{% url 'id-consultas-cita' cita.idCita %}"><input type="button" class="btn btn-info btn-sm" value="Ver consulta"></a></td>
-                        {% endif %}
-                   </tr>
+                        {% if hoy_o_posterior %}
+                            {% if cita.status == "Pendiente" %}
+                                <td class="tbl-td-centro"><a href="{% url 'cancel-citas' cita.idCita %}"><input type="button" class="btn btn-danger btn-sm" value="Cancelar cita"></a></td>
+                            {% elif cita.status == "Pasa a consulta" %}
+                                <td class="tbl-td-centro"><a href="{% url 'id-consultas-cita' cita.idCita %}"><input type="button" class="btn btn-info btn-sm" value="Ver consulta"></a></td>
+                            {% endif %}
+                            <td class="tbl-td-centro"><a href="{% url 'edit-notas-citas' cita.idCita %}"><input type="button" class="btn btn-info btn-sm" value="Editar notas"></a></td>
+                        {% else %}
+                            <td>&nbsp;</td>
+                            <td class="tbl-td-centro"><a href="{% url 'edit-notas-citas' cita.idCita %}"><input type="button" class="btn btn-info btn-sm" value="Editar notas"></a></td>
+                        {% endif %}             
+                    </tr>
                 {% endfor %}
 
       		{% endif%}

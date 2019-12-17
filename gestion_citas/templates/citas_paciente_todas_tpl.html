@@ -43,13 +43,13 @@
         		<th class="tbl-th">Consultorio</th>
                 <th class="tbl-th-izq tbl-td-20">Notas</th>
         		<th class="tbl-th-izq">Estado</th>
-                <th class="tbl-th-izq">Acciones</th>
+                <th class="tbl-th" colspan="2">Acciones</th>
             </tr>
 
             <!-- NO devuelve ningun paciente avisa y cierra la tabla -->
             {% if not citas %}
 	    	    <tr>
-                    <th colspan="7" class="field-errors">
+                    <th colspan="8" class="field-errors">
                         <span>Ningún cita encontrada</span>
                     </th>
                 </tr>
@@ -138,6 +138,7 @@
                                 </a>
                             </td>
                         {% endif %}
+                        <td class="tbl-td-centro"><a href="{% url 'edit-notas-citas' cita.idCita %}"><input type="button" class="btn btn-info btn-sm" value="Editar notas"></a></td>
                    </tr>
                 {% endfor %}
 

@@ -43,13 +43,13 @@
         		<th class="tbl-th">Consultorio</th>
                 <th class="tbl-th-izq tbl-td-20">Notas</th>
                 <th class="tbl-th-izq">Estado</th>
-                <th class="tbl-th-izq">Acciones</th>
+                <th class="tbl-th" colspan="2">Acciones</th>
             </tr>
 
             <!-- NO devuelve ningun paciente avisa y cierra la tabla -->
             {% if not citas %}
 	    	    <tr>
-                    <th colspan="7" class="field-errors">
+                    <th colspan="8" class="field-errors">
                         <span>Ningún cita pendiente</span>
                     </th>
                 </tr>
@@ -72,7 +72,7 @@
                         {% if cita.status == "Pendiente" %}
                             <td>
                                 <button type="button" class="btn btn-success btn-sm">P</button>
-                                <a href={% url 'modif-citas' cita.idCita 'Acude' %}>
+                                <a href="{% url 'modif-citas' cita.idCita 'Acude' %}">
                                     <button type="button" class="btn btn-outline-danger btn-sm">A</button>
                                 </a>
                             </td>
@@ -80,7 +80,7 @@
                             <td>
                                 <button type="button" class="btn btn-outline-success btn-sm">P</button>
                                 <button type="button" class="btn btn-success btn-sm">A</button>
-                                <a href={% url 'modif-citas' cita.idCita 'Pasa a consulta' %}>
+                                <a href="{% url 'modif-citas' cita.idCita 'Pasa a consulta' %}">
                                     <button type="button" class="btn btn-outline-danger btn-sm">C</button>
                                 </a>
                             </td>
@@ -88,7 +88,7 @@
                             <td>
                                 <button type="button" class="btn btn-outline-success btn-sm">P</button>
                                 <button type="button" class="btn btn-outline-success btn-sm">A</button>
-                                <a href={% url 'menu-citas' %}>
+                                <a href="{% url 'menu-citas' %}">
                                     <button type="button" class="btn btn-success btn-sm">C</button>
                                 </a>
                             </td>
@@ -100,7 +100,7 @@
 
                         <!-- Acciones -->
                         {% if cita.status == "Pendiente" or  cita.status == "Acude" %}
-                            <td><a href={% url 'cancel-citas' cita.idCita %}><input type="button" class="btn btn-danger btn-sm" value="Cancelar cita"></a></td>
+                            <td><a href="{% url 'cancel-citas' cita.idCita %}"><input type="button" class="btn btn-danger btn-sm" value="Cancelar cita"></a></td>
                         {% elif cita.status == "Pasa a consulta" %}
                             <td>
                                 <a href="{% url 'id-consultas' cita.idCita %}">
@@ -108,6 +108,7 @@
                                 </a>
                             </td>
                         {% endif %}
+                        <td class="tbl-td-centro"><a href="{% url 'edit-notas-citas' cita.idCita %}"><input type="button" class="btn btn-info btn-sm" value="Editar notas"></a></td>
                    </tr>
                 {% endfor %}
 

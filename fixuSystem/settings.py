@@ -28,8 +28,8 @@ SECRET_KEY = SECRET_KEY_PROD
 ##### CHANGES FOR PRODUCION ENVIRONMENT #####
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
 DEBUG = True
+# DEBUG = False
 
 # ALLOWED_HOSTS = []
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
@@ -162,7 +162,7 @@ LOGIN_URL = '/fixuSystem/access/login/'
 LOGOUT_REDIRECT_URL = '/'
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Session expiration on close
-SESSION_COOKIE_AGE = 5 # User logs out after 60 minutes (3600 secs) of inactivity but...
+SESSION_COOKIE_AGE = 3600 # User logs out after 60 minutes (3600 secs) of inactivity but...
 SESSION_SAVE_EVERY_REQUEST = True # timer may be reset in every request
 #AUTO_LOGOUT_DELAY = 60  # User logout after 60 minutes
 
