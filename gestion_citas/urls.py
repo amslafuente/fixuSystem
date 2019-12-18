@@ -40,7 +40,7 @@ urlpatterns = [
     # Muestra cita concreta
     path('cita/<int:idCita>/', views.id_citas_view.as_view(), name = "id-citas"),
     # Edita las NOTAS de una cita, para cualquier otro cambio cancela y crea una nueva
-    path('editar-notas/<int:idCita>/', views.edit_notas_citas_view.as_view(), name = "edit-notas-citas"),
+    path('editar/<int:idCita>/', views.edit_citas_view.as_view(), name = "edit-citas"),
     # Cancela una cita - NO LA BORRA
     path('cancelar/<int:idCita>', views.cancel_citas_view.as_view(), name = "cancel-citas"),
     # Cambia estado de una cita

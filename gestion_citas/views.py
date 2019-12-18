@@ -411,7 +411,7 @@ class create_citas_paciente_view(View):
 ######  Any other change: cancel and create a new one ######
 
 @method_decorator(login_required, name='dispatch')
-class edit_notas_citas_view(UpdateView):
+class edit_citas_view(UpdateView):
     pass
 
 ######  CANCELA CITA SIN BORRARLA #######
@@ -463,6 +463,13 @@ class modif_citas_view(DetailView):
         ctx = super().get_context_data(**kwargs)
         ctx['status'] = self.kwargs['status']
         ctx['next'] = self.request.META.get('HTTP_REFERER', '/')
+
+        # Determina si la cita ya ha pasado (no tiene sentido modificarla)
+        kwarg_idcita = self.kwargs['idCita']
+        kwarg_today = datetime.date.today()
+        cita = Cita.objects.get(idCita__iexact = kwarg_idcita)
+        if cita.appdate < kwarg_today:
+            ctx['old_app'] = True
 
         return ctx
 
