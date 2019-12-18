@@ -193,10 +193,7 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
 .grid-naranja-estado { /*--- Texto rojo ---*/
     background-color: orange;
     color: black;
-    padding-top: 2px;
-    padding-bottom: 3px;
-    padding-left: 50px;
-    padding-right: 50px;
+    text-align: center;
 }
 
 .grid-verde { /*--- Texto verde ---*/

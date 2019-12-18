@@ -32,32 +32,34 @@
     	    	{% csrf_token %}
 
              	<!-- Campos de  citas -->
-                <table class="tbl-general tbl-35 table-striped table-dark">
+                <table class="tbl-general tbl-forms tbl-35 table-striped">
 
                     <!-- Texto con el contenido -->
                     <caption class="tbl-capt">Nueva cita</caption>
 
                     <!-- Errores en el form -->
                     {% include 'errors_citas.html' %}
+                    
+                    <!-- Si hay mensajes pendientes -->
+                    {% for message in messages %}
+                        <th colspan="2" style="text-align: center; font-family: serif; font-variant: small-caps; padding: 5px; color: white; background-color: rgb(224, 89, 36);">
+                            {{ message }}
+                        </th>
+                    {% endfor %}
 
                     <!-- Datos -->
 		   	        <tr>
-	    		        <th class="tbl-th-dark" colspan="2">Datos preseleccionados</th>
+	    		        <th class="tbl-th" colspan="2">Datos preseleccionados</th>
                     </tr>
                     <tr>
-		    		    <td class="tbl-td-30">Fecha de la cita:</td><td>{{ form.appdate.as_widget }}</td>
+		    		    <td class="tbl-td-30">Fecha cita:</td><td>{{ form.appdate.as_widget }}</td>
                     </tr>
                     <tr>
-			    	    <td>Hora de la cita:</td><td>{{ form.apptime.as_widget }}
+			    	    <td>Hora cita:</td><td>{{ form.apptime.as_widget }}
                     </tr>
                     <tr>
                         <td class="tbl-td-centro grid-smalltxt" colspan="2">Puede modificar los minutos dentro de la franja horaria seleccionada</td>
                     </tr>
-        		</table>
-
-    		    <br>
-
-                <table class="tbl-general tbl-forms tbl-35 table-striped">
                     <tr>
                         <th class="tbl-th" colspan="2">Datos de la cita</th>
                     </tr>
@@ -73,16 +75,11 @@
                     <tr>
         			    <td>Estado:</td><td>{{ form.status.as_widget }}</td>
     		        </tr>
-                </table>
-
-                <br>
-
-                <table class="tbl-general tbl-forms tbl-35 table-striped">
 	    	   	    <tr>
-	        		    <th class="tbl-th">Notas</th>
+	        		    <th class="tbl-th" colspan="2">Notas</th>
                     </tr>
 	    		    <tr>
-    				    <td class="tbl-td-centro">{{ form.notes.as_widget }}</td>
+    				    <td class="tbl-td-centro"  colspan="2">{{ form.notes.as_widget }}</td>
     			    </tr>
                 </table>
 

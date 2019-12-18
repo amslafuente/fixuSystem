@@ -16,6 +16,17 @@ ERRORES DE LOS CAMPOS DEL MODELO CITA
 </tr>
 {% endif %}
 
+<!-- Error en fk_Consultorio -->
+{% if form.fk_Consultorio.errors %}
+<tr>
+    <th colspan="2" class ="field-errors">
+        {% for error in form.fk_Consultorio.errors %}
+            {{ form.fk_Consultorio.label }} : {{ error }}
+        {% endfor %}
+    </th>
+</tr>
+{% endif %}
+
 <!-- Error en fecha de la cita -->
 {% if form.appdate.errors %}
 <tr>

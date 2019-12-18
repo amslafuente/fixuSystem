@@ -18,9 +18,9 @@ class Cita(models.Model):
     appdate = models.DateField("Fecha cita", default = datetime.date.today)
     apptime = models.TimeField("Hora cita", default = datetime.time)
     # Citado/a por...
-    fk_Profesional = models.ForeignKey(Profesional, on_delete = models.PROTECT, related_name = 'profesionales', blank = True, null = True)
+    fk_Profesional = models.ForeignKey(Profesional, on_delete = models.PROTECT, related_name = 'profesionales', blank = True, null = True, limit_choices_to = {'currentavail': True, 'currentstaff': True})
     # En el Consultorio...
-    fk_Consultorio = models.ForeignKey(Consultorio, on_delete = models.PROTECT, related_name = 'consultorios', blank = True, null = True)
+    fk_Consultorio = models.ForeignKey(Consultorio, on_delete = models.PROTECT, related_name = 'consultorios', blank = True, null = True, limit_choices_to = {'officeIsavail': True})
     # Estados de la cita: Pendiente, Acudió, Pasa a consulta, Cancelada, Adelantada o Aplazada
     status = models.CharField('Estado cita', max_length = 20, choices = citasStatus, default = 'Pendiente')
     # Notas
@@ -40,4 +40,5 @@ class Cita(models.Model):
         verbose_name = 'Cita'
         verbose_name_plural = 'Citas'
         ordering = ['appdate', 'apptime']
+
 

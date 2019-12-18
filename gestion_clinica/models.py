@@ -55,8 +55,9 @@ class Profesional(models.Model):
     email2 = models.EmailField("Correo electrónico", max_length = 50)                               # Correo electrónico
     phone1 = models.PositiveIntegerField("Teléfono principal")                                      # Teléfono 1
     phone2 = models.PositiveIntegerField("Teléfono alternativo", blank = True, null = True)         # Teléfono 2
-    notes = models.TextField("Notas", blank = True)                                                 # Notas
-    currentstaff = models.BooleanField('En activo', default = True)                           # Es personal actual del centro?
+    notes = models.TextField("Notas", blank = True)
+    currentavail = models.BooleanField('De alta', default = True)                                                # Notas
+    currentstaff = models.BooleanField('En plantilla', default = True)                           # Es personal actual del centro?
     picturefile = models.ImageField(upload_to = 'clinica/', blank = True)                           # Archivo de la foto
     # Campos de control
     firstupdated = models.DateTimeField("Fecha registro", auto_now_add = True)                      # Fecha de registro
