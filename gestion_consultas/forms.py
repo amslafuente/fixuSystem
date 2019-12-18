@@ -5,8 +5,6 @@ from django.forms import ModelForm
 from .models import Consulta
 from django.forms import ModelForm, Textarea, DateInput
 
-###############################################################################
-
 # Form para crear pacientes
 
 class create_consultas_form(forms.ModelForm):

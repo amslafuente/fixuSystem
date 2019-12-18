@@ -5,10 +5,6 @@ from django.forms import ModelForm, Textarea, DateInput, TimeInput, Select
 from .models import Cita
 from gestion_clinica.models import Consultorio
 
-###############################################################################
-
-# Form para crear citas
-
 class create_citas_form(forms.ModelForm):
 
     class Meta:
@@ -32,4 +28,7 @@ class create_citas_paciente_form(forms.ModelForm):
             'notes': Textarea(attrs={'cols': 38, 'rows': 3})
             }
 
-###############################################################################
+class edit_citas_form(forms.Form):
+    
+    # Campos del formulario
+    notes = forms.CharField(label = 'Notas', required = False)

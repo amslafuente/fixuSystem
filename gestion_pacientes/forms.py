@@ -6,10 +6,6 @@ from .models import Paciente
 from django.conf import settings
 from fixuSystem.progvars import selOrder
 
-###############################################################################
-
-# Form para crear pacientes
-
 class create_pacientes_form(forms.ModelForm):
 
     class Meta:
@@ -35,8 +31,6 @@ class create_pacientes_form(forms.ModelForm):
             'notes': Textarea(attrs={'cols': 88, 'rows': 5})
             }
 
-###############################################################################
-
 # Form para seleccionar pacientes para mostrar
 
 class select_pacientes_form(forms.Form):
@@ -47,8 +41,6 @@ class select_pacientes_form(forms.Form):
     familyname = forms.CharField(label = 'Apellidos:', max_length = 50, required = False)
     orderby = forms.ChoiceField(label = 'Ordenar por:', choices = selOrder)
 
-###############################################################################
-
 # Form para seleccionar UN paciente para editar
 
 class edit_pacientes_form(forms.Form):
@@ -56,8 +48,6 @@ class edit_pacientes_form(forms.Form):
     # Campos del formulario
     id = forms.CharField(label = 'id Paciente:', max_length = 10, required = False)
     dni = forms.CharField(label = 'DNI Paciente:', max_length = 10, required = False)
-
-###############################################################################
 
 # Form para editar pacientes
 
@@ -69,5 +59,3 @@ class edit_id_pacientes_form(forms.ModelForm):
         widgets = {
             'notes': Textarea(attrs={'cols': 80, 'rows': 5})
             }
-
-###############################################################################

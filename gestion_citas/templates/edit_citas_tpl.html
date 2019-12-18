@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+		<title>fixuSystem - Fisioterapia  - Gestión de citas</title>
+
+    {% endblock title %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+		<!-- Taba principal con imágenes -->
+        <section class="sect-home-page-menu">
+
+                        	<!-- Campos de  citas -->
+                            <table class="tbl-general tbl-forms tbl-30 table-striped">
+
+                                <!-- Texto con el contenido -->
+                                <caption class="tbl-capt">Editar notas de la cita</caption>
+        
+                                <!-- Errores en el form -->
+                                {% include 'errors_citas.html' %}
+        
+                                <!-- Datos -->
+                                {% if citas %}
+                                    <tr>
+                                       <td>Id Cita:</td><td>{{citas.idCita }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Paciente:</td><td>{{citas.fk_Paciente }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Fecha cita:</td><td>{{citas.appdate }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Hora cita:</td><td>{{citas.apptime }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Notas:</td><td>{{ form.notes }}</td>
+                                    </tr>
+                                {% endif %}
+        
+                            </table>
+
+        </section>
+
+    {% endblock content %}

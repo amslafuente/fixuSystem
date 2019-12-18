@@ -13,7 +13,7 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views import View
 from .funct import contexto_dias, app_timegrid
-from .forms import create_citas_form, create_citas_paciente_form
+from .forms import create_citas_form, create_citas_paciente_form, edit_citas_form
 from django.contrib import messages
 
 #########################################################
@@ -411,8 +411,42 @@ class create_citas_paciente_view(View):
 ######  Any other change: cancel and create a new one ######
 
 @method_decorator(login_required, name='dispatch')
-class edit_citas_view(UpdateView):
-    pass
+class edit_citas_view(View):
+    
+    def post(self, request, **kwargs):
+
+        # Inicializa el contexto
+        ctx = dict()
+
+        # Rellena el form con el POST y la añade  al contexto
+        form = edit_citas_form(request.POST)
+        ctx['form'] = form
+
+        # El form SI es validado
+        if form.is_valid():
+            
+            # Regresa al META Referer
+            return render(request, 'edit_citas_tpl.html', ctx)
+
+    def get(self, request, **kwargs):
+
+        # Inicializa el contexto
+        ctx = initial_data = dict()
+
+        # Obtiene la info de la cita concreta
+        kwarg_idcita = self.kwargs['idCita']
+        # Recupera la cita pasada en URL
+        qs = Cita.objects.get(idCita__iexact = kwarg_idcita)
+    
+        # Rellena los datos iniciales del form con los datos pasados en la URL (cita)
+        initial_data['notes'] = qs.notes
+
+        # Pasa el form con los datos iniciales
+        form = edit_citas_form(initial = initial_data)
+        ctx['form'] = form
+        ctx['citas'] = qs
+
+        return render(request, 'edit_citas_tpl.html', ctx)
 
 ######  CANCELA CITA SIN BORRARLA #######
 
