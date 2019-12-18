@@ -16,6 +16,6 @@ urlpatterns = [
     # Seleccion de consultas
     # Consulta concreta, consulta a través de cita y consulta a traves de paciente (con fecha o sin fecha)
     path('consulta/<int:idConsulta>/', views.id_consultas_view.as_view(), name = 'id-consultas'),
-    path('consulta/cita/<int:idCita>/', views.id_consultas_citas_view.as_view(), name = '"id-consultas-citas'),
-    path('consulta/<int:idPaciente/', views.id_consultas_pacientes_view.as_view(), name = '"id-consultas-pacientes'),
+    path('consulta/cita/<int:idCita>/', views.id_consultas_citas_view.as_view(), name = 'id-consultas-citas'),
+    path('consulta/<int:idPaciente/', views.id_consultas_pacientes_view.as_view(), name = 'id-consultas-pacientes'),
 ]

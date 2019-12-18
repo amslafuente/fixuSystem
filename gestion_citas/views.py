@@ -32,26 +32,22 @@ class citas_hoy_view(ListView):
     template_name = 'citas_dia_tpl.html'
 
     def get_queryset(self):
-
         # Limita el queryset a las citas de hoy
         current_date = datetime.date.today()
         qs = super().get_queryset()
         qs = Cita.objects.filter(appdate__iexact = current_date).order_by('appdate', 'apptime', 'fk_Consultorio')
-
+        
         return qs
 
     def get_context_data(self, **kwargs):
-
-        context = super().get_context_data(**kwargs)
-
+        ctx = super().get_context_data(**kwargs)
         # Paciente 0 porque no se pasa paciente a este template
-        context['idPaciente'] = 0
-
-        # La fecha de hoy la prepara paaa pasarla al contexto
+        ctx['idPaciente'] = 0
+        # La fecha de hoy la prepara para pasarla al contexto
         current_date = datetime.date.today()
-        context['ctx_dias'] = contexto_dias(current_date)
+        ctx['ctx_dias'] = contexto_dias(current_date)
 
-        return context
+        return ctx
 
 ########## RELACION COMPLETA DE CITAS PARA UN DIA CONCRETO ##########
 
@@ -63,7 +59,6 @@ class citas_dia_view(ListView):
     template_name = 'citas_dia_tpl.html'
 
     def get_queryset(self, **kwargs):
-
         # Limita el queryset a las citas del dia pasado en kwargs
         kwarg_date = datetime.datetime.strptime(self.kwargs['date'], '%d_%m_%Y').date()
         qs = super().get_queryset()
@@ -72,24 +67,16 @@ class citas_dia_view(ListView):
         return qs
 
     def get_context_data(self, **kwargs):
-
-        context = super().get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
 
         # Paciente 0 porque no se pasa paciente a este template
-        context['idPaciente'] = 0
+        ctx['idPaciente'] = 0
 
         # La fecha indicada en el GET a traves de kwargs la prepara para pasar al contexto
         kwarg_date = datetime.datetime.strptime(self.kwargs['date'], '%d_%m_%Y').date()
-        context['ctx_dias'] = contexto_dias(kwarg_date)
-       
-        # Si el kwarg_date ya ha pasado, no permite otras acciones que no sea ver la ficha de la consulta
-        kwarg_today = datetime.date.today()       
-        if (kwarg_date < kwarg_today):
-            context['hoy_o_posterior'] = False
-        else:
-            context['hoy_o_posterior'] = True
-        
-        return context
+        ctx['ctx_dias'] = contexto_dias(kwarg_date)
+
+        return ctx
 
 ########## RELACION COMPLETA DE CITAS PARA UN DIA CONCRETO EN FORMATO REJILLA ##########
 
@@ -101,8 +88,7 @@ class citas_dia_grid_view(ListView):
     template_name = 'citas_dia_grid_tpl.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
-
-        context = super().get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
 
         # Query de las citas en la fecha pasada en los kwargs
         kwarg_date = datetime.datetime.strptime(self.kwargs['date'], '%d_%m_%Y').date()
@@ -113,13 +99,14 @@ class citas_dia_grid_view(ListView):
         # SI SE PASA UN idPaciente (idPaciente >0), extrae el paciente concreto y lo pasa al contexto
         if (kwarg_idpaciente > 0):
             qs_paciente = Paciente.objects.get(idPaciente__iexact = kwarg_idpaciente)
-            context['paciente'] = qs_paciente
-            context['idPaciente'] = qs_paciente.idPaciente
+            ctx['paciente'] = qs_paciente
+            ctx['idPaciente'] = qs_paciente.idPaciente
         else:
-            context['idPaciente'] = 0
+            ctx['idPaciente'] = 0
 
         # Extrae las citas filtradas por fecha
         qs = Cita.objects.filter(appdate__iexact = kwarg_date).order_by('appdate', 'apptime', 'fk_Consultorio')
+        
         # Pasa las citas a un array (cada fila es una tupla con todos los campos de una cita)
         citas = list()
         for cita in qs:
@@ -127,19 +114,12 @@ class citas_dia_grid_view(ListView):
             citas.append(cita_row)
 
         # Contexto que genera las fechas actuales, anteriores y siguentes
-        context['ctx_dias'] = contexto_dias(kwarg_date)
-
-        # Si el kwarg_date ya ha pasado, no permite otras acciones que no sea ver la ficha de la consulta
-        kwarg_today = datetime.date.today()       
-        if (kwarg_date < kwarg_today):
-            context['hoy_o_posterior'] = False
-        else:
-            context['hoy_o_posterior'] = True    
+        ctx['ctx_dias'] = contexto_dias(kwarg_date)
 
         # Contexto con las citas
-        context['rejilla'] = app_timegrid(citas, kwarg_date)
+        ctx['rejilla'] = app_timegrid(citas, kwarg_date)        
 
-        return context
+        return ctx
 
 #########################################################
 #                                                       #
@@ -156,7 +136,7 @@ class citas_paciente_desdefecha_view(ListView):
     context_object_name = 'citas'
     template_name = 'citas_paciente_desdefecha_tpl.html'
 
-    # Queryset desde la fecha de hoy, incluida
+    # Queryset de citas del paciente desde la fecha de hoy, incluida
     def get_queryset(self):
         qs =  super().get_queryset()
         current_date = datetime.date.today()
@@ -165,20 +145,23 @@ class citas_paciente_desdefecha_view(ListView):
         qs = Cita.objects.filter(fk_Paciente__exact = kwarg_idpaciente)
         # ... y todas sus citas a partir de hoy y futuras
         qs = qs.filter(appdate__gte = current_date).order_by('appdate', 'apptime', 'fk_Consultorio')
+        
         return qs
-
+    
+    # Genera contexto
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
         # Recupera datos del paciente para pasarlos al contexto
         kwarg_idpaciente = self.kwargs['idPaciente']
         qs = Paciente.objects.get(idPaciente__exact = kwarg_idpaciente)
-        context['idPaciente'] = kwarg_idpaciente
-        context['paciente'] = qs
+        ctx['idPaciente'] = kwarg_idpaciente
+        ctx['paciente'] = qs
         # La fecha hasta la que se muestran las citas y pasa al contexto
         # Sirve tb para crear una nueva cita
-        context['hasta_fecha'] = datetime.date.today().strftime('%d_%m_%Y')
-        context['fecha_cita'] = datetime.date.today().strftime('%d_%m_%Y')
-        return context
+        ctx['hasta_fecha'] = datetime.date.today().strftime('%d_%m_%Y')
+        ctx['fecha_cita'] = datetime.date.today().strftime('%d_%m_%Y')
+        
+        return ctx
 
 ######  CITAS PASADAS (ANTERIORES) DE UN PACIENTE #######
 
@@ -197,19 +180,21 @@ class citas_paciente_hastafecha_view(ListView):
         qs = Cita.objects.filter(fk_Paciente__exact = self.kwargs['idPaciente'])
         # ... y todas sus citas a partir de hoy y futuras
         qs = qs.filter(appdate__lt = current_date).order_by('appdate', 'apptime', 'fk_Consultorio')
+        
         return qs
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
         # Recupera datos del paciente para pasarlos al contexto
         kwarg_idpaciente = self.kwargs['idPaciente']
         qs = Paciente.objects.get(idPaciente__exact = kwarg_idpaciente)
-        context['idPaciente'] = kwarg_idpaciente
-        context['paciente'] = qs
+        ctx['idPaciente'] = kwarg_idpaciente
+        ctx['paciente'] = qs
         # La fecha hasta la que se muestran las citas y pasa al contexto
-        context['desde_fecha'] = datetime.date.today().strftime('%d_%m_%Y')
-        context['fecha_cita'] = datetime.date.today().strftime('%d_%m_%Y')
-        return context
+        ctx['desde_fecha'] = datetime.date.today().strftime('%d_%m_%Y')
+        ctx['fecha_cita'] = datetime.date.today().strftime('%d_%m_%Y')
+       
+        return ctx
 
 ######  TODAS LAS CITAS PASADAS y FUTURAS DE UN PACIENTE #######
 
@@ -223,28 +208,30 @@ class citas_paciente_todas_view(ListView):
     def get_queryset(self):
         qs =  super().get_queryset()
         qs = Cita.objects.filter(fk_Paciente__exact = self.kwargs['idPaciente']).order_by('appdate', 'apptime', 'fk_Consultorio')
+        
         return qs
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
         # Recupera datos del paciente para pasarlos al contexto
         kwarg_idpaciente = self.kwargs['idPaciente']
         qs = Paciente.objects.get(idPaciente__exact = kwarg_idpaciente)
-        context['idPaciente'] = kwarg_idpaciente
-        context['paciente'] = qs
+        ctx['idPaciente'] = kwarg_idpaciente
+        ctx['paciente'] = qs
         # La fecha desde y hasta la que se muestran las citas y pasa al contexto
         # Sirve tb para crear una nueva cita
-        context['desde_fecha'] = datetime.date.today().strftime('%d_%m_%Y')
-        context['hasta_fecha'] = datetime.date.today().strftime('%d_%m_%Y')
-        context['fecha_cita'] = datetime.date.today().strftime('%d_%m_%Y')
-        return context
+        ctx['desde_fecha'] = datetime.date.today().strftime('%d_%m_%Y')
+        ctx['hasta_fecha'] = datetime.date.today().strftime('%d_%m_%Y')
+        ctx['fecha_cita'] = datetime.date.today().strftime('%d_%m_%Y')
+        
+        return ctx
 
 #########################################################
 #                                                       #
 #              CREACION Y EDICION DE CITAS              #
 #                                                       #
 #########################################################
-
+"""
 ######  PARA CREAR CITAS DESDE EL PACIENTE PASANDO POR EL GRID #######
 
 @method_decorator(login_required, name='dispatch')
@@ -273,6 +260,7 @@ class citas_paciente_grid_view____(ListView):
         context['ctx_dias'] = contexto_dias(kwarg_date)
         context['rejilla'] = app_timegrid(citas, kwarg_date)
         return context
+"""
 
 ######  CREA CITA DESDE EL GRID, CON FECHA Y HORA PRESELECIONADAS #######
 
@@ -309,6 +297,7 @@ class create_citas_view(View):
             ctx = dict()
             ctx['idPaciente'] = 0
             ctx['date'] = date
+            
             return HttpResponseRedirect(reverse('citas-dia', kwargs = ctx))
 
         # Si no es válido muestra los errores
@@ -316,6 +305,7 @@ class create_citas_view(View):
 
             # Mensaje de error en contexto y recarga la pagina
             messages.warning(request, 'El formulario contiene errores')
+            
             return render(request, 'create_citas_tpl.html', ctx)
 
     def get(self, request, **kwargs):
@@ -367,6 +357,7 @@ class create_citas_paciente_view(View):
             ctx = dict()
             ctx['idPaciente'] = idPaciente
             ctx['date'] = date
+            
             return HttpResponseRedirect(reverse('citas-dia', kwargs = ctx))
 
         # Si no es válido muestra los errores
@@ -434,15 +425,21 @@ class cancel_citas_view(DetailView):
     pk_url_kwarg ='idCita'
 
     def get_context_data(self, **kwargs):
+        # Determina la pagina de procedencia del click
+        ctx = super().get_context_data(**kwargs)
+        ctx['next'] = self.request.META.get('HTTP_REFERER', '/')
 
-        # Muestra la modificacion para confirmar
-        context = super().get_context_data(**kwargs)
-        context['next'] = self.request.META.get('HTTP_REFERER', '/')
-        return context
+        # Determina si la cita ya ha pasado (no tiene sentido cancelarla)
+        kwarg_idcita = self.kwargs['idCita']
+        kwarg_today = datetime.date.today()
+        cita = Cita.objects.get(idCita__iexact = kwarg_idcita)
+        if cita.appdate < kwarg_today:
+            ctx['old_app'] = True
+        
+        return ctx
 
-    def post(self, request, **kwargs):
-
-        # Determina la cancelación de la cita
+    # Determina la cancelación de la cita
+    def post(self, request, **kwargs):       
         kwarg_next = request.POST['next']
         kwarg_idcita = kwargs['idCita']
         cita = Cita.objects.get(idCita__iexact = kwarg_idcita)
@@ -461,20 +458,19 @@ class modif_citas_view(DetailView):
     template_name = 'modif_citas_tpl.html'
     pk_url_kwarg ='idCita'
 
-    def get_context_data(self, **kwargs):
+    # Muestra la modificacion para confirmar
+    def get_context_data(self, **kwargs):        
+        ctx = super().get_context_data(**kwargs)
+        ctx['status'] = self.kwargs['status']
+        ctx['next'] = self.request.META.get('HTTP_REFERER', '/')
 
-        # Muestra la modificacion para confirmar
-        context = super().get_context_data(**kwargs)
-        context['status'] = self.kwargs['status']
-        context['next'] = self.request.META.get('HTTP_REFERER', '/')
-        return context
+        return ctx
 
-    def post(self, request, **kwargs):
-
-        # Determina la modificacion de la cita
-        kwarg_next = request.POST['next']
+    # Completa la modificacion de la cita
+    def post(self, request, **kwargs):        
         kwarg_idcita = kwargs['idCita']
         kwarg_status = kwargs['status']
+        kwarg_next = request.POST['next']
         cita = Cita.objects.get(idCita__iexact = kwarg_idcita)
         cita.status = kwarg_status
         cita.save()

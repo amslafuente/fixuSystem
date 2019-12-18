@@ -107,7 +107,13 @@
                                 <span>
                             {% endif %}
 
-                            {{ cita.3 }}</span><br/>
+                            {% if cita.3 %}
+                                {{ cita.3 }}
+                            {% else %}
+                                Indet.
+                            {% endif %}                        
+                            </span><br/>
+
                         {% endif %}
                     {% endfor %}
                     </td>
@@ -123,7 +129,13 @@
                                 <span>
                             {% endif %}
 
-                            {{ cita.4 }}</span><br/>
+                            {% if cita.4 %}
+                                {{ cita.4 }}
+                            {% else %}
+                                Indet.
+                            {% endif %}                        
+                            </span><br/>
+
                         {% endif %}
                     {% endfor %}
                     </td>
@@ -186,7 +198,7 @@
                         {% if cita.0|date:'H:i' == franja_horaria|date:'H:i' %}
 
                             {% if cita.7 != "Cancelada" and cita.7 != "Pasa a consulta" %}
-                                <a class="link-cancelar" href={% url 'cancel-citas' cita.1 %}>Cancelar cita</a><br/>
+                                <a class="link-cancelar" href="{% url 'cancel-citas' cita.1 %}">Cancelar cita</a><br/>
                             {% else %}
                                 <span>&nbsp;</span><br/>
                             {% endif %}

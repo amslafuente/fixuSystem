@@ -235,7 +235,7 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
 }
 
 .grid-smalltxt { /*--- Texto pequeño para el grid ---*/
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     font-size: small;
     font-variant: normal;
     font-weight: bold;

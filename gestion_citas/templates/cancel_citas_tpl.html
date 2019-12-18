@@ -23,49 +23,81 @@
 
         {% load static %}
 
-		<!-- Tabka principal con imágenes -->
+		<!-- Taba principal con imágenes -->
         <section class="sect-home-page-menu">
 
-            <!-- Formularion de nueva cita -->
-	        <form method="post">
+            <!-- Comprueba si la cita ya ha pasado  de fecha -->
+            {% if old_app %}
 
-    	    	{% csrf_token %}
-
-             	<!-- Campos de  citas -->
-                <table class="tbl-general tbl-forms tbl-40 table-striped">
+                <table class="tbl-general tbl-forms tbl-30 table-striped">
 
                     <!-- Texto con el contenido -->
-                    <caption class="tbl-capt">Confirme la cancelación de la cita</caption>
-
-                    <!-- Errores en el form -->
-                    {% include 'errors_citas.html' %}
-
-                    <!-- Datos -->
-                    {% if citas %}
-                        <tr>
-                            <td>Id Cita:</td><td>{{citas.idCita }}</td>
-                        </tr>
-                        <tr>
-                            <td>Paciente:</td><td>{{citas.fk_Paciente }}</td>
-                        </tr>
-                        <tr>
-                            <td>Fecha de la cita:</td><td>{{citas.appdate }}</td>
-                        </tr>
-                        <tr>
-                            <td>Hora de la cita:</td><td>{{citas.apptime }}</td>
-                        </tr>
-                    {% endif %}
+                    <caption class="tbl-capt">Cancelación de cita</caption>
+                    <tr>
+                        <td>Paciente:</td><td>{{citas.fk_Paciente }}</td>
+                    </tr>
+                    <tr>
+                        <td>Fecha cita:</td><td>{{citas.appdate }}</td>
+                    </tr>
+                    <tr>
+                        <td class="tbl-td-centro grid-naranja" colspan="2">La cita seleccionada ya ha pasado.</td>
+                    </tr>
+                    <tr>
+                        <td class="tbl-td-centro grid-rojo" colspan="2">No es posible la cancelación.</td>
+                    </tr>
 
                 </table>
 
-            	<!-- Botones de acción -->
+                <!-- Botones de acción -->
                 <div class="div-botones">
-		        	<input type="submit" class="btn btn-danger" value="Confirmar cancelación">
-                    <input type="hidden" name="next" value={{ next }}>
                     <a href="{{ next|safe }}"><input type="button" class="btn btn-info" value="Volver"></a>
                     <a href={% url 'menu-citas' %}><input type="button" class="btn btn-info" value="Menú de citas"></a>
                 </div>
-            </form>
+
+            {% else %}
+
+                <!-- Formularion de canelar cita -->
+	            <form method="post">
+
+    	        	{% csrf_token %}
+
+                	<!-- Campos de  citas -->
+                    <table class="tbl-general tbl-forms tbl-30 table-striped">
+
+                        <!-- Texto con el contenido -->
+                        <caption class="tbl-capt">Confirme la cancelación de la cita</caption>
+
+                        <!-- Errores en el form -->
+                        {% include 'errors_citas.html' %}
+
+                        <!-- Datos -->
+                        {% if citas %}
+                            <tr>
+                               <td>Id Cita:</td><td>{{citas.idCita }}</td>
+                            </tr>
+                            <tr>
+                                <td>Paciente:</td><td>{{citas.fk_Paciente }}</td>
+                            </tr>
+                            <tr>
+                                <td>Fecha cita:</td><td>{{citas.appdate }}</td>
+                            </tr>
+                            <tr>
+                                <td>Hora cita:</td><td>{{citas.apptime }}</td>
+                            </tr>
+                        {% endif %}
+
+                    </table>
+
+            	    <!-- Botones de acción -->
+                    <div class="div-botones">
+		        	    <input type="submit" class="btn btn-danger" value="Confirmar cancelación">
+                        <input type="hidden" name="next" value={{ next }}>
+                        <a href="{{ next|safe }}"><input type="button" class="btn btn-info" value="Volver"></a>
+                        <a href={% url 'menu-citas' %}><input type="button" class="btn btn-info" value="Menú de citas"></a>
+                    </div>
+                </form>
+
+            {% endif %}
 
         </section>
 
