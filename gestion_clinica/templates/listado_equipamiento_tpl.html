@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+		<title>fixuSystem - Fisioterapia  - Gestión de clínica</title>
+
+    {% endblock title %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+        <section class="sect-home-page-menu">
+
+        <!-- Tabla mostrando consultorios -->
+        <table class="tbl-general tbl-forms tbl-70 table-striped">
+
+            <!-- Texto con el contenido -->
+	    	<caption class="tbl-capt">Listado de equipamiento
+                {% if is_paginated %}
+                    <span> - Página {{ page_obj.number }}</span>
+                {% endif %}
+            </caption>
+
+            <!-- Filtrado -->
+            <tr>
+                <td class="tbl-th-filter" colspan="3">
+                    Tipos listados: {{ filter }}
+                </td>
+                <td class="tbl-th-filter" colspan="5">
+                    <div class="div-filtro">                        
+                        <form action="post">
+                            {% csrf_token %}                                                      
+                            <input class="btn btn-info btn-sm" type="submit" name="filter_by" value="Filtrar por tipo :">
+                            {{ filterform.filter_by_field }}
+                        </form>     
+                    </div>
+                </td>
+            </tr>
+
+            <!-- Cabecera de la tabla -->
+	    	<tr>
+                <th class="tbl-th">Tipo</th>
+		        <th class="tbl-th">ID</th>
+                <th class="tbl-th">Ref./Ident.</th>
+                <th class="tbl-th-izq">Descr.</th>   
+                <th class="tbl-th-izq">Local.</th>
+                <th class="tbl-th-izq">Depto.</th>
+                <th class="tbl-th">Dispon.</th>
+                <th class="tbl-th">Acciones</th>
+            </tr>
+
+            <!-- NO devuelve ningun equipamiento avisa y cierra la tabla -->
+            {% if not equipamientos %}
+	    	    <tr>
+                    <th colspan="8" class="field-errors">
+                        <span>Ningún equipamiento devuelto</span>
+                    </th>
+                </tr>
+
+            <!-- SI devuelve algun equipamiento muestra y cierra la tabla -->
+            {% else %}
+
+                <!-- Devuelve los equipamientos en un querySet llamada equipamientos -->
+                {% for equipamiento in equipamientos %}
+               		<tr>
+                        <td class="tbl-td">{{ equipamiento.equipType }}</td>   
+                        <td class="tbl-td-centro">{{ equipamiento.idEquipamiento }}</td>
+                        <td class="tbl-td-centro">{{ equipamiento.equipID }}</td>
+                        <td class="tbl-td">{{ equipamiento.equipDesc }}</td>
+                        <td class="tbl-td">{{ equipamiento.equipLocation }}</td>
+                        <td class="tbl-td">{{ equipamiento.equipDepartment }}</td>
+
+                        {% if equipamiento.equipIsavail %}
+                            <td class="tbl-td-centro avail">Si</td>
+                        {% else %}
+                            <td class="tbl-td-centro not-avail">No</td>
+                        {% endif %}
+
+                        <!-- Enlaces a abrir, editar y borrar equipamiento -->
+                        <td>
+                            <div class="div-fechas">
+                                <a href={% url 'id-consultorios' consultorio.idConsultorio %}><input type="button" class="btn btn-info btn-sm" value="Ver"></a>&nbsp;
+                                <a href={% url 'edit-consultorios' consultorio.idConsultorio %}><input type="button" class="btn btn-info btn-sm" value="Editar"></a>&nbsp;
+                                <a href={% url 'delete-consultorios' consultorio.idConsultorio %}><input type="button" class="btn btn-danger btn-sm" value="Borrar"></a>&nbsp;
+                            </div>
+                        </td>
+                   </tr>
+                {% endfor %}
+
+      		{% endif%}
+
+        </table>
+
+        <!-- Incluye PAGINADOR-->
+        {% include 'paginador.html' %}
+
+    	<!-- Botones de acción -->
+        <div class="div-botones">
+            <a href={% url 'create-consultorios' %}><input type="button" class="btn btn-info" value="Nuevo equipamiento"></a>
+		    <a href={% url 'menu-clinica' %}><input type="button" class="btn btn-info" value="Menu de clínica"></a>
+        </div>
+
+        </section>
+
+    {% endblock content %}

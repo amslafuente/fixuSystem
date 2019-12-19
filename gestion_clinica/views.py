@@ -17,6 +17,8 @@ from .forms import init_edit_info_clinica_form, create_edit_consultorios_form
 import os
 from pathlib import Path
 from django.conf import settings
+from django.forms import forms, fields, widgets
+from fixuSystem.progvars import selTipoEquip
 
 ########## MUESTRA MENU DE GESTION DE SERVICIOS ##########
 
@@ -388,17 +390,47 @@ class id_equipamiento_view(DetailView):
 class listado_equipamiento_view(ListView):
 
     model = Equipamiento
-    context_object_name = 'consultorios'
+    context_object_name = 'equipamientos'
     paginate_by = 20
     template_name = 'listado_equipamiento_tpl.html'
 
-    def get_queryset(self):
-
-        # Todos los consultorios ordenados por officeID
-        qs = Equipamiento.objects.all().order_by('idEquipamiento')
+    def get_queryset(self, **kwargs):
+        
+        # Obtiene el filtro actual del GET
+        kwarg_filter = self.kwargs['filter']
+        # Todos los equipamientos por tipo y description filtrados
+        if kwarg_filter == 'todos':
+            qs = Equipamiento.objects.all().order_by('equipType', 'equipDesc')
+        else:
+            qs = Equipamiento.objects.filter(equipType__istartswith = kwarg_filter).order_by('equipDesc')
         return qs
 
+    def get_context_data(self, **kwargs):
+        
+        ctx = super().get_context_data(**kwargs)
 
+        # Obtiene el filtro actual del GET
+        ctx['filter'] = kwargs['filter']
+
+        # Elabora un widget Select con selTipoEquip y lo pasa al contexto
+        filterform = customTipoForm()
+        ctx['filterform'] = filterform
+
+        return ctx
+
+# Widget de filtrado
+class customTipoWidget(widgets.Select):  
+    def __init__(self, *args, **kwargs) :
+        super().__init__(*args, **kwargs)
+        tuple_todos = ('todos', 'Todos')
+        list_choices = list()
+        list_choices.append(tuple_todos)
+        list_choices.extend(selTipoEquip)
+        self.choices = list_choices
+
+# Form que muestra el widget
+class customTipoForm(forms.Form):
+    filter_by_field = fields.CharField(label="filter_by_field", required = True, widget = customTipoWidget())
 
 # Error si el usuario NO ES SUPERUSUARIO
 @method_decorator(login_required, name='dispatch')

@@ -307,14 +307,13 @@ citasStatus = [
 
 ##### Choices para el tipo de material/equipamiento #####
 selTipoEquip = [
-    ('Ordenador', 'Ordenador'),
-    ('Tablet', 'Tablet'),
-    ('Máquinas muscul.', 'Máquinas muscul.'),
-    ('Equipos tratamiento', 'Equipos tratamiento'),
-    ('Enfermería', 'Enfermería'),
-    ('Fungible', 'Fungible'),
-    ('Mobiliario', 'Mobiliario'),
-    ('Papelería', 'Papelería'),    
-    ('Limpieza', 'Limpieza'),
-    ('Otros', 'otros'),
+    ('infor', 'Equipos informáticos'),
+    ('muscl', 'Máquinas musculación'),
+    ('eqtrm', 'Equipos tratamiento'),
+    ('enfer', 'Enfermería'),
+    ('fung', 'Fungible'),
+    ('mobi', 'Mobiliario'),
+    ('papel', 'Papelería'),    
+    ('limp', 'Limpieza'),
+    ('otrs', 'Otros'),
 ]

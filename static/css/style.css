@@ -130,6 +130,14 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
 
 }
 
+.div-filtro { /* --- Filtrado de tipos --- */
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 5px;
+    font-size: 0.75em;
+}
+
 /*---------- DIVS DE MENUS ----------*/
 .div-cabecera-menu {
     display: flex;
@@ -319,6 +327,19 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
     border-bottom-width: 1px;
     padding: 8px;
     background-color:rgb(230, 219, 209);
+}
+
+.tbl-th-filter { /* Header de filtrado */
+    vertical-align: middle;
+    text-align: left;
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    padding: 4px;
+    color:yellow;
+    background-color:rgb(104, 74, 50);
+
 }
 
 .tbl-th-dark { /* --- TH header general --- */

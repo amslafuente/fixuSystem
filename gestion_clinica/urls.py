@@ -36,7 +36,7 @@ urlpatterns = [
 
      # Equipamiento
     path('equipamiento/<int:idEquipamiento>/', views.id_equipamiento_view.as_view(), name = 'id-equipamiento'),
-    path('equipamiento/listado/', views.listado_equipamiento_view.as_view(), name = 'listado-equipamiento'),
+    path('equipamiento/listado/<str:filter>/', views.listado_equipamiento_view.as_view(), name = 'listado-equipamiento'),
 
 
 

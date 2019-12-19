@@ -142,7 +142,7 @@ class Equipamiento(models.Model):
     idEquipamiento = models.AutoField(primary_key = True, unique = True)
     equipID = models.CharField("Referencia/Identificación", max_length = 10, unique = True)
     equipDesc = models.CharField("Descripción", max_length = 100, blank = True)
-    equipType = models.CharField('Tipo', max_length = 50, choices = selTipoEquip, default = 'Otros')
+    equipType = models.CharField('Tipo', max_length = 5, choices = selTipoEquip, default = 'otros')
     equipIsavail = models.BooleanField("Disponible", default = True)                               # Disponible o no para consultas
     equipLocation = models.CharField("Localización", max_length = 50, blank = True)
     equipDepartment = models.CharField("Departamento", max_length = 50, blank = True)
