@@ -13,7 +13,7 @@ class Paciente(models.Model):
     name = models.CharField("Nombre", max_length = 50)
     familyname = models.CharField("Apellidos", max_length = 100)
     birthdate = models.DateField("Fecha de nacimiento", help_text="DD/MM/AAAA")
-    sex = models.CharField("Sexo", max_length = 15, choices = sexDef, default = 'No declarado')
+    sex = models.CharField("Sexo", max_length = 50, choices = sexDef, default = 'No declarado')
     address = models.CharField("Dirección", max_length = 250)
     postcode = models.PositiveIntegerField("C. Postal")
     city = models.CharField("Ciudad", max_length = 50)

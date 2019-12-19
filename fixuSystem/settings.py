@@ -75,7 +75,11 @@ TEMPLATES = [
                 ###############
                 'home_page/templates',
                 'gestion_login/templates',
-                'gestion_pacientes/templates',
+                'gestion_pacientes/templates',                
+                'gestion_clinica/templates/clinica',
+                'gestion_clinica/templates/consultorios',
+                'gestion_clinica/templates/equipamiento',
+                'gestion_clinica/templates/profesionales',
                 'gestion_clinica/templates',
                 'gestion_citas/templates',
                 'gestion_consultas/templates',

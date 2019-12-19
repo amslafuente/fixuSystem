@@ -24,6 +24,7 @@ urlpatterns = [
 
     # Instalaciones y servicios
     path('instalaciones-servicios/', views.instalac_servic_clinica_view.as_view(), name = 'instalac-servic'),
+    
     # Consultorios
     path('consultorios/<int:idConsultorio>/', views.id_consultorios_view.as_view(), name = 'id-consultorios'),
     path('consultorios/listado/', views.listado_consultorios_view.as_view(), name = 'listado-consultorios'),
@@ -32,6 +33,21 @@ urlpatterns = [
     path('consultorios/borrar/<int:idConsultorio>/', views.delete_consultorios_view.as_view(), name = 'delete-consultorios'),
     # Error si trata de un usuario NO STAFF
     path('consultorios/error-usuario/', views.error_consultorios_usuario_view.as_view(), name = 'error-consultorios-usuario'),
+
+     # Equipamiento
+    path('equipamiento/<int:idEquipamiento>/', views.id_equipamiento_view.as_view(), name = 'id-equipamiento'),
+    path('equipamiento/listado/', views.listado_equipamiento_view.as_view(), name = 'listado-equipamiento'),
+
+
+
+
+
+    # Error si trata de un usuario NO STAFF
+    path('equipamiento/error-usuario/', views.error_equipamiento_usuario_view.as_view(), name = 'error-equipamiento-usuario'),
+
+
+
+
 
     ##### Profesionales #####
 

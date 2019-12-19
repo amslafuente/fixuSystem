@@ -12,15 +12,25 @@ from django.views.generic.detail import DetailView
 from django.views.generic import CreateView, TemplateView, DeleteView
 from django.views import View
 from django.contrib import messages
-from .models import Clinica, Profesional, Consultorio
+from .models import Clinica, Profesional, Consultorio, Equipamiento
 from .forms import init_edit_info_clinica_form, create_edit_consultorios_form
 import os
 from pathlib import Path
 from django.conf import settings
 
-########## MUESTRA DATOS DE CLINICA ##########
+########## MUESTRA MENU DE GESTION DE SERVICIOS ##########
 
 @method_decorator(login_required, name='dispatch')
+class instalac_servic_clinica_view(TemplateView):
+
+    template_name = 'instalac_servic_clinica_tpl.html'
+
+##################################################
+#                     CLINICA                    #
+##################################################
+
+########## MUESTRA DATOS DE CLINICA ##########
+
 class info_clinica_view(View):
 
     def get(self, request):
@@ -31,12 +41,7 @@ class info_clinica_view(View):
         ctx['clinica'] = qs
         return render (request, 'info_clinica_tpl.html', ctx)
 
-    def form_valid(self, form):
-
-        pass
-
-
-########## INICIALIZA DATOS DE CLINICA ##########
+ ########## INICIALIZA DATOS DE CLINICA ##########
 
 @method_decorator(login_required, name='dispatch')
 class init_clinica_view(View):
@@ -231,12 +236,9 @@ class edit_info_clinica_view(UpdateView):
         # Devuelve la form
         return HttpResponseRedirect(reverse('info-clinica'))
 
-########## MUESTRA MENU DE GESTION DE SERVICIOS ##########
-
-@method_decorator(login_required, name='dispatch')
-class instalac_servic_clinica_view(TemplateView):
-
-    template_name = 'instalac_servic_clinica_tpl.html'
+##################################################
+#                 CONSULTORIOS                   #
+##################################################
 
 ##### MUESTRA EL ID CONSULTORIO CONCRETO #####
 
@@ -261,7 +263,7 @@ class listado_consultorios_view(ListView):
 
     model = Consultorio
     context_object_name = 'consultorios'
-    paginate_by = 25
+    paginate_by = 20
     template_name = 'listado_consultorios_tpl.html'
 
     def get_queryset(self):
@@ -270,6 +272,7 @@ class listado_consultorios_view(ListView):
         qs = Consultorio.objects.all().order_by('officeID')
         return qs
 
+########## EDITA DATOS DE CLINICA ##########
 
 @method_decorator(login_required, name='dispatch')
 class create_consultorios_view(CreateView):
@@ -358,6 +361,50 @@ class delete_consultorios_view(DeleteView):
 class error_consultorios_usuario_view(TemplateView):
 
     template_name = 'error_consultorios_usuario_tpl.html'
+
+##################################################
+#                   EQUIPAMIENTO                 #
+##################################################
+
+##### ID DE EQUIPAMIENTO #####
+
+@method_decorator(login_required, name='dispatch')
+class id_equipamiento_view(DetailView):
+
+    model = Equipamiento
+    context_object_name = 'equiamientos'
+    pk_url_kwarg = 'idEquipamiento'
+    template_name = 'id_equipamiento_tpl.html'
+
+    def get_queryset(self):
+
+        # Extrae el consultorio en cuestion
+        qs = Equipamiento.objects.filter(idConsultorio__exact = self.kwargs['Equipamiento'])
+        return qs
+
+##### LISTADO DE EQUIPAMIENTO #####
+
+@method_decorator(login_required, name='dispatch')
+class listado_equipamiento_view(ListView):
+
+    model = Equipamiento
+    context_object_name = 'consultorios'
+    paginate_by = 20
+    template_name = 'listado_equipamiento_tpl.html'
+
+    def get_queryset(self):
+
+        # Todos los consultorios ordenados por officeID
+        qs = Equipamiento.objects.all().order_by('idEquipamiento')
+        return qs
+
+
+
+# Error si el usuario NO ES SUPERUSUARIO
+@method_decorator(login_required, name='dispatch')
+class error_equipamiento_usuario_view(TemplateView):
+
+    template_name = 'error_equipamiento_usuario_tpl.html'
 
 #############################################################
 

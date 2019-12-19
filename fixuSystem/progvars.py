@@ -303,5 +303,18 @@ citasStatus = [
     ('Pasa a consulta', 'Pasa a consulta'),
     ('Cancelada', 'Cancelada')
 ]
+##### CONFIG: VARIABLES DE LA APP GESTION_CLINICA #####
 
-
+##### Choices para el tipo de material/equipamiento #####
+selTipoEquip = [
+    ('Ordenador', 'Ordenador'),
+    ('Tablet', 'Tablet'),
+    ('Máquinas muscul.', 'Máquinas muscul.'),
+    ('Equipos tratamiento', 'Equipos tratamiento'),
+    ('Enfermería', 'Enfermería'),
+    ('Fungible', 'Fungible'),
+    ('Mobiliario', 'Mobiliario'),
+    ('Papelería', 'Papelería'),    
+    ('Limpieza', 'Limpieza'),
+    ('Otros', 'otros'),
+]
