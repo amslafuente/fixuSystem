@@ -33,15 +33,15 @@
             <!-- Filtrado -->
             <tr>
                 <td class="tbl-th-filter" colspan="3">
-                    Tipos listados: {{ filter }}
+                    <button class="btn btn-info btn-sm">Filtrado por: {{ filter|upper }}</button>   
                 </td>
                 <td class="tbl-th-filter" colspan="5">
-                    <div class="div-filtro">                        
-                        <form action="post">
-                            {% csrf_token %}                                                      
-                            <input class="btn btn-info btn-sm" type="submit" name="filter_by" value="Filtrar por tipo :">
-                            {{ filterform.filter_by_field }}
-                        </form>     
+                    <div class="div-filtro">
+                        <form method="post">
+                             {% csrf_token %}
+                            <input class="btn btn-danger btn-sm" type="submit" value="Pulse para filtrar por: ">
+                            {{ form.filter }}
+                        </form>
                     </div>
                 </td>
             </tr>

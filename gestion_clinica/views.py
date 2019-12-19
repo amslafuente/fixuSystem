@@ -387,7 +387,56 @@ class id_equipamiento_view(DetailView):
 ##### LISTADO DE EQUIPAMIENTO #####
 
 @method_decorator(login_required, name='dispatch')
-class listado_equipamiento_view(ListView):
+class listado_equipamiento_view(View):
+
+    def post(self, request, **kwargs):
+
+        # Se meten los datos del formulario
+        ctx= dict()
+        filterform = customTipoForm(request.POST)
+        ctx['form'] = filterform
+
+        # Si el formulario es valido
+        if filterform.is_valid():
+
+            # Obtiene el filtro actual del GET
+            ctx['filter'] = filterform.cleaned_data['filter'].lower()
+
+            # Recupera los registros
+            kwarg_filter = filterform.cleaned_data['filter'].lower()
+            # Todos los equipamientos por tipo y description filtrados
+            if kwarg_filter == 'todos':
+                qs = Equipamiento.objects.all().order_by('equipType', 'equipDesc')
+            # O solo los filtrados
+            else:
+                qs = Equipamiento.objects.filter(equipType__istartswith = kwarg_filter).order_by('equipDesc')
+            ctx['equipamientos'] = qs
+        
+            # Elabora un widget Select con selTipoEquip y lo pasa al contexto
+            filterform = customTipoForm(request.POST)
+            ctx['form'] = filterform
+
+            return render(request, 'listado_equipamiento_tpl.html', ctx) 
+
+    def get(self, request, **kwargs):
+
+        ctx = dict()
+        
+        # Filtro por defecto es TODOS
+        ctx['filter'] = 'todos'
+
+        # Todos los equipamientos por tipo y description
+        qs = Equipamiento.objects.all().order_by('equipType', 'equipDesc')
+        ctx['equipamientos'] = qs
+        
+        # Elabora un widget Select con selTipoEquip y lo pasa al contexto
+        filterform = customTipoForm()
+        ctx['form'] = filterform
+
+        return render(request, 'listado_equipamiento_tpl.html', ctx)
+
+@method_decorator(login_required, name='dispatch')
+class listado_equipamiento_view_____(ListView):
 
     model = Equipamiento
     context_object_name = 'equipamientos'
@@ -397,7 +446,7 @@ class listado_equipamiento_view(ListView):
     def get_queryset(self, **kwargs):
         
         # Obtiene el filtro actual del GET
-        kwarg_filter = self.kwargs['filter']
+        kwarg_filter = self.kwargs['filter'].lower()
         # Todos los equipamientos por tipo y description filtrados
         if kwarg_filter == 'todos':
             qs = Equipamiento.objects.all().order_by('equipType', 'equipDesc')
@@ -410,7 +459,7 @@ class listado_equipamiento_view(ListView):
         ctx = super().get_context_data(**kwargs)
 
         # Obtiene el filtro actual del GET
-        ctx['filter'] = kwargs['filter']
+        ctx['filter'] = self.kwargs['filter'].lower()
 
         # Elabora un widget Select con selTipoEquip y lo pasa al contexto
         filterform = customTipoForm()
@@ -419,7 +468,8 @@ class listado_equipamiento_view(ListView):
         return ctx
 
 # Widget de filtrado
-class customTipoWidget(widgets.Select):  
+class customTipoWidget(widgets.Select):
+
     def __init__(self, *args, **kwargs) :
         super().__init__(*args, **kwargs)
         tuple_todos = ('todos', 'Todos')
@@ -428,9 +478,10 @@ class customTipoWidget(widgets.Select):
         list_choices.extend(selTipoEquip)
         self.choices = list_choices
 
-# Form que muestra el widget
+# Form que muestra el customwidget
 class customTipoForm(forms.Form):
-    filter_by_field = fields.CharField(label="filter_by_field", required = True, widget = customTipoWidget())
+
+    filter = fields.CharField(label="filter", required=True, widget=customTipoWidget())
 
 # Error si el usuario NO ES SUPERUSUARIO
 @method_decorator(login_required, name='dispatch')

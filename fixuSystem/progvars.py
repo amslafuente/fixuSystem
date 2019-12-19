@@ -315,5 +315,5 @@ selTipoEquip = [
     ('mobi', 'Mobiliario'),
     ('papel', 'Papelería'),    
     ('limp', 'Limpieza'),
-    ('otrs', 'Otros'),
+    ('otros', 'Otros'),
 ]
