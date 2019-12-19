@@ -231,36 +231,6 @@ class citas_paciente_todas_view(ListView):
 #              CREACION Y EDICION DE CITAS              #
 #                                                       #
 #########################################################
-"""
-######  PARA CREAR CITAS DESDE EL PACIENTE PASANDO POR EL GRID #######
-
-@method_decorator(login_required, name='dispatch')
-class citas_paciente_grid_view____(ListView):
-
-    model = Cita
-    context_object_name = 'citas'
-    template_name = 'citas_paciente_grid_tpl.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # Query de las citas en la fecha pasada el los kwargs
-        kwarg_date= datetime.datetime.strptime(self.kwargs['date'], '%d_%m_%Y').date()
-        # Selecciona las citas de todos los pacientes
-        qs = Cita.objects.filter(appdate__iexact = kwarg_date).order_by('appdate', 'apptime', 'fk_Consultorio')
-        # Extrae el paciente concreto para citarlo
-        qs2 = Paciente.objects.get(idPaciente__iexact = self.kwargs['idPaciente'])
-        # Pasa las citas a un array (cada fila es una tupla con todos los campos de una cita)
-        citas = list()
-        for cita in qs:
-            cita_row = (cita.idCita, cita.fk_Paciente, cita.appdate, cita.apptime, cita.fk_Profesional, cita.fk_Consultorio, cita.status, cita.notes)
-            citas.append(cita_row)
-        # Contexto que genera las fechas actuales, anteriores y siguentes y la tabla HTML
-        context['idPaciente'] = self.kwargs['idPaciente']
-        context['Paciente'] = qs2
-        context['ctx_dias'] = contexto_dias(kwarg_date)
-        context['rejilla'] = app_timegrid(citas, kwarg_date)
-        return context
-"""
 
 ######  CREA CITA DESDE EL GRID, CON FECHA Y HORA PRESELECIONADAS #######
 
@@ -424,7 +394,24 @@ class edit_citas_view(View):
 
         # El form SI es validado
         if form.is_valid():
+
+            # Obtiene la info de la cita concreta
+            kwarg_idcita = self.kwargs['idCita'] 
+             # Recupera la cita pasada en URL
+            qs = Cita.objects.get(idCita__iexact = kwarg_idcita)
+            # Almacena las nuevas notas y guarda
+            qs.notes = form.cleaned_data['notes']
+            qs.save()
             
+            # Regresa donde se llamó
+            kwarg_next = request.POST['next']
+            return HttpResponseRedirect(kwarg_next)
+
+        # Si el form NO es validado
+        else:
+
+            messages.warning(request, 'Error en el formulario.')
+
             # Regresa al META Referer
             return render(request, 'edit_citas_tpl.html', ctx)
 
@@ -445,6 +432,16 @@ class edit_citas_view(View):
         form = edit_citas_form(initial = initial_data)
         ctx['form'] = form
         ctx['citas'] = qs
+
+        # Determina la pagina de procedencia del click
+        ctx['next'] = self.request.META.get('HTTP_REFERER', '/')
+
+        # Determina si la cita ya ha pasado (no tiene sentido modificarla)
+        kwarg_idcita = self.kwargs['idCita']
+        kwarg_today = datetime.date.today()
+        cita = Cita.objects.get(idCita__iexact = kwarg_idcita)
+        if cita.appdate < kwarg_today:
+            ctx['old_app'] = True
 
         return render(request, 'edit_citas_tpl.html', ctx)
 

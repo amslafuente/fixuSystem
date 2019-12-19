@@ -1,7 +1,3 @@
-<!-- *********************** -->
-<!--   select_pacientes_tpl  -->
-<!-- *********************** -->
-
 {% extends 'base.html' %}
 
     <!-- **************** -->
@@ -20,7 +16,7 @@
 
     {% block content %}
 
-        <section class="sect-home-page-menu">
+    <section class="sect-home-page-menu">
 
         {% load static %}
 
@@ -34,12 +30,8 @@
                 <!-- Texto con el contenido -->
         	    <caption class="tbl-capt">Criterios de selección</caption>
 
-                <!-- Si hay mensajes pendientes -->
-                {% for message in messages %}
-                    <th colspan="2" style="text-align: center; font-family: serif; font-variant: small-caps; padding: 5px; color: white; background-color: rgb(224, 89, 36);">
-                        {{ message }}
-                    </th>
-                {% endfor %}
+                <!-- Errores en el form -->
+                {% include 'errors_pacientes.html' %}
 
                 <!-- Campos para el contenido -->
                 <tr>
@@ -59,15 +51,16 @@
                     <td>{{ form.orderby.as_widget }}</td>
                 </tr>
 
-                </table>
+            </table>
 
-                <!-- Botones -->
-                <div class="div-botones">
-				    <input type="submit" class="btn btn-info" value="Enviar">
-				    <a href={% url 'menu-pacientes' %}><input type="button" class="btn btn-info" value="Menu de pacientes"></a>
-                </div>
+            <!-- Botones -->
+            <div class="div-botones">
+			    <input type="submit" class="btn btn-info" value="Enviar">
+			    <a href={% url 'menu-pacientes' %}><input type="button" class="btn btn-info" value="Menu de pacientes"></a>
+            </div>
+
 	    </form>
 
-        </section>
+    </section>
 
     {% endblock %}

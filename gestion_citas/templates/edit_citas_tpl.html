@@ -18,38 +18,93 @@
 
         {% load static %}
 
-		<!-- Taba principal con imágenes -->
+		<!-- Tabla principal -->
         <section class="sect-home-page-menu">
 
-                        	<!-- Campos de  citas -->
-                            <table class="tbl-general tbl-forms tbl-30 table-striped">
+           <!-- Comprueba si la cita ya ha pasado  de fecha -->
+           {% if old_app %}
 
-                                <!-- Texto con el contenido -->
-                                <caption class="tbl-capt">Editar notas de la cita</caption>
+                <table class="tbl-general tbl-forms tbl-30 table-striped">
+
+                    <!-- Texto con el contenido -->
+                    <caption class="tbl-capt">Modificación de cita</caption>
+
+                    <tr>
+                        <td>Paciente:</td><td>{{citas.fk_Paciente }}</td>
+                    </tr>
+                    <tr>
+                        <td>Fecha cita:</td><td>{{citas.appdate }}</td>
+                    </tr>
+                    <tr>
+                        <td class="tbl-td-centro grid-naranja" colspan="2">La cita seleccionada ya ha pasado.</td>
+                    </tr>
+                    <tr>
+                        <td class="tbl-td-centro grid-rojo" colspan="2">No es posible la modificación.</td>
+                    </tr>
+
+                </table>
+
+                <!-- Botones de acción -->
+                <div class="div-botones">
+                    <a href="{{ next|safe }}"><input type="button" class="btn btn-info" value="Volver"></a>
+                    <a href={% url 'menu-citas' %}><input type="button" class="btn btn-info" value="Menú de citas"></a>
+                </div>
+
+            {% else %}
+                
+            <!-- Formularion de modificar cita -->
+	            <form method="post">
+
+                    {% csrf_token %}
+               
+                    <!-- Campos de  citas -->
+                    <table class="tbl-general tbl-forms tbl-30 table-striped">
+
+                        <!-- Texto con el contenido -->
+                        <caption class="tbl-capt">Editar notas de la cita</caption>
         
-                                <!-- Errores en el form -->
-                                {% include 'errors_citas.html' %}
+                        <!-- Errores en el form -->
+                        {% include 'errors_citas.html' %}
         
-                                <!-- Datos -->
-                                {% if citas %}
-                                    <tr>
-                                       <td>Id Cita:</td><td>{{citas.idCita }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Paciente:</td><td>{{citas.fk_Paciente }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Fecha cita:</td><td>{{citas.appdate }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Hora cita:</td><td>{{citas.apptime }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Notas:</td><td>{{ form.notes }}</td>
-                                    </tr>
-                                {% endif %}
+                        <!-- Datos -->
+                        <tr>
+                            <th class="tbl-th" colspan="2">
+                                Solo es posible modificar las notas.
+                                Si desea modificar otros datos, cancele la cita y genere una nueva.
+                            </th>
+                        </tr>
+
+                        {% if citas %}
+                            <tr>
+                                <td class="tbl-td-30">Id Cita:</td><td>{{citas.idCita }}</td>
+                            </tr>
+                            <tr>
+                                <td>Paciente:</td><td>{{citas.fk_Paciente }}</td>
+                            </tr>
+                            <tr>
+                                <td>Fecha cita:</td><td>{{citas.appdate }}</td>
+                            </tr>
+                            <tr>
+                                <td>Hora cita:</td><td>{{citas.apptime }}</td>
+                            </tr>
+                            <tr>
+                                <td>Notas:</td><td>{{ form.notes }}</td>
+                            </tr>
+                        {% endif %}
         
-                            </table>
+                    </table>
+
+                    <!-- Botones de acción -->
+                    <div class="div-botones">
+		            	<input type="submit" class="btn btn-danger" value="Confirmar modificación">
+                        <input type="hidden" name="next" value={{ next }}>
+                        <a href="{{ next|safe }}"><input type="button" class="btn btn-info" value="Volver"></a>
+                        <a href={% url 'menu-citas' %}><input type="button" class="btn btn-info" value="Menú de citas"></a>
+                    </div>
+
+                </form>
+
+            {% endif %}                 
 
         </section>
 

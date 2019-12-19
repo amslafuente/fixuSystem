@@ -31,4 +31,4 @@ class create_citas_paciente_form(forms.ModelForm):
 class edit_citas_form(forms.Form):
     
     # Campos del formulario
-    notes = forms.CharField(label = 'Notas', required = False)
+    notes = forms.CharField(label = 'Notas', widget = Textarea(attrs={'cols': 18, 'rows': 3}), required = False)

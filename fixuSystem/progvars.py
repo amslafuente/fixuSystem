@@ -290,8 +290,11 @@ HORA_COMIENZO = '13:00'
 # Hora de finalización de las consultas en formato string: HH:MM
 HORA_FINAL = '19:30'
 
-# Duración aproxinada de cada ventana de consulta en formato int: N
-DURACION_CONSULTA = 20
+# Duración en MINUTOS aproximada de cada ventana de consulta int: N
+DURACION_CONSULTA = 30
+
+# Notificar citas con ESTOS dias de antelación int: N
+NOTIFICAR_CON = 3
 
 ##### Choices para el status de las citas #####
 citasStatus = [
