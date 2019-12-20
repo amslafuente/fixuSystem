@@ -58,9 +58,9 @@
 	    		<tr>
                     <td class="tbl-td tbl-td-40">Teléfono:</td><td>{{ consultorios.officePhone }}</td>
                         {% if consultorios.officeIsavail %}
-                            <td class="tbl-td avail">Disponible:</td><td class="avail">Si</td>
+                            <td>Disponible:</td><td class="tbl-td-centro avail">Si</td>
                         {% else %}
-                            <td class="tbl-td not-avail">Disponible:</td><td class="not-avail">No</td>
+                            <td>Disponible:</td><td class="tbl-td-centro not-avail">No</td>
                         {% endif %}
 		   	    <tr>
 	    		    <th class="tbl-th" colspan="4">Equipamiento y notas</th>
@@ -78,7 +78,7 @@
             <div class="div-botones">
                 <a href={% url 'listado-consultorios' %}><input type="button" class="btn btn-info" value="Aceptar"></a>
 	    	    <a href={% url 'menu-clinica' %}><input type="button" class="btn btn-info" value="Menu de clínica"></a>
-            </div
+            </div>
 
         </section>
 

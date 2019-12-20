@@ -375,14 +375,14 @@ class error_consultorios_usuario_view(TemplateView):
 class id_equipamiento_view(DetailView):
 
     model = Equipamiento
-    context_object_name = 'equiamientos'
+    context_object_name = 'equipamientos'
     pk_url_kwarg = 'idEquipamiento'
     template_name = 'id_equipamiento_tpl.html'
 
-    def get_queryset(self):
+    def get_queryset(self, **kwargs):
 
-        # Extrae el consultorio en cuestion
-        qs = Equipamiento.objects.filter(idConsultorio__exact = self.kwargs['Equipamiento'])
+        # Extrae el equipo en cuestion
+        qs = Equipamiento.objects.filter(idEquipamiento__exact = self.kwargs['idEquipamiento'])
         return qs
 
 ##### LISTADO DE EQUIPAMIENTO #####
@@ -498,8 +498,18 @@ class error_equipamiento_usuario_view(TemplateView):
 
 #############################################################
 
+@method_decorator(login_required, name='dispatch')
+class create_equipamiento_view(CreateView):
+    pass
+
+@method_decorator(login_required, name='dispatch')
+class edit_equipamiento_view(UpdateView):
+    pass
+
+@method_decorator(login_required, name='dispatch')
+class delete_equipamiento_view(DeleteView):
+    pass
 
 @method_decorator(login_required, name='dispatch')
 class profesionales_clinica_view(View):
-
     pass

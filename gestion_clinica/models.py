@@ -140,7 +140,7 @@ class Proveedor(models.Model):
 class Equipamiento(models.Model):
 
     idEquipamiento = models.AutoField(primary_key = True, unique = True)
-    equipID = models.CharField("Referencia/Identificación", max_length = 10, unique = True)
+    equipID = models.CharField("Refer./Ident./Num. Serie", max_length = 50, unique = True)
     equipDesc = models.CharField("Descripción", max_length = 100, blank = True)
     equipType = models.CharField('Tipo', max_length = 5, choices = selTipoEquip, default = 'otros')
     equipIsavail = models.BooleanField("Operativo", default = True)                               # Disponible o no para consultas

@@ -423,7 +423,7 @@ td { /* --- Padding por defecto ---*/
 .avail {
     background-color:darkgreen;
     color: white;
-    padding-left: 5px;
+    padding: 5px;
     font-weight: bold;
 
 }
@@ -431,7 +431,7 @@ td { /* --- Padding por defecto ---*/
 .not-avail {
     background-color: darkred;
     color: white;
-    padding-left: 5px;
+    padding: 5px;
     font-weight: bold;
 
 }

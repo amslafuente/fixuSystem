@@ -37,11 +37,9 @@ urlpatterns = [
      # Equipamiento
     path('equipamiento/<int:idEquipamiento>/', views.id_equipamiento_view.as_view(), name = 'id-equipamiento'),
     path('equipamiento/listado/', views.listado_equipamiento_view.as_view(), name = 'listado-equipamiento'),
-
-
-
-
-
+    path('equipamiento/nuevo/', views.create_equipamiento_view.as_view(), name = 'create-equipamiento'),
+    path('equipamiento/modificar/<int:idEquipamiento>/', views.edit_equipamiento_view.as_view(), name = 'edit-equipamiento'),
+    path('equipamiento/borrar/<int:idEquipamiento>/', views.delete_equipamiento_view.as_view(), name = 'delete-equipamiento'),
     # Error si trata de un usuario NO STAFF
     path('equipamiento/error-usuario/', views.error_equipamiento_usuario_view.as_view(), name = 'error-equipamiento-usuario'),
 
