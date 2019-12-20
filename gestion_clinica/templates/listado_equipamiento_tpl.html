@@ -37,10 +37,9 @@
                 </td>
                 <td class="tbl-th-filter" colspan="9">
                     <div class="div-filtro">
-                        <form method="post">
-                             {% csrf_token %}
+                        <form method="get"> 
                             <input class="btn btn-danger btn-sm" type="submit" value="Pulse para filtrar por:">
-                            {{ form.filter }} <button type="button" class="btn btn-danger btn-sm">con la descripción:</button>{{ form.condition }}
+                            {{ form.filter }} <button type="button" class="btn btn-danger btn-sm">con descripción:</button>{{ form.condition }}
                         </form>
                     </div>
                 </td>
@@ -103,8 +102,8 @@
 
                         <!-- Enlaces a abrir, editar y borrar equipamiento -->
                         <td><a href="{% url 'id-equipamiento' equipamiento.idEquipamiento %}"><button type="button" class="btn btn-info btn-sm">Abrir</button></a></td>
-                        <td><a href="{% url 'menu-clinica' %}"><button type="button" class="btn btn-info btn-sm">Editar</button></a></td>
-                        <td><a href="{% url 'menu-clinica'  %}"><button type="button" class="btn btn-danger btn-sm">Borrar</button></a></td>
+                        <td><a href="{% url 'edit-equipamiento' equipamiento.idEquipamiento %}"><button type="button" class="btn btn-info btn-sm">Editar</button></a></td>
+                        <td><a href="{% url 'delete-equipamiento' equipamiento.idEquipamiento %}"><button type="button" class="btn btn-danger btn-sm">Borrar</button></a></td>
                    </tr>
                 {% endfor %}
 
@@ -113,7 +112,7 @@
         </table>
 
         <!-- Incluye PAGINADOR-->
-        {% include 'paginador.html' %}
+        {% include 'paginador_equipamiento.html' %}
 
     	<!-- Botones de acción -->
         <div class="div-botones">
