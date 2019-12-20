@@ -418,27 +418,23 @@ class listado_equipamiento_view(View):
             paginator = Paginator(qs, 20)
             ctx['equipamientos'] = qs
         
-            # Elabora un widget Select con selTipoEquip y lo pasa al contexto
-            filterform = customTipoForm(request.POST)
-            ctx['form'] = filterform
-
             return render(request, 'listado_equipamiento_tpl.html', ctx) 
 
     def get(self, request, **kwargs):
 
         ctx = dict()
         
+        # Elabora un widget Select con selTipoEquip y lo pasa al contexto
+        filterform = customTipoForm()
+        ctx['form'] = filterform
+    
         # Filtro por defecto es TODOS
         ctx['filter'] = 'todos'
 
         # Todos los equipamientos por tipo y description
         qs = Equipamiento.objects.all().order_by('equipType', 'equipDesc')
         paginator = Paginator(qs, 20)
-        ctx['equipamientos'] = qs
-        
-        # Elabora un widget Select con selTipoEquip y lo pasa al contexto
-        filterform = customTipoForm()
-        ctx['form'] = filterform
+        ctx['equipamientos'] = qs        
 
         return render(request, 'listado_equipamiento_tpl.html', ctx)
 
