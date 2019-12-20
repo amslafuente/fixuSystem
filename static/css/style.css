@@ -272,6 +272,14 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
 
 }
 
+/*---------- BARRA DE PROGRESO ----------*/
+.stock-bar {
+    margin: auto;
+    width: 80px;
+    height: 20px;
+ 
+}
+
 /*---------- TABLAS GENERAL ----------*/
 
 .tbl-general { /* --- General de las tablas ---*/

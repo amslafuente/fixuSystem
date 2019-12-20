@@ -21,7 +21,7 @@
         <section class="sect-home-page-menu">
 
         <!-- Tabla mostrando consultorios -->
-        <table class="tbl-general tbl-forms tbl-70 table-striped">
+        <table class="tbl-general tbl-forms tbl-85 table-striped">
 
             <!-- Texto con el contenido -->
 	    	<caption class="tbl-capt">Listado de equipamiento
@@ -35,12 +35,12 @@
                 <td class="tbl-th-filter" colspan="3">
                     <button class="btn btn-info btn-sm">Filtrado por: {{ filter|upper }}</button>   
                 </td>
-                <td class="tbl-th-filter" colspan="5">
+                <td class="tbl-th-filter" colspan="9">
                     <div class="div-filtro">
                         <form method="post">
                              {% csrf_token %}
                             <input class="btn btn-danger btn-sm" type="submit" value="Pulse para filtrar por: ">
-                            {{ form.filter }}
+                            {{ form.filter }}&nbsp;{{ form.condition }}
                         </form>
                     </div>
                 </td>
@@ -48,20 +48,21 @@
 
             <!-- Cabecera de la tabla -->
 	    	<tr>
-                <th class="tbl-th">Tipo</th>
+                <th class="tbl-th-izq">Tipo</th>
 		        <th class="tbl-th">ID</th>
-                <th class="tbl-th">Ref./Ident.</th>
+                <th class="tbl-th-izq">Ref./Ident.</th>
                 <th class="tbl-th-izq">Descr.</th>   
                 <th class="tbl-th-izq">Local.</th>
                 <th class="tbl-th-izq">Depto.</th>
-                <th class="tbl-th">Dispon.</th>
-                <th class="tbl-th">Acciones</th>
+                <th class="tbl-th tbl-td-5">Operat.</th>
+                <th class="tbl-th tbl-td-5">Stock</th>
+                <th class="tbl-th tbl-td-10" colspan="3">Acciones</th>
             </tr>
 
             <!-- NO devuelve ningun equipamiento avisa y cierra la tabla -->
             {% if not equipamientos %}
 	    	    <tr>
-                    <th colspan="8" class="field-errors">
+                    <th colspan="12" class="field-errors">
                         <span>Ningún equipamiento devuelto</span>
                     </th>
                 </tr>
@@ -71,28 +72,39 @@
 
                 <!-- Devuelve los equipamientos en un querySet llamada equipamientos -->
                 {% for equipamiento in equipamientos %}
-               		<tr>
+               		<tr class="grid-smalltxt">
                         <td class="tbl-td">{{ equipamiento.equipType }}</td>   
                         <td class="tbl-td-centro">{{ equipamiento.idEquipamiento }}</td>
-                        <td class="tbl-td-centro">{{ equipamiento.equipID }}</td>
+                        <td class="tbl-td">{{ equipamiento.equipID }}</td>
                         <td class="tbl-td">{{ equipamiento.equipDesc }}</td>
                         <td class="tbl-td">{{ equipamiento.equipLocation }}</td>
                         <td class="tbl-td">{{ equipamiento.equipDepartment }}</td>
 
-                        {% if equipamiento.equipIsavail %}
-                            <td class="tbl-td-centro avail">Si</td>
+                        <!-- Controla stock y disponibilidad-->
+                        <!-- Si se mide en stock no se pone operatividad -->
+                        <!-- Si se mide en operatividad no se pone stock -->
+                        {% if equipamiento.stockwarning %}
+                            <td class="tbl-td-centro">&nbsp;</td>
+                            <td class="tbl-td-centro">
+                                {% if equipamiento.stockavail == 0 %}
+                                    <progress class="stock-bar" style="background-color:red;" max="{{ equipamiento.stocklimit }}" value="{{ equipamiento.stockavail }}"></progress>                              
+                                {% else %}
+                                    <progress class="stock-bar" max="{{ equipamiento.stocklimit }}" value="{{ equipamiento.stockavail }}"></progress>                          
+                                {% endif %}
+                            </td>
                         {% else %}
-                            <td class="tbl-td-centro not-avail">No</td>
-                        {% endif %}
+                            {% if equipamiento.equipIsavail %}
+                                <td class="tbl-td-centro avail">Si</td>
+                            {% else %}
+                                <td class="tbl-td-centro not-avail">No</td>
+                            {% endif %}
+                            <td>&nbsp;</td>
+                        {% endif %}                     
 
                         <!-- Enlaces a abrir, editar y borrar equipamiento -->
-                        <td>
-                            <div class="div-fechas">
-                                <a href={% url 'id-consultorios' consultorio.idConsultorio %}><input type="button" class="btn btn-info btn-sm" value="Ver"></a>&nbsp;
-                                <a href={% url 'edit-consultorios' consultorio.idConsultorio %}><input type="button" class="btn btn-info btn-sm" value="Editar"></a>&nbsp;
-                                <a href={% url 'delete-consultorios' consultorio.idConsultorio %}><input type="button" class="btn btn-danger btn-sm" value="Borrar"></a>&nbsp;
-                            </div>
-                        </td>
+                        <td><a href="{% url 'id-equipamiento' equipamiento.idEquipamiento%}"><button type="button" class="btn btn-info btn-sm">Abrir</button></a></td>
+                        <td><a href="{% url 'menu-clinica' %}"><button type="button" class="btn btn-info btn-sm">Editar</button></a></td>
+                        <td><a href="{% url 'menu-clinica'  %}"><button type="button" class="btn btn-danger btn-sm">Borrar</button></a></td>
                    </tr>
                 {% endfor %}
 

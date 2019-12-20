@@ -19,6 +19,7 @@ from pathlib import Path
 from django.conf import settings
 from django.forms import forms, fields, widgets
 from fixuSystem.progvars import selTipoEquip
+from django.core.paginator import Paginator
 
 ########## MUESTRA MENU DE GESTION DE SERVICIOS ##########
 
@@ -410,6 +411,11 @@ class listado_equipamiento_view(View):
             # O solo los filtrados
             else:
                 qs = Equipamiento.objects.filter(equipType__istartswith = kwarg_filter).order_by('equipDesc')
+            # Filtra la condicion en equipDesc
+            kwarg_condit = filterform.cleaned_data['condition']
+            if kwarg_condit != '':
+                qs = qs.filter(equipDesc__icontains = kwarg_condit).order_by('equipDesc')            
+            paginator = Paginator(qs, 20)
             ctx['equipamientos'] = qs
         
             # Elabora un widget Select con selTipoEquip y lo pasa al contexto
@@ -427,6 +433,7 @@ class listado_equipamiento_view(View):
 
         # Todos los equipamientos por tipo y description
         qs = Equipamiento.objects.all().order_by('equipType', 'equipDesc')
+        paginator = Paginator(qs, 20)
         ctx['equipamientos'] = qs
         
         # Elabora un widget Select con selTipoEquip y lo pasa al contexto
@@ -480,8 +487,8 @@ class customTipoWidget(widgets.Select):
 
 # Form que muestra el customwidget
 class customTipoForm(forms.Form):
-
-    filter = fields.CharField(label="filter", required=True, widget=customTipoWidget())
+    filter = fields.CharField(label='Filtro', widget=customTipoWidget())
+    condition = fields.CharField(label='Condición', required=False, max_length=10)
 
 # Error si el usuario NO ES SUPERUSUARIO
 @method_decorator(login_required, name='dispatch')

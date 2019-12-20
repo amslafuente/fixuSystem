@@ -143,12 +143,15 @@ class Equipamiento(models.Model):
     equipID = models.CharField("Referencia/Identificación", max_length = 10, unique = True)
     equipDesc = models.CharField("Descripción", max_length = 100, blank = True)
     equipType = models.CharField('Tipo', max_length = 5, choices = selTipoEquip, default = 'otros')
-    equipIsavail = models.BooleanField("Disponible", default = True)                               # Disponible o no para consultas
+    equipIsavail = models.BooleanField("Operativo", default = True)                               # Disponible o no para consultas
     equipLocation = models.CharField("Localización", max_length = 50, blank = True)
     equipDepartment = models.CharField("Departamento", max_length = 50, blank = True)
     equipManufact = models.CharField("Fabricante", max_length = 100, blank = True)
     fk_Proveedor = models.ForeignKey(Proveedor, on_delete = models.PROTECT, related_name = 'proveedores', blank = True, null = True)
     equipSAT = models.TextField("S.A.T.", blank = True)
+    stockavail = models.PositiveIntegerField('Cantidad disponible', default = 0)
+    stockwarning = models.BooleanField("Aviso de falta de material", default = True)
+    stocklimit = models.PositiveIntegerField('Límite para aviso', default = 10)
     notes = models.TextField("Notas", blank = True)
     # Campos de control
     firstupdated = models.DateTimeField("Fecha registro", auto_now_add = True)                      # Fecha de registro
