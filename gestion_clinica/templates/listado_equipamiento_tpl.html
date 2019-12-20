@@ -33,14 +33,14 @@
             <!-- Filtrado -->
             <tr>
                 <td class="tbl-th-filter" colspan="3">
-                    <button class="btn btn-info btn-sm">Filtrado por: {{ filter|upper }}</button>   
+                    <button class="btn btn-info btn-sm">Filtro: {{ filter|upper }}&nbsp;{{ condition|upper }}</button>   
                 </td>
                 <td class="tbl-th-filter" colspan="9">
                     <div class="div-filtro">
                         <form method="post">
                              {% csrf_token %}
-                            <input class="btn btn-danger btn-sm" type="submit" value="Pulse para filtrar por: ">
-                            {{ form.filter }}&nbsp;{{ form.condition }}
+                            <input class="btn btn-danger btn-sm" type="submit" value="Pulse para filtrar por:">
+                            {{ form.filter }} <button type="button" class="btn btn-danger btn-sm">con la descripción:</button>{{ form.condition }}
                         </form>
                     </div>
                 </td>
@@ -117,8 +117,8 @@
 
     	<!-- Botones de acción -->
         <div class="div-botones">
-            <a href={% url 'create-consultorios' %}><input type="button" class="btn btn-info" value="Nuevo equipamiento"></a>
-		    <a href={% url 'menu-clinica' %}><input type="button" class="btn btn-info" value="Menu de clínica"></a>
+            <a href="{% url 'create-equipamiento' %}"><input type="button" class="btn btn-info" value="Nuevo equipamiento"></a>
+		    <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
         </div>
 
         </section>

@@ -19,7 +19,7 @@ from pathlib import Path
 from django.conf import settings
 from django.forms import forms, fields, widgets
 from fixuSystem.progvars import selTipoEquip
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 ########## MUESTRA MENU DE GESTION DE SERVICIOS ##########
 
@@ -391,9 +391,10 @@ class id_equipamiento_view(DetailView):
 class listado_equipamiento_view(View):
 
     def post(self, request, **kwargs):
-
-        # Se meten los datos del formulario
+        
         ctx= dict()
+        
+        # Se meten los datos del formulario
         filterform = customTipoForm(request.POST)
         ctx['form'] = filterform
 
@@ -402,6 +403,7 @@ class listado_equipamiento_view(View):
 
             # Obtiene el filtro actual del GET
             ctx['filter'] = filterform.cleaned_data['filter'].lower()
+            ctx['condition'] = filterform.cleaned_data['condition'].lower()
 
             # Recupera los registros
             kwarg_filter = filterform.cleaned_data['filter'].lower()
@@ -414,13 +416,30 @@ class listado_equipamiento_view(View):
             # Filtra la condicion en equipDesc
             kwarg_condit = filterform.cleaned_data['condition']
             if kwarg_condit != '':
-                qs = qs.filter(equipDesc__icontains = kwarg_condit).order_by('equipDesc')            
-            paginator = Paginator(qs, 20)
+                qs = qs.filter(equipDesc__icontains = kwarg_condit).order_by('equipDesc')      
             ctx['equipamientos'] = qs
-        
+   
             # Elabora un widget Select con selTipoEquip y lo pasa al contexto
             filterform = customTipoForm(request.POST)
             ctx['form'] = filterform
+
+
+
+            # Paginacion
+            paginator = Paginator(qs, 4)
+            page = request.GET.get('page')
+            try:
+                page_obj = paginator.page(page)
+            except PageNotAnInteger:
+            # If page is not an integer deliver the first page
+                page_obj = paginator.page(1)
+            except EmptyPage:
+                # If page is out of range deliver last page of results
+                page_obj = paginator.page(paginator.num_pages)
+            ctx['page_obj'] = page_obj
+            ctx['is_paginated'] = True
+
+            
 
             return render(request, 'listado_equipamiento_tpl.html', ctx) 
 
@@ -428,17 +447,35 @@ class listado_equipamiento_view(View):
 
         ctx = dict()
         
+        # Elabora un widget Select con selTipoEquip y lo pasa al contexto
+        filterform = customTipoForm(request.GET)
+        ctx['form'] = filterform
+
         # Filtro por defecto es TODOS
         ctx['filter'] = 'todos'
+        ctx['condition'] =''
 
         # Todos los equipamientos por tipo y description
         qs = Equipamiento.objects.all().order_by('equipType', 'equipDesc')
-        paginator = Paginator(qs, 20)
         ctx['equipamientos'] = qs
-        
-        # Elabora un widget Select con selTipoEquip y lo pasa al contexto
-        filterform = customTipoForm()
-        ctx['form'] = filterform
+
+
+
+        # Paginacion
+        paginator = Paginator(qs, 4)
+        page = request.GET.get('page')
+        try:
+            page_obj = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer deliver the first page
+            page_obj = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range deliver last page
+            page_obj = paginator.page(paginator.num_pages)
+        ctx['page_obj'] = page_obj
+        ctx['is_paginated'] = True
+
+
 
         return render(request, 'listado_equipamiento_tpl.html', ctx)
 
