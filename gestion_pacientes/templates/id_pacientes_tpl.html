@@ -37,8 +37,8 @@
                     <caption class="tbl-capt">Paciente : {{ paciente.name }} {{ paciente.familyname }} </caption>
 
                     <tr>
-                        <td>
-                            <table class="tbl-in-tbl tbl-100">
+                        <td class="tbl-td-80">
+                            <table class="tbl-in-tbl">
 
         		                <!-- Datos personales -->
             		            <tr>
@@ -70,7 +70,7 @@
                             </table>
                         </td>
                         {% if paciente.picturefile.url != '' %}
-                            <td class="td-marco-foto"><img height="240px" width="180px" src="{{ paciente.picturefile.url }}" /></td>
+                            <td><img class="img-paciente" height="240px" width="180px" src="{{ paciente.picturefile.url }}" /></td>
                         {% else %}
                             <td class="td-marco-foto">Sin foto</td>
                         {% endif %}
