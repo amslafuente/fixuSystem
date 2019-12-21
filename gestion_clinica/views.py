@@ -19,7 +19,6 @@ from pathlib import Path
 from django.conf import settings
 from django.forms import forms, fields, widgets
 from fixuSystem.progvars import selTipoEquip
-from django.core.paginator import Paginator
 
 ########## MUESTRA MENU DE GESTION DE SERVICIOS ##########
 
@@ -388,86 +387,42 @@ class id_equipamiento_view(DetailView):
 ##### LISTADO DE EQUIPAMIENTO #####
 
 @method_decorator(login_required, name='dispatch')
-class listado_equipamiento_view(View):
-
-    def post(self, request, **kwargs):
-
-        # Se meten los datos del formulario
-        ctx= dict()
-        filterform = customTipoForm(request.POST)
-        ctx['form'] = filterform
-
-        # Si el formulario es valido
-        if filterform.is_valid():
-
-            # Obtiene el filtro actual del GET
-            ctx['filter'] = filterform.cleaned_data['filter'].lower()
-
-            # Recupera los registros
-            kwarg_filter = filterform.cleaned_data['filter'].lower()
-            # Todos los equipamientos por tipo y description filtrados
-            if kwarg_filter == 'todos':
-                qs = Equipamiento.objects.all().order_by('equipType', 'equipDesc')
-            # O solo los filtrados
-            else:
-                qs = Equipamiento.objects.filter(equipType__istartswith = kwarg_filter).order_by('equipDesc')
-            # Filtra la condicion en equipDesc
-            kwarg_condit = filterform.cleaned_data['condition']
-            if kwarg_condit != '':
-                qs = qs.filter(equipDesc__icontains = kwarg_condit).order_by('equipDesc')            
-            paginator = Paginator(qs, 20)
-            ctx['equipamientos'] = qs
-        
-            return render(request, 'listado_equipamiento_tpl.html', ctx) 
-
-    def get(self, request, **kwargs):
-
-        ctx = dict()
-        
-        # Elabora un widget Select con selTipoEquip y lo pasa al contexto
-        filterform = customTipoForm()
-        ctx['form'] = filterform
+class listado_equipamiento_view(ListView):
     
-        # Filtro por defecto es TODOS
-        ctx['filter'] = 'todos'
-
-        # Todos los equipamientos por tipo y description
-        qs = Equipamiento.objects.all().order_by('equipType', 'equipDesc')
-        paginator = Paginator(qs, 20)
-        ctx['equipamientos'] = qs        
-
-        return render(request, 'listado_equipamiento_tpl.html', ctx)
-
-@method_decorator(login_required, name='dispatch')
-class listado_equipamiento_view_____(ListView):
-
     model = Equipamiento
     context_object_name = 'equipamientos'
     paginate_by = 20
     template_name = 'listado_equipamiento_tpl.html'
+ 
+    def get_queryset(self):
 
-    def get_queryset(self, **kwargs):
-        
-        # Obtiene el filtro actual del GET
-        kwarg_filter = self.kwargs['filter'].lower()
-        # Todos los equipamientos por tipo y description filtrados
+        qs = super().get_queryset()
+
+        # Extrae registros del GET o los pone por defecto
+        kwarg_filter = (self.request.GET.get('filter') or 'todos').lower()
+        kwarg_condition = (self.request.GET.get('condition') or '').lower()
+
         if kwarg_filter == 'todos':
-            qs = Equipamiento.objects.all().order_by('equipType', 'equipDesc')
+            qs = Equipamiento.objects.all().order_by('equipDesc')
         else:
             qs = Equipamiento.objects.filter(equipType__istartswith = kwarg_filter).order_by('equipDesc')
+        if kwarg_condition != '':
+            qs = qs.filter(equipDesc__icontains = kwarg_condition).order_by('equipDesc')
+
         return qs
 
     def get_context_data(self, **kwargs):
-        
+
+        # Pasa el form y el contexto
         ctx = super().get_context_data(**kwargs)
 
-        # Obtiene el filtro actual del GET
-        ctx['filter'] = self.kwargs['filter'].lower()
+        filterform = customTipoForm(self.request.GET) or customTipoForm()
+        ctx['form'] = filterform
 
-        # Elabora un widget Select con selTipoEquip y lo pasa al contexto
-        filterform = customTipoForm()
-        ctx['filterform'] = filterform
-
+        # Obtiene el filtro y condicion actual del GET   
+        ctx['filter'] = (self.request.GET.get('filter') or 'todos').lower()
+        ctx['condition'] = (self.request.GET.get('condition') or '').lower()
+ 
         return ctx
 
 # Widget de filtrado

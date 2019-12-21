@@ -33,14 +33,13 @@
             <!-- Filtrado -->
             <tr>
                 <td class="tbl-th-filter" colspan="3">
-                    <button class="btn btn-info btn-sm">Filtrado por: {{ filter|upper }}</button>   
+                    <button class="btn btn-info btn-sm">Filtro: {{ filter|upper }}&nbsp;{{ condition|upper }}</button>   
                 </td>
                 <td class="tbl-th-filter" colspan="9">
                     <div class="div-filtro">
-                        <form method="post">
-                             {% csrf_token %}
-                            <input class="btn btn-danger btn-sm" type="submit" value="Pulse para filtrar por: ">
-                            {{ form.filter }}&nbsp;{{ form.condition }}
+                        <form method="get"> 
+                            <input class="btn btn-danger btn-sm" type="submit" value="Pulse para filtrar por:">&nbsp;{{ form.filter }}
+                            <button type="button" class="btn btn-danger btn-sm">con descripción:</button>&nbsp;{{ form.condition }}
                         </form>
                     </div>
                 </td>
@@ -103,8 +102,8 @@
 
                         <!-- Enlaces a abrir, editar y borrar equipamiento -->
                         <td><a href="{% url 'id-equipamiento' equipamiento.idEquipamiento %}"><button type="button" class="btn btn-info btn-sm">Abrir</button></a></td>
-                        <td><a href="{% url 'menu-clinica' %}"><button type="button" class="btn btn-info btn-sm">Editar</button></a></td>
-                        <td><a href="{% url 'menu-clinica'  %}"><button type="button" class="btn btn-danger btn-sm">Borrar</button></a></td>
+                        <td><a href="{% url 'edit-equipamiento' equipamiento.idEquipamiento %}"><button type="button" class="btn btn-info btn-sm">Editar</button></a></td>
+                        <td><a href="{% url 'delete-equipamiento' equipamiento.idEquipamiento %}"><button type="button" class="btn btn-danger btn-sm">Borrar</button></a></td>
                    </tr>
                 {% endfor %}
 
@@ -113,12 +112,12 @@
         </table>
 
         <!-- Incluye PAGINADOR-->
-        {% include 'paginador.html' %}
+        {% include 'paginador_equipamiento.html' %}
 
     	<!-- Botones de acción -->
         <div class="div-botones">
-            <a href={% url 'create-consultorios' %}><input type="button" class="btn btn-info" value="Nuevo equipamiento"></a>
-		    <a href={% url 'menu-clinica' %}><input type="button" class="btn btn-info" value="Menu de clínica"></a>
+            <a href="{% url 'create-equipamiento' %}"><input type="button" class="btn btn-info" value="Nuevo equipamiento"></a>
+		    <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
         </div>
 
         </section>
