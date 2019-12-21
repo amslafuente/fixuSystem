@@ -18,11 +18,16 @@
 
         <script type="text/javascript">
 
-            // Limpia la condicion al pulsar un boton
+            // Limpia campos de filtro al pulsar un boton
+            function cleanType() {
+                document.getElementById('id_filter_').value = 'todos';
+            }
             function cleanCondit() {
                 document.getElementById('id_condition').value = '';
             }
-            
+            function cleanCtrl() {
+                document.getElementById('id_ctrl').value = '';
+            }
         </script>
 
     {% endblock JS %}
@@ -44,24 +49,26 @@
             <!-- Texto con el contenido -->
 	    	<caption class="tbl-capt">Listado de equipamiento/material
                 {% if is_paginated %}
-                    <span> - Página {{ page_obj.number }}</span>
+                    <span> - Página {{ page_obj.number }} de {{ paginator.num_pages }}</span>
                 {% endif %}
             </caption>
 
             <!-- Filtrado -->
             <tr>
-                <td class="tbl-th-filter" colspan="2">
-                    <button class="btn btn-info btn-sm">Filtro: {{ filter|upper }}&nbsp;{{ condition|upper }}</button>   
-                </td>
-                <td class="tbl-th-filter" colspan="9">
-                    <div class="div-filtro">
-                        <form method="get"> 
-                            <input class="btn btn-danger btn-sm" type="submit" value="Pulse para filtrar por:">&nbsp;{{ form.filter }}
-                            <button type="button" id="btnCondit" onclick="cleanCondit()" class="btn btn-danger btn-sm">con descripción:</button>&nbsp;{{ form.condition }}
-                        </form>
+                <td colspan="11">
+                    <div class="div-filtro-equip">
+                        <button class="btn btn-success btn-sm">Filtro: {{ filter|upper }}&nbsp;{{ condition|upper }}</button>   
+                        <div class="div-filtro">
+                            <form method="get"> 
+                                <button type="button" onclick="cleanType()" class="btn btn-info btn-sm">Filtrar por:</button>{{ form.filter_ }}
+                                <button type="button" onclick="cleanCondit()" class="btn btn-info btn-sm">con descripción:</button>{{ form.condition }}
+                                <button type="button" onclick="cleanCtrl()" class="btn btn-info btn-sm">con control de:</button>{{ form.ctrl }}
+                                <input class="btn btn-danger btn-sm" type="submit" value="Filtrar">
+                            </form>
+                        </div>
                     </div>
                 </td>
-            </tr>
+          </tr>
 
             <!-- Cabecera de la tabla -->
 	    	<tr>

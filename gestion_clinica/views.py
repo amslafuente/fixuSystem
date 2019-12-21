@@ -399,7 +399,7 @@ class listado_equipamiento_view(ListView):
         qs = super().get_queryset()
 
         # Extrae registros del GET o los pone por defecto
-        kwarg_filter = (self.request.GET.get('filter') or 'todos').lower()
+        kwarg_filter = (self.request.GET.get('filter_') or 'todos').lower()
         kwarg_condition = (self.request.GET.get('condition') or '').lower()
 
         if kwarg_filter == 'todos':
@@ -420,7 +420,7 @@ class listado_equipamiento_view(ListView):
         ctx['form'] = filterform
 
         # Obtiene el filtro y condicion actual del GET   
-        ctx['filter'] = (self.request.GET.get('filter') or 'todos').lower()
+        ctx['filter'] = (self.request.GET.get('filter_') or 'todos').lower()
         ctx['condition'] = (self.request.GET.get('condition') or '').lower()
  
         return ctx
@@ -438,8 +438,10 @@ class customTipoWidget(widgets.Select):
 
 # Form que muestra el customwidget
 class customTipoForm(forms.Form):
-    filter = fields.CharField(label='Filtro', widget=customTipoWidget())
-    condition = fields.CharField(label='Condición', required=False, max_length=10)
+    filter_ = fields.CharField(label = 'Filtro', widget = customTipoWidget())
+    condition = fields.CharField(label = 'Condición', required = False, max_length = 10)
+    condition.widget = widgets.TextInput(attrs={'style': 'width: 80px'})
+    ctrl = fields.CharField(label = 'Ctrl', widget = customTipoWidget())
 
 ##### CREACION DE EQUIPAMIENTO ##
 
@@ -468,7 +470,7 @@ class create_equipamiento_view(CreateView):
         # Limpia y guarda el registro
         equipamiento.save()
 
-        # Regresa a mostrar el consultorio nuevo
+        # Regresa a mostrar el listado de equipamiento
         return HttpResponseRedirect(reverse('listado-equipamiento'))
 
     # GET al llamar a la view
@@ -480,17 +482,27 @@ class create_equipamiento_view(CreateView):
 
         return super().get(request)
 
+@method_decorator(login_required, name='dispatch')
+class edit_equipamiento_view(UpdateView): 
 
+    model = Equipamiento
+    context_object_name = 'equipamiento'
+    pk_url_kwarg = 'idEquipamiento'
+    form_class = create_edit_equipamiento_form
+    template_name = 'edit_equipamiento_tpl.html'
 
+    # GET al llamar a la view
+    def get(self, request, **kwargs):
 
+        # Si el usuario no es o staff no permite acceder a los datos de la clinica
+        if (not request.user.is_superuser) or (not request.user.is_staff):
+            return HttpResponseRedirect(reverse('error-consultorios-usuario'))
 
+        return super().get(request)
 
-
-
-
-
-
-
+@method_decorator(login_required, name='dispatch')
+class delete_equipamiento_view(DeleteView):
+    pass
 
 # Error si el usuario NO ES SUPERUSUARIO
 @method_decorator(login_required, name='dispatch')
@@ -499,15 +511,6 @@ class error_equipamiento_usuario_view(TemplateView):
     template_name = 'error_equipamiento_usuario_tpl.html'
 
 #############################################################
-
-
-@method_decorator(login_required, name='dispatch')
-class edit_equipamiento_view(UpdateView):
-    pass
-
-@method_decorator(login_required, name='dispatch')
-class delete_equipamiento_view(DeleteView):
-    pass
 
 @method_decorator(login_required, name='dispatch')
 class profesionales_clinica_view(View):

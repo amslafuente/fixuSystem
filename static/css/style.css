@@ -138,6 +138,12 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
     font-size: 0.75em;
 }
 
+.div-filtro-equip {
+    display: flex;
+    justify-content: space-between;
+
+}
+
 .div-control-stock {
     display: flex;
     justify-content: flex-start;

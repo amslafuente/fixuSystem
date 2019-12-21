@@ -45,7 +45,12 @@
                 </tr>
                 <tr>
 			        <td>Departamento:</td><td colspan="2">{{ equipamientos.equipDepartment }}
-                    <td>Localización:</td><td colspan="2">{{ equipamientos.fk_Location }}</td>
+                    <td>Localización:</td>
+                    {% if fk_Location != None %}
+                        <td colspan="2">{{ equipamiento.fk_Location }}</td>
+                    {% else %}
+                        <td colspan="2">Indet.</td>
+                    {% endif %}
                 </tr>                
 	              
                 <!-- Disponibilidad/Stock -->
@@ -137,8 +142,8 @@
 
     	    <!-- Botones -->
             <div class="div-botones">
-                <a href="{% url 'listado-equipamiento' %}"><input type="button" class="btn btn-info" value="Aceptar"></a>
-	    	    <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
+                <a href="{% url 'listado-equipamiento' %}"><input type="button" class="btn btn-info" value="Listado de equipamiento"></a>
+                <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
             </div>
 
         </section>
