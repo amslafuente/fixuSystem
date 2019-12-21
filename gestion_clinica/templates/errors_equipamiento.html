@@ -1,0 +1,13 @@
+<!-- Errores en el form -->
+{{ form.non_field_errors }}
+
+<!-- Error en la identif del consultorio -->
+{% if form.equipID.errors %}
+<tr>
+    <th colspan="4" class ="field-errors">
+        {% for error in form.equipID.errors %}
+            {{ form.equipID.label }} : {{ error }}
+        {% endfor %}
+    </th>
+</tr>
+{% endif %}

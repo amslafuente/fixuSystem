@@ -13,7 +13,7 @@ from django.views.generic import CreateView, TemplateView, DeleteView
 from django.views import View
 from django.contrib import messages
 from .models import Clinica, Profesional, Consultorio, Equipamiento
-from .forms import init_edit_info_clinica_form, create_edit_consultorios_form
+from .forms import init_edit_info_clinica_form, create_edit_consultorios_form, create_edit_equipamiento_form
 import os
 from pathlib import Path
 from django.conf import settings
@@ -441,6 +441,57 @@ class customTipoForm(forms.Form):
     filter = fields.CharField(label='Filtro', widget=customTipoWidget())
     condition = fields.CharField(label='Condición', required=False, max_length=10)
 
+##### CREACION DE EQUIPAMIENTO ##
+
+@method_decorator(login_required, name='dispatch')
+class create_equipamiento_view(CreateView):
+
+    model = Equipamiento
+    context_object_name = 'equipamientos'
+    pk_url_kwarg = 'idEquipamiento'
+    form_class = create_edit_equipamiento_form
+    template_name = 'create_equipamiento_tpl.html'
+    
+    # Formulario correcto
+    def form_valid(self, form):
+
+        equipamiento = form.save(commit = False)
+
+        # Los campos firstupdated y lastupdated se añaden solos
+
+        # Se pone modifiedby
+        if str(self.request.user) != 'AmonymousUser':
+            equipamiento.modifiedby = str(self.request.user)
+        else:
+            equipamiento.modifiedby = 'unix:' + str(self.request.META['USERNAME'])
+
+        # Limpia y guarda el registro
+        equipamiento.save()
+
+        # Regresa a mostrar el consultorio nuevo
+        return HttpResponseRedirect(reverse('listado-equipamiento'))
+
+    # GET al llamar a la view
+    def get(self, request):
+
+        # Si el usuario no es o staff no permite acceder a los datos de la clinica
+        if (not request.user.is_superuser) and (not request.user.is_staff):
+            return HttpResponseRedirect(reverse('error-equipamiento-usuario'))
+
+        return super().get(request)
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Error si el usuario NO ES SUPERUSUARIO
 @method_decorator(login_required, name='dispatch')
 class error_equipamiento_usuario_view(TemplateView):
@@ -449,9 +500,6 @@ class error_equipamiento_usuario_view(TemplateView):
 
 #############################################################
 
-@method_decorator(login_required, name='dispatch')
-class create_equipamiento_view(CreateView):
-    pass
 
 @method_decorator(login_required, name='dispatch')
 class edit_equipamiento_view(UpdateView):

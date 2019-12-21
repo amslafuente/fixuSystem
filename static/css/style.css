@@ -138,6 +138,14 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
     font-size: 0.75em;
 }
 
+.div-control-stock {
+    display: flex;
+    justify-content: flex-start;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 50%
+}
+
 /*---------- DIVS DE MENUS ----------*/
 .div-cabecera-menu {
     display: flex;
@@ -244,7 +252,7 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
 
 .grid-smalltxt { /*--- Texto pequeño para el grid ---*/
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    font-size: small;
+    font-size: 0.9em;
     font-variant: normal;
     font-weight: bold;
     padding-left: 10px;

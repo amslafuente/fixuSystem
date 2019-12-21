@@ -115,9 +115,22 @@ class Proveedor(models.Model):
     fulladdress = models.CharField("Dirección", max_length = 250)    
     nif = models.CharField("NIF", max_length = 25, blank = True)                      
     owner = models.CharField("Propietario", blank = True, max_length = 25)
-    contacto = models.CharField('Persona de contacto', max_length = 100)
-    emailcontacto = models.EmailField('Correo elect. contacto', max_length = 75)
-    phonecontacto = models.PositiveIntegerField("Teléfono contacto")  
+    
+    isManufact = models.BooleanField("Es fabricante", default = True)
+    phoneManufact = models.PositiveIntegerField("Teléfono", blank = True, null = True)
+    contactManufact = models.CharField('Persona de contacto', max_length = 100, blank = True)
+    emailManufact = models.EmailField('Correo electrónico', max_length = 75, blank = True)
+
+    isProveedor = models.BooleanField("Es proveedor", default = True)
+    phoneProveedor = models.PositiveIntegerField("Teléfono", blank = True, null = True) 
+    contactProveedor = models.CharField('Persona de contacto', max_length = 100, blank = True)
+    emailProveedor = models.EmailField('Correo electrónico', max_length = 75, blank = True)   
+    
+    IsSAT = models.BooleanField("Es SAT", default = True)
+    phoneSAT = models.PositiveIntegerField("Teléfono fabricante", blank = True, null = True)
+    contactSAT = models.CharField('Persona de contacto', max_length = 100, blank = True)
+    emailSAT = models.EmailField('Correo electrónico', max_length = 75, blank = True)   
+    
     notas = models.TextField("Notas", blank = True)
     # Campos de control
     firstupdated = models.DateTimeField("Fecha registro", auto_now_add = True)                      # Fecha de registro
@@ -141,17 +154,21 @@ class Equipamiento(models.Model):
 
     idEquipamiento = models.AutoField(primary_key = True, unique = True)
     equipID = models.CharField("Refer./Ident./Num. Serie", max_length = 50, unique = True)
-    equipDesc = models.CharField("Descripción", max_length = 100, blank = True)
+    equipDesc = models.CharField("Descripción", max_length = 100)
     equipType = models.CharField('Tipo', max_length = 5, choices = selTipoEquip, default = 'otros')
+   
     equipIsavail = models.BooleanField("Operativo", default = True)                               # Disponible o no para consultas
-    equipLocation = models.CharField("Localización", max_length = 50, blank = True)
+    fk_Location = models.ForeignKey(Consultorio, on_delete = models.PROTECT, related_name = 'localizaciones', blank = True, null = True)
     equipDepartment = models.CharField("Departamento", max_length = 50, blank = True)
-    equipManufact = models.CharField("Fabricante", max_length = 100, blank = True)
+    
+    fk_Manufact = models.ForeignKey(Proveedor, on_delete = models.PROTECT, related_name = 'fabricantess', blank = True, null = True)
     fk_Proveedor = models.ForeignKey(Proveedor, on_delete = models.PROTECT, related_name = 'proveedores', blank = True, null = True)
-    equipSAT = models.TextField("S.A.T.", blank = True)
-    stockavail = models.PositiveIntegerField('Cantidad disponible', default = 0)
+    fk_SAT = models.ForeignKey(Proveedor, on_delete = models.PROTECT, related_name = 'sats', blank = True, null = True)
+    
     stockwarning = models.BooleanField("Aviso de falta de material", default = True)
     stocklimit = models.PositiveIntegerField('Límite para aviso', default = 10)
+    stockavail = models.PositiveIntegerField('Cantidad disponible', default = 0)
+
     notes = models.TextField("Notas", blank = True)
     # Campos de control
     firstupdated = models.DateTimeField("Fecha registro", auto_now_add = True)                      # Fecha de registro

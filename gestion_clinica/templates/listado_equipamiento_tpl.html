@@ -11,6 +11,24 @@
     {% endblock title %}
 
     <!-- **************** -->
+    <!--        JS        -->
+    <!-- **************** -->
+
+    {% block JS %}
+
+        <script type="text/javascript">
+
+            // Limpia la codnicion al pulsar un boton
+            function cleanCondit() {
+                document.getElementById('id_condition').value = '';
+            }
+            
+        </script>
+
+    {% endblock JS %}
+
+
+    <!-- **************** -->
     <!-- Centro de página -->
     <!-- **************** -->
 
@@ -24,7 +42,7 @@
         <table class="tbl-general tbl-forms tbl-85 table-striped">
 
             <!-- Texto con el contenido -->
-	    	<caption class="tbl-capt">Listado de equipamiento
+	    	<caption class="tbl-capt">Listado de equipamiento/material
                 {% if is_paginated %}
                     <span> - Página {{ page_obj.number }}</span>
                 {% endif %}
@@ -32,14 +50,14 @@
 
             <!-- Filtrado -->
             <tr>
-                <td class="tbl-th-filter" colspan="3">
+                <td class="tbl-th-filter" colspan="2">
                     <button class="btn btn-info btn-sm">Filtro: {{ filter|upper }}&nbsp;{{ condition|upper }}</button>   
                 </td>
                 <td class="tbl-th-filter" colspan="9">
                     <div class="div-filtro">
                         <form method="get"> 
                             <input class="btn btn-danger btn-sm" type="submit" value="Pulse para filtrar por:">&nbsp;{{ form.filter }}
-                            <button type="button" class="btn btn-danger btn-sm">con descripción:</button>&nbsp;{{ form.condition }}
+                            <button type="button" id="btnCondit" onclick="cleanCondit()" class="btn btn-danger btn-sm">con descripción:</button>&nbsp;{{ form.condition }}
                         </form>
                     </div>
                 </td>
@@ -48,8 +66,7 @@
             <!-- Cabecera de la tabla -->
 	    	<tr>
                 <th class="tbl-th-izq">Tipo</th>
-		        <th class="tbl-th">ID</th>
-                <th class="tbl-th-izq">Ref./Ident.</th>
+                <th class="tbl-th-izq">Ref./Ident./Serie</th>
                 <th class="tbl-th-izq">Descr.</th>   
                 <th class="tbl-th-izq">Local.</th>
                 <th class="tbl-th-izq">Depto.</th>
@@ -61,7 +78,7 @@
             <!-- NO devuelve ningun equipamiento avisa y cierra la tabla -->
             {% if not equipamientos %}
 	    	    <tr>
-                    <th colspan="12" class="field-errors">
+                    <th colspan="11" class="field-errors">
                         <span>Ningún equipamiento devuelto</span>
                     </th>
                 </tr>
@@ -73,10 +90,13 @@
                 {% for equipamiento in equipamientos %}
                		<tr class="grid-smalltxt">
                         <td class="tbl-td">{{ equipamiento.equipType }}</td>   
-                        <td class="tbl-td-centro">{{ equipamiento.idEquipamiento }}</td>
                         <td class="tbl-td">{{ equipamiento.equipID }}</td>
                         <td class="tbl-td">{{ equipamiento.equipDesc }}</td>
-                        <td class="tbl-td">{{ equipamiento.equipLocation }}</td>
+                        {% if fk_Location != None %}
+                            <td class="tbl-td">{{ equipamiento.fk_Location }}</td>
+                        {% else %}
+                            <td>Indet.</td>
+                        {% endif %}
                         <td class="tbl-td">{{ equipamiento.equipDepartment }}</td>
 
                         <!-- Controla stock y disponibilidad-->

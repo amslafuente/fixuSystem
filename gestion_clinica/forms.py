@@ -1,8 +1,8 @@
 ########## Forms de gestion_clinica ##########
 
 from django import forms
-from django.forms import ModelForm, Textarea, TextInput, NumberInput
-from .models import Clinica, Consultorio
+from django.forms import ModelForm, Textarea, TextInput, NumberInput, Select
+from .models import Clinica, Consultorio, Equipamiento
 from django.conf import settings
 
 ###############################################################################
@@ -38,3 +38,24 @@ class create_edit_consultorios_form(forms.ModelForm):
             }
 
 ###############################################################################
+
+# Form para crear equipamiento
+
+class create_edit_equipamiento_form(forms.ModelForm):
+
+    class Meta:
+        model = Equipamiento
+        exclude = ['firstupdated', 'lastupdated', 'modifiedby']
+        widgets = {
+            'equipID': TextInput(attrs={'style': 'width: 360px'}),
+            'equipDesc': TextInput(attrs={'style': 'width: 360px'}),
+            'equipType': Select(attrs={'style': 'width: 360px'}),
+            'fk_Location': Select(attrs={'style': 'width: 360px'}),
+            'equipDepartment': TextInput(attrs={'style': 'width: 360px'}),
+            'fk_Manufact': Select(attrs={'style': 'width: 360px'}),
+            'fk_Proveedor': Select(attrs={'style': 'width: 360px'}),
+            'fk_SAT': Select(attrs={'style': 'width: 360px'}),
+            'stocklimit': NumberInput(attrs={'style': 'width: 85px', 'min': 0, 'max': 99999}),
+            'stockavail': NumberInput(attrs={'style': 'width: 85px', 'min': 0, 'max': 99999}),
+            'notes': Textarea(attrs={'cols': 57, 'rows': 2})
+            }

@@ -45,7 +45,7 @@
                 </tr>
                 <tr>
 			        <td>Departamento:</td><td colspan="2">{{ equipamientos.equipDepartment }}
-                    <td>Localización:</td><td colspan="2">{{ equipamientos.equipLocation }}</td>
+                    <td>Localización:</td><td colspan="2">{{ equipamientos.fk_Location }}</td>
                 </tr>                
 	              
                 <!-- Disponibilidad/Stock -->
@@ -103,10 +103,10 @@
                 </tr>
                 <tr>
                     <td>Fabricante:</td><td class="tbl-td-30">
-                    {% if equipamientos.equipManufact %}
-                        {{ equipamientos.equipManufact }}
+                    {% if equipamientos.fk_Manufact %}
+                        {{ equipamientos.fk_Manufact }}
                     {% else %}
-                        <span>Indef.</span>
+                        <span>Indet.</span>
                     {% endif %}                        
                     </td>
 
@@ -114,15 +114,15 @@
                     {% if fk_Proveedor %}
                         {{ equipamientos.fk_Proveedor }}
                     {% else %}
-                        <span>Indef.</span>
+                        <span>Indet.</span>
                     {% endif %}
                     </td>
 
                     <td>S.A.T.:</td><td class="tbl-td-40">
                     {% if equipamientos.equipSAT %}
-                            {{ equipamientos.equipSAT }}
+                            {{ equipamientos.fk_SAT }}
                         {% else %}
-                            <span>Indef.</span>
+                            <span>Indet.</span>
                         {% endif %}
                     </td>                     
                 </tr>
