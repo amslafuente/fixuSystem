@@ -417,7 +417,7 @@ class listado_equipamiento_view(ListView):
         # Pasa el form y el contexto
         ctx = super().get_context_data(**kwargs)
 
-        filterform = customTipoForm(self.request.POST) or customTipoForm()
+        filterform = customTipoForm(self.request.GET) or customTipoForm()
         ctx['form'] = filterform
 
         # Obtiene el filtro y condicion actual del GET   
