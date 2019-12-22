@@ -168,6 +168,7 @@ class Equipamiento(models.Model):
     stockwarning = models.BooleanField("Aviso de falta de material", default = True)
     stocklimit = models.PositiveIntegerField('Límite para aviso', default = 10)
     stockavail = models.PositiveIntegerField('Cantidad disponible', default = 0)
+    stockratio = models.PositiveIntegerField(blank = True, default = 0)
 
     notes = models.TextField("Notas", blank = True)
     # Campos de control
@@ -180,9 +181,10 @@ class Equipamiento(models.Model):
 
     def get_absolute_url(self):
         return reverse('id-equipamiento', args=[self.idEquipamiento])
-
+ 
     class Meta:
         verbose_name = 'Equipamiento'
         verbose_name_plural = 'Equipamientos'
         ordering =['equipID']
+    
 

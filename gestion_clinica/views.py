@@ -401,13 +401,28 @@ class listado_equipamiento_view(ListView):
         # Extrae registros del GET o los pone por defecto
         kwarg_filter = (self.request.GET.get('filter_') or 'todos').lower()
         kwarg_condition = (self.request.GET.get('condition') or '').lower()
+        kwarg_ctrl = (self.request.GET.get('ctrl') or '').lower()
+        kwarg_orderby = (self.request.GET.get('orderby') or '')
 
+       # Filter_
         if kwarg_filter == 'todos':
             qs = Equipamiento.objects.all().order_by('equipDesc')
         else:
             qs = Equipamiento.objects.filter(equipType__istartswith = kwarg_filter).order_by('equipDesc')
+
+        # Condit
         if kwarg_condition != '':
-            qs = qs.filter(equipDesc__icontains = kwarg_condition).order_by('equipDesc')
+            qs = qs.filter(equipDesc__icontains = kwarg_condition)
+        
+        # Ctrl
+        if kwarg_ctrl == 'stock':
+            qs = qs.filter(stockwarning = True)
+        elif kwarg_ctrl == 'oper':
+            qs = qs.filter(stockwarning = False)
+
+        # OrderBy
+        if kwarg_orderby != '':
+            qs = qs.order_by(kwarg_orderby)
 
         return qs
 
@@ -422,7 +437,9 @@ class listado_equipamiento_view(ListView):
         # Obtiene el filtro y condicion actual del GET   
         ctx['filter'] = (self.request.GET.get('filter_') or 'todos').lower()
         ctx['condition'] = (self.request.GET.get('condition') or '').lower()
- 
+        ctx['ctrl'] = (self.request.GET.get('ctrl') or '').lower()
+        ctx['orderby'] = (self.request.GET.get('orderby') or '')
+
         return ctx
 
 # Widget de filtrado
@@ -430,9 +447,8 @@ class customTipoWidget(widgets.Select):
 
     def __init__(self, *args, **kwargs) :
         super().__init__(*args, **kwargs)
-        tuple_todos = ('todos', 'Todos')
         list_choices = list()
-        list_choices.append(tuple_todos)
+        list_choices.append(('todos', 'Todos'))
         list_choices.extend(selTipoEquip)
         self.choices = list_choices
 
@@ -441,9 +457,9 @@ class customTipoForm(forms.Form):
     filter_ = fields.CharField(label = 'Filtro', widget = customTipoWidget())
     condition = fields.CharField(label = 'Condición', required = False, max_length = 10)
     condition.widget = widgets.TextInput(attrs={'style': 'width: 80px'})
-    ctrl = fields.CharField(label = 'Ctrl', widget = customTipoWidget())
-
-##### CREACION DE EQUIPAMIENTO ##
+    ctrl = fields.CharField(label = 'Ctrl', required = False, max_length = 10)
+    ctrl.widget = widgets.TextInput(attrs={'style': 'width: 80px'})
+    ctrl.widget = widgets.Select(attrs={'style': 'width: 80px'}, choices=[('', ''), ('oper', 'Oper'), ('stock', 'Stock')])
 
 @method_decorator(login_required, name='dispatch')
 class create_equipamiento_view(CreateView):
@@ -459,6 +475,14 @@ class create_equipamiento_view(CreateView):
 
         equipamiento = form.save(commit = False)
 
+        # Calcula el stockratio
+        if form.cleaned_data['stocklimit'] > 0:
+            equipamiento.stockratio = (form.cleaned_data['stockavail'] * 100 // form.cleaned_data['stocklimit'])
+        else:
+            equipamiento.stockratio = 0
+        if equipamiento.stockratio > 100:
+            equipamiento.stockratio = 100
+            
         # Los campos firstupdated y lastupdated se añaden solos
 
         # Se pone modifiedby
@@ -472,6 +496,10 @@ class create_equipamiento_view(CreateView):
 
         # Regresa a mostrar el listado de equipamiento
         return HttpResponseRedirect(reverse('listado-equipamiento'))
+
+    def form_invalid(self, form):
+        messages.warning(self.request, 'Errores en el formulario.')
+        return super().form_invalid(form)
 
     # GET al llamar a la view
     def get(self, request):
@@ -490,6 +518,33 @@ class edit_equipamiento_view(UpdateView):
     pk_url_kwarg = 'idEquipamiento'
     form_class = create_edit_equipamiento_form
     template_name = 'edit_equipamiento_tpl.html'
+
+    # Formulario correcto
+    def form_valid(self, form):
+
+        equipamiento = form.save(commit = False)
+
+        # Calcula el stockratio
+        if form.cleaned_data['stocklimit'] > 0:
+            equipamiento.stockratio = (form.cleaned_data['stockavail'] * 100 // form.cleaned_data['stocklimit'])
+        else:
+            equipamiento.stockratio = 0
+        if equipamiento.stockratio > 100:
+            equipamiento.stockratio = 100
+
+        # Los campos firstupdated y lastupdated se añaden solos
+
+        # Se pone modifiedby
+        if str(self.request.user) != 'AmonymousUser':
+            equipamiento.modifiedby = str(self.request.user)
+        else:
+            equipamiento.modifiedby = 'unix:' + str(self.request.META['USERNAME'])
+
+        # Limpia y guarda el registro
+        equipamiento.save()
+
+        # Regresa a mostrar el listado de equipamiento
+        return HttpResponseRedirect(reverse('id-equipamiento', args=[equipamiento.idEquipamiento]))
 
     # GET al llamar a la view
     def get(self, request, **kwargs):

@@ -130,18 +130,18 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
 
 }
 
-.div-filtro { /* --- Filtrado de tipos --- */
+.div-filtro-equip {/* --- Filtrado de tipos --- */
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.div-filtro-equip-der { /* --- Filtrado de tipos --- */
     display: flex;
     justify-content: flex-end;
     align-items: center;
     padding: 5px;
     font-size: 0.75em;
-}
-
-.div-filtro-equip {
-    display: flex;
-    justify-content: space-between;
-
 }
 
 .div-control-stock {
