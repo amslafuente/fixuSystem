@@ -6,10 +6,11 @@ from django.http import request, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 import datetime
-from .models import Cita
+from .models import Cita, NotificaCita, ProcesaCita
 from gestion_pacientes.models import Paciente
 from django.views.generic.edit import UpdateView
 from django.views.generic.list import ListView
+from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views import View
 from .funct import contexto_dias, app_timegrid
@@ -515,6 +516,44 @@ class modif_citas_view(DetailView):
 
         # Regresa donde se llamó
         return HttpResponseRedirect(kwarg_next)
+
+######  PROCESAR CITAS #######
+
+@method_decorator(login_required, name='dispatch')
+class procesar_citas_view(View):
+
+    def get(self, request):
+
+        ctx = dict()
+
+        notif = NotificaCita.objects.last()
+        proc = ProcesaCita.objects.last()
+        try:
+            ctx['last_notif'] = notif.notifLastrun
+        except:
+            ctx['last_notif'] = 'Sin fecha'
+        try:
+            ctx['last_proc'] = proc.procLastrun
+        except:
+            ctx['last_proc'] = 'Sin fecha'
+
+        return render(request, 'procesar_citas_tpl.html', ctx)
+
+@method_decorator(login_required, name='dispatch')
+class confirm_recordatorios_citas_view(View):
+    pass
+
+@method_decorator(login_required, name='dispatch')
+class recordatorios_citas_view(View):
+    pass
+
+@method_decorator(login_required, name='dispatch')
+class confirm_pasadas_canceladas_citas_view(View):
+    pass
+
+@method_decorator(login_required, name='dispatch')
+class pasadas_canceladas_citas_view(View):
+    pass
 
 #####################################################################################
 

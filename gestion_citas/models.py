@@ -41,4 +41,23 @@ class Cita(models.Model):
         verbose_name_plural = 'Citas'
         ordering = ['appdate', 'apptime']
 
+########## TABLAS DE PROCESAMIENTO DE CITAS ##########
 
+class NotificaCita(models.Model):
+
+    idNotificaCita = models.AutoField(primary_key = True, unique = True)
+    notifLastrun = models.DateTimeField('Ultima fecha de notificación', auto_now = True)
+    modifiedby = models.CharField("Modificado por", max_length = 50, blank = True, default = 'fixuUser')
+    # Datos de control
+    firstupdated = models.DateTimeField("Fecha registro", auto_now_add = True)
+    lastupdated = models.DateTimeField("Fecha actualización", auto_now = True)
+    modifiedby = models.CharField("Modificado por", max_length = 50, blank = True, default = 'fixuUser')
+
+class ProcesaCita(models.Model):
+    
+    idProcesaCita = models.AutoField(primary_key = True, unique = True)
+    procLastrun = models.DateTimeField('Ultima fecha de procesamiento', auto_now = True)
+    # Datos de control
+    firstupdated = models.DateTimeField("Fecha registro", auto_now_add = True)
+    lastupdated = models.DateTimeField("Fecha actualización", auto_now = True)
+    modifiedby = models.CharField("Modificado por", max_length = 50, blank = True, default = 'fixuUser')
