@@ -16,6 +16,7 @@ from django.views import View
 from .funct import contexto_dias, app_timegrid
 from .forms import create_citas_form, create_citas_paciente_form, edit_citas_form
 from django.contrib import messages
+from django.db.models import Q
 
 #########################################################
 #                                                       #
@@ -232,6 +233,10 @@ class citas_paciente_todas_view(ListView):
 #              CREACION Y EDICION DE CITAS              #
 #                                                       #
 #########################################################
+
+@method_decorator(login_required, name='dispatch')
+class id_citas_view(DetailView):
+    pass
 
 ######  CREA CITA DESDE EL GRID, CON FECHA Y HORA PRESELECIONADAS #######
 
@@ -540,20 +545,70 @@ class procesar_citas_view(View):
         return render(request, 'procesar_citas_tpl.html', ctx)
 
 @method_decorator(login_required, name='dispatch')
-class confirm_recordatorios_citas_view(View):
-    pass
-
-@method_decorator(login_required, name='dispatch')
 class recordatorios_citas_view(View):
     pass
 
 @method_decorator(login_required, name='dispatch')
-class confirm_pasadas_canceladas_citas_view(View):
-    pass
-
-@method_decorator(login_required, name='dispatch')
 class pasadas_canceladas_citas_view(View):
-    pass
+
+    def post(self, request):
+        
+        ctx = dict()
+        
+         # Comprueba si es superuser
+        if not request.user.is_superuser:
+
+            return HttpResponseRedirect(reverse('procesar-citas'))
+ 
+        # Borra el query
+        queryexclude = Q(status__iexact = 'Pasa a consulta')
+        querydelete = (Q(appdate__lt = datetime.date.today()) | Q(status__iexact = 'Cancelada'))
+        try:
+            qscita = Cita.objects.exclude(queryexclude).filter(querydelete).count()
+            numregs = 0
+            qsproc = ProcesaCita()
+            # Se pone modifiedby
+            if str(request.user) != 'AmonymousUser':
+                qsproc.modifiedby = str(request.user)
+            else:
+                qsproc.modifiedby = 'unix:' + str(request.META['USERNAME'])
+            qsproc.save()
+        except:
+            numregs = Cita.objects.exclude(queryexclude).filter(querydelete).count()
+
+        if numregs > 0:
+            ctx['mensaje'] = 'Error al procesar la base de datos.'
+            ctx['numregs'] = numregs
+        else:
+            ctx['mensaje'] = 'No hay citas más para procesar.'            
+
+        return render(request, 'pasadas_canceladas_citas_tpl.html', ctx)
+
+    def get(self, request):
+        
+        ctx = dict()
+        
+        # Comprueba si es superuser
+        if not request.user.is_superuser:
+
+            return HttpResponseRedirect(reverse('procesar-citas'))
+     
+        # Cueta los registros que cuplen las condiciones de ser pasada, canceladas y sin consulta
+        queryexclude = Q(status__iexact = 'Pasa a consulta')
+        querydelete = (Q(appdate__lt = datetime.date.today()) | Q(status__iexact = 'Cancelada'))
+        
+        try:
+            numregs = Cita.objects.exclude(queryexclude).filter(querydelete).count()
+        except:
+            numregs = 0
+        
+        if numregs > 0:
+            ctx['mensaje'] = 'Se va a proceder a BORRAR de la base de datos las citas ya pasadas, o canceladas, que no han generado ninguna ficha de consulta.'
+            ctx['numregs'] = numregs
+        else:
+            ctx['mensaje'] = 'No hay citas para procesar.'            
+
+        return render(request, 'pasadas_canceladas_citas_tpl.html', ctx)
 
 #####################################################################################
 
@@ -565,6 +620,4 @@ class citas_semana_view(View):
 class citas_mes_view(View):
     pass
 
-@method_decorator(login_required, name='dispatch')
-class id_citas_view(DetailView):
-    pass
+
