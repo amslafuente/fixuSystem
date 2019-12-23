@@ -40,13 +40,6 @@
                     <!-- Errores en el form -->
                     {% include 'errors_citas.html' %}
                     
-                    <!-- Si hay mensajes pendientes -->
-                    {% for message in messages %}
-                        <th colspan="2" style="text-align: center; font-family: serif; font-variant: small-caps; padding: 5px; color: white; background-color: rgb(224, 89, 36);">
-                            {{ message }}
-                        </th>
-                    {% endfor %}
-
                     <!-- Datos -->
 		   	        <tr>
 	    		        <th class="tbl-th" colspan="2">Datos preseleccionados</th>

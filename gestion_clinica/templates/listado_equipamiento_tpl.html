@@ -32,13 +32,15 @@
             function setOrder (order) {
 
                 // Reset buttons css
-                document.getElementById("btn-equipID").classList.remove("btn-danger");
-                document.getElementById("btn-equipDesc").classList.remove("btn-danger");
-                document.getElementById("btn-stockratio").classList.remove("btn-danger");
+                document.getElementById("btn-equipType").classList.remove("btn-warning");
+                document.getElementById("btn-equipID").classList.remove("btn-warning");
+                document.getElementById("btn-equipDesc").classList.remove("btn-warning");
+                document.getElementById("btn-equipIsavail").classList.remove("btn-warning");
+                document.getElementById("btn-stockratio").classList.remove("btn-warning");
 
                 // Set button css and value
                 var btn_target = "btn-" + order;
-                document.getElementById(btn_target).classList.add("btn-danger");
+                document.getElementById(btn_target).classList.add("btn-warning");
                 origen = document.getElementById("id_orderby");
                 origen.value = order;
             }
@@ -72,7 +74,7 @@
             <tr>
                 <td colspan="11">
                     <div class="div-filtro-equip">
-                        <button class="btn btn-success btn-sm">Filtro: {{ filter|upper }}&nbsp;{{ condition|upper }}&nbsp;{{ ctrl|upper }}</button>   
+                        <button class="btn btn-success btn-sm" style="font-size: 0.8em;">{{ filter|upper }}&nbsp;{{ condition|upper }}&nbsp;{{ ctrl|upper }}&nbsp;{{ orderby|upper }}</button>   
                         <div class="div-filtro-equip-der">
                             <form method="GET">                            
                                 <button type="button" onclick="cleanType()" class="btn btn-info btn-sm">Filtrar por:</button>{{ form.filter_ }}
@@ -90,7 +92,9 @@
             <!-- Con cada form pasa la ordenacion y todos los parametros de filtro -->
 
 	    	<tr>
-                <th class="tbl-th-izq">Tipo</th>
+                <th class="tbl-th-izq">
+                    <button id="btn-equipType" onclick="setOrder('equipType')" type="button" class="btn btn-info btn-sm">Tipo</button>
+                </th> 
                 <th class="tbl-th-izq">
                     <button id="btn-equipID" onclick="setOrder('equipID')" type="button" class="btn btn-info btn-sm">Ref./Ident./Serie</button>
                 </th> 
@@ -99,8 +103,10 @@
                 </th> 
                 <th class="tbl-th-izq">Local.</th>
                 <th class="tbl-th-izq">Depto.</th>
-                <th class="tbl-th tbl-td-5">Operat.</th>
-                <th class="tbl-th-izq">
+                <th class="tbl-th tbl-td-5">
+                    <button id="btn-equipIsavail" onclick="setOrder('equipIsavail')" type="button" class="btn btn-info btn-sm">Operat.</button>
+                </th> 
+                <th class="tbl-th tbl-td-10">
                     <button id="btn-stockratio" onclick="setOrder('stockratio')" type="button" class="btn btn-info btn-sm">Stock</button>
                 </th> 
                 <th class="tbl-th tbl-td-10" colspan="3">Acciones</th>
@@ -123,11 +129,7 @@
                         <td class="tbl-td">{{ equipamiento.equipType }}</td>   
                         <td class="tbl-td">{{ equipamiento.equipID }}</td>
                         <td class="tbl-td">{{ equipamiento.equipDesc }}</td>
-                        {% if fk_Location != None %}
-                            <td class="tbl-td">{{ equipamiento.fk_Location }}</td>
-                        {% else %}
-                            <td>Indet.</td>
-                        {% endif %}
+                        <td class="tbl-td">{{ equipamiento.fk_Location|default_if_none:"Indet." }}</td>
                         <td class="tbl-td">{{ equipamiento.equipDepartment }}</td>
 
                         <!-- Controla stock y disponibilidad-->

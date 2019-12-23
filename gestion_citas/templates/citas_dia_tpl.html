@@ -78,19 +78,8 @@
                		<tr>
 		       		    <td class="tbl-td-centro">{{ cita.apptime|date:'H:i' }}</td>
 			       	    <td>{{ cita.fk_Paciente }}</td>
-                        
-                        {% if cita.fk_Profesional %}
-                           <td>{{ cita.fk_Profesional }}</td>
-                        {% else %}
-                            <td>Indet.</td>
-                        {% endif %}
-                       
-                        {% if cita.fk_Consultorio %}
-                           <td class="tbl-td-centro">{{ cita.fk_Consultorio }}</td>
-                        {% else %}
-                            <td class="tbl-td-centro">Indet.</td>
-                        {% endif %}
-
+                        <td>{{ cita.fk_Profesional|default_if_none:"Indet." }}</td>
+                        <td class="tbl-td-centro">{{ cita.fk_Consultorio|default_if_none:"Indet." }}</td>
                         <td class="tbl-td-15">{{ cita.notes }}</td>
 
                         <!-- Estatus -->

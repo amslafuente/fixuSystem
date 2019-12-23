@@ -40,17 +40,12 @@
 	                <th class="tbl-th" colspan="6">Descripción y localización</th>
                 </tr>
                 <tr>
-                    <td>Descripción:</td><td colspan="2">{{ equipamientos.equipDesc }}</td>
+                    <td>Descripción:</td><td  class="tbl-60" colspan="2">{{ equipamientos.equipDesc }}</td>
                     <td>Tipo equip.:</td><td colspan="2">{{ equipamientos.equipType|upper }}</td>
                 </tr>
                 <tr>
 			        <td>Departamento:</td><td colspan="2">{{ equipamientos.equipDepartment }}
-                    <td>Localización:</td>
-                    {% if fk_Location != None %}
-                        <td colspan="2">{{ equipamiento.fk_Location }}</td>
-                    {% else %}
-                        <td colspan="2">Indet.</td>
-                    {% endif %}
+                    <td>Localización:</td><td colspan="2">{{ equipamiento.fk_Location|default_if_none:"Indet." }}</td>
                 </tr>                
 	              
                 <!-- Disponibilidad/Stock -->
@@ -71,7 +66,7 @@
                                 <th class="tbl-td-centro">Cantidad en stock</th>
                             </tr>
                             <tr>
-                                <td class="tbl-td-40 tbl-td-centro" style="vertical-align: middle;">Si - Actual:
+                                <td class="tbl-td-40 tbl-td-centro" style="vertical-align: middle;">Si - Actual: {{ equipamientos.stockratio }}% -
                                     {% if equipamientos.stockavail == 0 %}
                                         <progress class="stock-bar" style="background-color:red; vertical-align: middle;" max="{{ equipamientos.stocklimit }}" value="{{ equipamientos.stockavail }}"></progress>
                                     {% else %}                                
@@ -108,27 +103,13 @@
                 </tr>
                 <tr>
                     <td>Fabricante:</td><td class="tbl-td-30">
-                    {% if equipamientos.fk_Manufact %}
-                        {{ equipamientos.fk_Manufact }}
-                    {% else %}
-                        <span>Indet.</span>
-                    {% endif %}                        
+                        {{ equipamientos.fk_Manufact|default_if_none:"Indet." }}
                     </td>
-
                     <td>Proveedor:</td><td  class="tbl-td-30">
-                    {% if fk_Proveedor %}
-                        {{ equipamientos.fk_Proveedor }}
-                    {% else %}
-                        <span>Indet.</span>
-                    {% endif %}
+                        {{ equipamientos.fk_Proveedor|default_if_none:"Indet." }}
                     </td>
-
                     <td>S.A.T.:</td><td class="tbl-td-40">
-                    {% if equipamientos.equipSAT %}
-                            {{ equipamientos.fk_SAT }}
-                        {% else %}
-                            <span>Indet.</span>
-                        {% endif %}
+                        {{ equipamientos.fk_SAT|default_if_none:"Indet." }}
                     </td>                     
                 </tr>
                 <tr>
