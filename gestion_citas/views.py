@@ -17,6 +17,9 @@ from .funct import contexto_dias, app_timegrid
 from .forms import create_citas_form, create_citas_paciente_form, edit_citas_form
 from django.contrib import messages
 from django.db.models import Q
+from fixuSystem.progvars import NOTIFICAR_CON
+from django.forms import forms, fields, widgets
+from django.forms.widgets import NumberInput
 
 #########################################################
 #                                                       #
@@ -546,7 +549,43 @@ class procesar_citas_view(View):
 
 @method_decorator(login_required, name='dispatch')
 class recordatorios_citas_view(View):
-    pass
+
+    def get(self, request):
+        
+        ctx = dict()
+        
+        # Comprueba si es superuser
+        if not request.user.is_superuser:
+
+            return HttpResponseRedirect(reverse('procesar-citas'))
+
+        # Dias de antelacion por defecto
+        ctx['dias'] = NOTIFICAR_CON
+
+        # Pasa la form con dias a modificar
+        ctx['form'] = customNotifDias(initial={'day': NOTIFICAR_CON, 'interdays': False})
+
+        # Cuenta los registros que cumplen las condiciones de ser notificados por email o telefono
+        kwarg_date = datetime.date.today()
+        kwarg_notifydate = kwarg_date + datetime.timedelta(days = NOTIFICAR_CON)
+
+        numregsemail = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').count()
+        numregstelef = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email').count()
+
+        if (numregsemail > 0 or numregstelef > 0):
+            ctx['mensaje'] = 'Se van a notificar las siguientes citas pendientes:'
+            ctx['numregsemail'] = numregsemail
+            ctx['numregstelef'] = numregstelef
+        else:
+            ctx['mensaje'] = 'No hay citas para notificar.'            
+
+        return render(request, 'recordatorios_citas_tpl.html', ctx)
+
+class customNotifDias(forms.Form):
+    
+    day = fields.IntegerField(required = False)
+    interdays = fields.BooleanField(required = False)
+    day.widget = widgets.NumberInput(attrs={'style': 'width: 50px', 'min': 0, 'max': 99})   
 
 @method_decorator(login_required, name='dispatch')
 class pasadas_canceladas_citas_view(View):
@@ -593,7 +632,7 @@ class pasadas_canceladas_citas_view(View):
 
             return HttpResponseRedirect(reverse('procesar-citas'))
      
-        # Cueta los registros que cuplen las condiciones de ser pasada, canceladas y sin consulta
+        # Cuenta los registros que cumplen las condiciones de ser pasada, canceladas y sin consulta
         queryexclude = Q(status__iexact = 'Pasa a consulta')
         querydelete = (Q(appdate__lt = datetime.date.today()) | Q(status__iexact = 'Cancelada'))
         
