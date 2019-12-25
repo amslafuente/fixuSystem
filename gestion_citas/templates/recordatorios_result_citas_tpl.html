@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+		<title>fixuSystem - Fisioterapia  - Gestión de citas</title>
+
+    {% endblock title %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+		<!-- Taba principal con imágenes -->
+        <section class="sect-home-page-menu">
+        
+            <table class="tbl-general tbl-forms tbl-35 table-striped">
+
+                <!-- Texto con el contenido -->
+                <caption class="tbl-capt">Resultados de las notificaciones</caption>
+                
+            </table>
+
+            <!-- Botones de acción -->
+
+                <div class="div-botones">
+                    <a href="{% url 'procesar-citas' %}">
+                        <button type="button" class="btn btn-info">Volver</button>
+                    </a>
+                </div>
+
+        </section>
+
+    {% endblock content %}

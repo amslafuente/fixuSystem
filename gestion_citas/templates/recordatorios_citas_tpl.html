@@ -21,11 +21,16 @@
 		<!-- Taba principal con imágenes -->
         <section class="sect-home-page-menu">
         
+            <form method="POST">
+            {% csrf_token %}
+        
             <table class="tbl-general tbl-forms tbl-35 table-striped">
 
                 <!-- Texto con el contenido -->
                 <caption class="tbl-capt">Notificación de citas</caption>
                 
+                {% include 'errors_recordatorios.html' %}
+
                 {% if numregsemail > 0 or numregstelef > 0 %}
                     <tr>
                         <th colspan="2" class="field-errors">
@@ -36,14 +41,12 @@
                         <td class="tbl-td-40">Por e-mail: {{ numregsemail }}</td>
                         <td class="tbl-td-40">Por teléfono: {{ numregstelef }}</td>
                     </tr>
-                    <form method="POST">
-                        {% csrf_token %}
-                        <tr>
-                            <td colspan="2">Notificar citas con {{ form.day }} días de antelación.</td>
-                       </tr>
-                        <tr>
-                            <td colspan="2">Notificar también las de los días intermedios: {{ form.interdays }}</td>
-                        </tr>
+                    <tr>
+                        <td colspan="2">Notificar citas con {{ form.day }} días de antelación.</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Notificar también las de los días intermedios: {{ form.untilday }}</td>
+                    </tr>
                 {% else %}
                     <tr>
                         <th class="tbl-td-centro">{{ mensaje }}</th>
@@ -63,6 +66,7 @@
                         <button type="button" class="btn btn-info">Volver</button>
                     </a>
                 </div>
+
             </form>
 
         </section>
