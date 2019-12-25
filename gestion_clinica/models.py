@@ -112,6 +112,7 @@ class Proveedor(models.Model):
 
     idProveedor = models.AutoField(primary_key = True, unique = True)                            
     fullname = models.CharField("Nombre Empresa", max_length = 100)
+    area = models.CharField("Area/Ambito", max_length = 150, blank = True)
     fulladdress = models.CharField("Dirección", max_length = 250)    
     nif = models.CharField("NIF", max_length = 25, blank = True)                      
     owner = models.CharField("Propietario", blank = True, max_length = 25)
@@ -141,7 +142,7 @@ class Proveedor(models.Model):
         return self.fullname
 
     def get_absolute_url(self):
-        return reverse('id-equipamiento', args=[self.idProveedor])
+        return reverse('id-proveedores', args=[self.idProveedor])
 
     class Meta:
         verbose_name = 'Proveedor'

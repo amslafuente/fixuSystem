@@ -12,7 +12,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic import CreateView, TemplateView, DeleteView
 from django.views import View
 from django.contrib import messages
-from .models import Clinica, Profesional, Consultorio, Equipamiento
+from .models import Clinica, Profesional, Consultorio, Equipamiento, Proveedor
 from .forms import init_edit_info_clinica_form, create_edit_consultorios_form, create_edit_equipamiento_form
 import os
 from pathlib import Path
@@ -408,7 +408,7 @@ class listado_equipamiento_view(ListView):
         if kwarg_filter == 'todos':
             qs = Equipamiento.objects.all().order_by('equipDesc')
         else:
-            qs = Equipamiento.objects.filter(equipType__istartswith = kwarg_filter).order_by('equipDesc')
+            qs = Equipamiento.objects.filter(equipType__icontains = kwarg_filter).order_by('equipDesc')
 
         # Condit
         if kwarg_condition != '':
@@ -454,6 +454,7 @@ class customTipoWidget(widgets.Select):
 
 # Form que muestra el customwidget
 class customTipoForm(forms.Form):
+
     filter_ = fields.CharField(label = 'Filtro', widget = customTipoWidget())
     condition = fields.CharField(label = 'Condición', required = False, max_length = 10)
     condition.widget = widgets.TextInput(attrs={'style': 'width: 80px'})
@@ -564,6 +565,97 @@ class delete_equipamiento_view(DeleteView):
 class error_equipamiento_usuario_view(TemplateView):
 
     template_name = 'error_equipamiento_usuario_tpl.html'
+
+##################################################
+#                   PROVEEDORES                  #
+##################################################
+
+##### ID DE PROVEEDORES #####
+
+@method_decorator(login_required, name='dispatch')
+class id_proveedores_view(DetailView):
+
+    model = Proveedor
+    context_object_name = 'proveedores'
+    pk_url_kwarg = 'idProveedor'
+    template_name = 'id_proveedores_tpl.html'
+
+    def get_queryset(self, **kwargs):
+
+        # Extrae el equipo en cuestion
+        qs = Proveedor.objects.filter(idProveedor__exact = self.kwargs['idProveedor'])
+        return qs
+
+##### LISTADO DE PROVEEDORES #####
+
+@method_decorator(login_required, name='dispatch')
+class listado_proveedores_view(ListView):
+    
+    model = Proveedor
+    context_object_name = 'proveedores'
+    paginate_by = 20
+    template_name = 'listado_proveedores_tpl.html'
+ 
+    def get_queryset(self):
+
+        qs = super().get_queryset()
+
+        # Extrae registros del GET o los pone por defecto
+        kwarg_filtername = (self.request.GET.get('filtername') or '').lower()
+        kwarg_filterarea = (self.request.GET.get('filterarea') or '').lower()
+        kwarg_orderby = (self.request.GET.get('orderby') or '')
+
+       # Fullname
+        if kwarg_filtername == '':
+            qs = Proveedor.objects.all().order_by('fullname')
+        else:
+            qs = Proveedor.objects.filter(fullname__icontains = kwarg_filtername).order_by('fullname')
+
+        # Area
+        if kwarg_filterarea != '':
+            qs = qs.filter(area__icontains = kwarg_filterarea)
+        
+         # OrderBy
+        if kwarg_orderby != '':
+            qs = qs.order_by(kwarg_orderby)
+
+        return qs
+
+    def get_context_data(self, **kwargs):
+
+        # Pasa el form y el contexto
+        ctx = super().get_context_data(**kwargs)
+
+        filterform = customProveedorForm(self.request.GET) or customProveedorForm()
+        ctx['form'] = filterform
+
+        # Obtiene el filtro y condicion actual del GET   
+        ctx['filtername'] = (self.request.GET.get('filtername') or '').lower()
+        ctx['filterarea'] = (self.request.GET.get('filterarea') or '').lower()
+        ctx['orderby'] = (self.request.GET.get('orderby') or '')
+
+        return ctx
+
+# Form que muestra la ordenacion
+class customProveedorForm(forms.Form):
+
+    filtername = fields.CharField(label = 'Empresa', required = False, max_length = 10)
+    filtername.widget = widgets.TextInput(attrs={'style': 'width: 80px'})
+    filterarea = fields.CharField(label = 'Area', required = False, max_length = 10)
+    filterarea.widget = widgets.TextInput(attrs={'style': 'width: 80px'})
+ 
+@method_decorator(login_required, name='dispatch')
+class edit_proveedores_view(UpdateView):
+    pass
+
+@method_decorator(login_required, name='dispatch')
+class delete_proveedores_view(DeleteView):
+    pass
+
+
+
+
+
 
 #############################################################
 

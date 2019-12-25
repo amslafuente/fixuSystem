@@ -78,6 +78,7 @@ TEMPLATES = [
                 'gestion_login/templates',
                 'gestion_pacientes/templates',                
                 'gestion_clinica/templates',
+                'gestion_clinica/templates/proveedores',
                 'gestion_citas/templates',
                 'gestion_consultas/templates',
                 'estadisticas/templates',

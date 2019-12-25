@@ -42,7 +42,13 @@ urlpatterns = [
     path('equipamiento/borrar/<int:idEquipamiento>/', views.delete_equipamiento_view.as_view(), name = 'delete-equipamiento'),
     # Error si trata de un usuario NO STAFF
     path('equipamiento/error-usuario/', views.error_equipamiento_usuario_view.as_view(), name = 'error-equipamiento-usuario'),
-
+    
+    # Proveedores
+    path('proveedores/<int:idProveedor>/', views.id_proveedores_view.as_view(), name = 'id-proveedores'),
+    path('proveedores/listado/', views.listado_proveedores_view.as_view(), name = 'listado-proveedores'),
+    path('proveedores/modificar/<int:Proveedor>/', views.edit_proveedores_view.as_view(), name = 'edit-proveedores'),
+    path('proveedores/borrar/<int:idProveedor>/', views.delete_proveedores_view.as_view(), name = 'delete-proveedores'),
+ 
 
 
 

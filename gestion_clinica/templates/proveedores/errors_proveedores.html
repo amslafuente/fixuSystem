@@ -1,0 +1,21 @@
+
+<!-- Errores en el form -->
+{{ form.non_field_errors }}
+
+<!-- Error en la identif del consultorio -->
+{% if form.officeID.errors %}
+<tr>
+    <th colspan="4" class ="field-errors">
+        {% for error in form.officeID.errors %}
+            {{ form.officeID.label }} : {{ error }}
+        {% endfor %}
+    </th>
+</tr>
+{% endif %}
+
+<!-- Si hay mensajes pendientes -->
+{% for message in messages %}
+    <th colspan="4" style="text-align: center; font-family: serif; font-variant: small-caps; padding: 5px; color: white; background-color: rgb(224, 89, 36);">
+        {{ message }}
+    </th>
+{% endfor %}
