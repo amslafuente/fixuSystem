@@ -14,6 +14,7 @@ from django.views import View
 from django.contrib import messages
 from .models import Clinica, Profesional, Consultorio, Equipamiento, Proveedor
 from .forms import init_edit_info_clinica_form, create_edit_consultorios_form, create_edit_equipamiento_form
+from .forms import create_edit_proveedores_form
 import os
 from pathlib import Path
 from django.conf import settings
@@ -127,7 +128,7 @@ class init_clinica_view(View):
 
         # Si el usuario no es superuser no permite acceder a los datos de la clinica
         if not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('error-init-usuario'))
+            return HttpResponseRedirect(reverse('error-privilegios'))
 
         # Si ya existe un registro avisa de que solo se puede editar, no crear
         elif qs_count > 0:
@@ -148,9 +149,9 @@ class init_clinica_view(View):
 
 # Error si el usuario NO ES SUPERUSUARIO
 @method_decorator(login_required, name='dispatch')
-class error_init_usuario_view(TemplateView):
+class error_privilegios_view(TemplateView):
 
-    template_name = 'error_init_usuario_tpl.html'
+    template_name = 'error_privilegios_tpl.html'
 
 # Error si ya existe un registro y se pretende crear otro
 @method_decorator(login_required, name='dispatch')
@@ -176,7 +177,7 @@ class edit_info_clinica_view(UpdateView):
 
         # Si no es superusuario no permite acceder a los datos de clinica
         if not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('error-init-usuario'))
+            return HttpResponseRedirect(reverse('error-privilegios'))
         else:
             return super().get(request, *args, **kwargs)
 
@@ -309,7 +310,7 @@ class create_consultorios_view(CreateView):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) and (not request.user.is_staff):
-            return HttpResponseRedirect(reverse('error-consultorios-usuario'))
+            return HttpResponseRedirect(reverse('error-privilegios'))
 
         return super().get(request)
 
@@ -328,7 +329,7 @@ class edit_consultorios_view(UpdateView):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) or (not request.user.is_staff):
-            return HttpResponseRedirect(reverse('error-consultorios-usuario'))
+            return HttpResponseRedirect(reverse('error-privilegios'))
 
         return super().get(request)
 
@@ -354,7 +355,7 @@ class delete_consultorios_view(DeleteView):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) or (not request.user.is_staff):
-            return HttpResponseRedirect(reverse('error-consultorios-usuario'))
+            return HttpResponseRedirect(reverse('privilegios'))
 
         return super().get(request)
 
@@ -462,6 +463,8 @@ class customTipoForm(forms.Form):
     ctrl.widget = widgets.TextInput(attrs={'style': 'width: 80px'})
     ctrl.widget = widgets.Select(attrs={'style': 'width: 80px'}, choices=[('', ''), ('oper', 'Oper'), ('stock', 'Stock')])
 
+##### CREACION Y EDICION DE EQUIPAMIENTO #####
+
 @method_decorator(login_required, name='dispatch')
 class create_equipamiento_view(CreateView):
 
@@ -507,7 +510,7 @@ class create_equipamiento_view(CreateView):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) and (not request.user.is_staff):
-            return HttpResponseRedirect(reverse('error-equipamiento-usuario'))
+            return HttpResponseRedirect(reverse('error-privilegios'))
 
         return super().get(request)
 
@@ -552,7 +555,7 @@ class edit_equipamiento_view(UpdateView):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) or (not request.user.is_staff):
-            return HttpResponseRedirect(reverse('error-consultorios-usuario'))
+            return HttpResponseRedirect(reverse('error-privilegios'))
 
         return super().get(request)
 
@@ -640,13 +643,90 @@ class listado_proveedores_view(ListView):
 class customProveedorForm(forms.Form):
 
     filtername = fields.CharField(label = 'Empresa', required = False, max_length = 10)
-    filtername.widget = widgets.TextInput(attrs={'style': 'width: 80px'})
+    filtername.widget = widgets.TextInput(attrs={'style': 'width: 100px'})
     filterarea = fields.CharField(label = 'Area', required = False, max_length = 10)
-    filterarea.widget = widgets.TextInput(attrs={'style': 'width: 80px'})
- 
+    filterarea.widget = widgets.TextInput(attrs={'style': 'width: 100px'})
+
+##### CREACION Y EDICION DE PROVEEDORES #####
+
+@method_decorator(login_required, name='dispatch')
+class create_proveedores_view(CreateView):
+
+    model = Proveedor
+    context_object_name = 'proveedores'
+    pk_url_kwarg = 'idProveedor'
+    form_class = create_edit_proveedores_form
+    template_name = 'create_proveedores_tpl.html'
+    
+    # Formulario correcto
+    def form_valid(self, form):
+
+        proveedor = form.save(commit = False)
+
+        # Los campos firstupdated y lastupdated se añaden solos
+
+        # Se pone modifiedby
+        if str(self.request.user) != 'AmonymousUser':
+            proveedor.modifiedby = str(self.request.user)
+        else:
+            proveedor.modifiedby = 'unix:' + str(self.request.META['USERNAME'])
+
+        # Limpia y guarda el registro
+        proveedor.save()
+
+        # Regresa a mostrar el listado de equipamiento
+        return HttpResponseRedirect(reverse('listado-proveedores'))
+
+    def form_invalid(self, form):
+        messages.warning(self.request, 'Errores en el formulario.')
+        return super().form_invalid(form)
+
+    # GET al llamar a la view
+    def get(self, request):
+
+        # Si el usuario no es o staff no permite acceder a los datos de la clinica
+        if (not request.user.is_superuser) and (not request.user.is_staff):
+            return HttpResponseRedirect(reverse('error-privilegios'))
+
+        return super().get(request)
+
 @method_decorator(login_required, name='dispatch')
 class edit_proveedores_view(UpdateView):
-    pass
+
+    model = Proveedor
+    context_object_name = 'proveedores'
+    pk_url_kwarg = 'idProveedor'
+    form_class = create_edit_proveedores_form
+    template_name = 'edit_proveedores_tpl.html'
+
+    # Formulario correcto
+    def form_valid(self, form):
+
+        proveedor = form.save(commit = False)
+
+        # Los campos firstupdated y lastupdated se añaden solos
+
+        # Se pone modifiedby
+        if str(self.request.user) != 'AmonymousUser':
+            proveedor.modifiedby = str(self.request.user)
+        else:
+            proveedor.modifiedby = 'unix:' + str(self.request.META['USERNAME'])
+
+        # Limpia y guarda el registro
+        proveedor.save()
+
+        # Regresa a mostrar el listado de equipamiento
+        return HttpResponseRedirect(reverse('id-proveedores', args=[proveedor.idProveedor]))
+
+    # GET al llamar a la view
+    def get(self, request, **kwargs):
+
+        # Si el usuario no es o staff no permite acceder a los datos de la clinica
+        if (not request.user.is_superuser) or (not request.user.is_staff):
+            return HttpResponseRedirect(reverse('error-privilegios'))
+
+        return super().get(request)
+
 
 @method_decorator(login_required, name='dispatch')
 class delete_proveedores_view(DeleteView):

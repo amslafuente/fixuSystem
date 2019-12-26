@@ -1,8 +1,8 @@
 ########## Forms de gestion_clinica ##########
 
 from django import forms
-from django.forms import ModelForm, Textarea, TextInput, NumberInput, Select
-from .models import Clinica, Consultorio, Equipamiento
+from django.forms import ModelForm, Textarea, TextInput, NumberInput, Select, EmailInput
+from .models import Clinica, Consultorio, Equipamiento, Proveedor
 from django.conf import settings
 
 ###############################################################################
@@ -58,4 +58,31 @@ class create_edit_equipamiento_form(forms.ModelForm):
             'stocklimit': NumberInput(attrs={'style': 'width: 85px', 'min': 0, 'max': 99999}),
             'stockavail': NumberInput(attrs={'style': 'width: 85px', 'min': 0, 'max': 99999}),
             'notes': Textarea(attrs={'cols': 57, 'rows': 2})
+            }
+
+###############################################################################
+
+# Form para crear proveedores
+
+class create_edit_proveedores_form(forms.ModelForm):
+
+    class Meta:
+        model = Proveedor
+        exclude = ['firstupdated', 'lastupdated', 'modifiedby']
+        widgets = {
+            'fullname': TextInput(attrs={'style': 'width: 320px'}),
+            'area': TextInput(attrs={'style': 'width: 224px'}),
+            'owner': TextInput(attrs={'style': 'width: 320px'}),
+            'nif': TextInput(attrs={'style': 'width: 224px'}),
+            'fulladdress': TextInput(attrs={'style': 'width: 710px'}),
+            'contactManufact': TextInput(attrs={'style': 'width: 686px'}),
+            'phoneManufact': NumberInput(attrs={'style': 'width: 120px', 'min': 0, 'max': 999999999}),
+            'emailManufact': EmailInput(attrs={'style': 'width: 300px'}),
+            'contactProveedor': TextInput(attrs={'style': 'width: 686px'}),
+            'phoneProveedor': NumberInput(attrs={'style': 'width: 122px', 'min': 0, 'max': 999999999}),
+            'emailProveedor': EmailInput(attrs={'style': 'width: 302px'}),
+            'contactSAT': TextInput(attrs={'style': 'width: 686px'}),
+            'phoneSAT': NumberInput(attrs={'style': 'width: 135px', 'min': 0, 'max': 999999999}),
+            'emailSAT': EmailInput(attrs={'style': 'width: 315px'}),
+            'notas': Textarea(attrs={'cols': 82, 'rows': 2})
             }

@@ -117,17 +117,17 @@ class Proveedor(models.Model):
     nif = models.CharField("NIF", max_length = 25, blank = True)                      
     owner = models.CharField("Propietario", blank = True, max_length = 25)
     
-    isManufact = models.BooleanField("Es fabricante", default = True)
+    isManufact = models.BooleanField("Es fabricante", default = False)
     phoneManufact = models.PositiveIntegerField("Teléfono", blank = True, null = True)
     contactManufact = models.CharField('Persona de contacto', max_length = 100, blank = True)
     emailManufact = models.EmailField('Correo electrónico', max_length = 75, blank = True)
 
-    isProveedor = models.BooleanField("Es proveedor", default = True)
+    isProveedor = models.BooleanField("Es proveedor", default = False)
     phoneProveedor = models.PositiveIntegerField("Teléfono", blank = True, null = True) 
     contactProveedor = models.CharField('Persona de contacto', max_length = 100, blank = True)
     emailProveedor = models.EmailField('Correo electrónico', max_length = 75, blank = True)   
     
-    IsSAT = models.BooleanField("Es SAT", default = True)
+    isSAT = models.BooleanField("Es SAT", default = False)
     phoneSAT = models.PositiveIntegerField("Teléfono fabricante", blank = True, null = True)
     contactSAT = models.CharField('Persona de contacto', max_length = 100, blank = True)
     emailSAT = models.EmailField('Correo electrónico', max_length = 75, blank = True)   

@@ -18,7 +18,7 @@ urlpatterns = [
     # Error si trata de crear mas de una clinica
     path('error-iniciar/', views.error_init_clinica_view.as_view(), name = 'error-init-clinica'),
     # Error si trata de un usuario NO SUPERUSER
-    path('error-usuario/', views.error_init_usuario_view.as_view(), name = 'error-init-usuario'),
+    path('error-privilegios/', views.error_privilegios_view.as_view(), name = 'error-privilegios'),
 
     ##### Instalaciones y servicios #####
 
@@ -31,22 +31,19 @@ urlpatterns = [
     path('consultorios/nuevo/', views.create_consultorios_view.as_view(), name = 'create-consultorios'),
     path('consultorios/modificar/<int:idConsultorio>/', views.edit_consultorios_view.as_view(), name = 'edit-consultorios'),
     path('consultorios/borrar/<int:idConsultorio>/', views.delete_consultorios_view.as_view(), name = 'delete-consultorios'),
-    # Error si trata de un usuario NO STAFF
-    path('consultorios/error-usuario/', views.error_consultorios_usuario_view.as_view(), name = 'error-consultorios-usuario'),
-
+   
      # Equipamiento
     path('equipamiento/<int:idEquipamiento>/', views.id_equipamiento_view.as_view(), name = 'id-equipamiento'),
     path('equipamiento/listado/', views.listado_equipamiento_view.as_view(), name = 'listado-equipamiento'),
     path('equipamiento/nuevo/', views.create_equipamiento_view.as_view(), name = 'create-equipamiento'),
     path('equipamiento/modificar/<int:idEquipamiento>/', views.edit_equipamiento_view.as_view(), name = 'edit-equipamiento'),
     path('equipamiento/borrar/<int:idEquipamiento>/', views.delete_equipamiento_view.as_view(), name = 'delete-equipamiento'),
-    # Error si trata de un usuario NO STAFF
-    path('equipamiento/error-usuario/', views.error_equipamiento_usuario_view.as_view(), name = 'error-equipamiento-usuario'),
     
     # Proveedores
     path('proveedores/<int:idProveedor>/', views.id_proveedores_view.as_view(), name = 'id-proveedores'),
     path('proveedores/listado/', views.listado_proveedores_view.as_view(), name = 'listado-proveedores'),
-    path('proveedores/modificar/<int:Proveedor>/', views.edit_proveedores_view.as_view(), name = 'edit-proveedores'),
+    path('proveedores/nuevo/', views.create_proveedores_view.as_view(), name = 'create-proveedores'),
+    path('proveedores/modificar/<int:idProveedor>/', views.edit_proveedores_view.as_view(), name = 'edit-proveedores'),
     path('proveedores/borrar/<int:idProveedor>/', views.delete_proveedores_view.as_view(), name = 'delete-proveedores'),
  
 
