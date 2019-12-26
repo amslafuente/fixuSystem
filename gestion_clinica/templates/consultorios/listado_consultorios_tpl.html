@@ -79,9 +79,9 @@
                         <!-- Enlaces a abrir, editar y borrar consultorio -->
                         <td>
                             <div class="div-fechas">
-                                <a href={% url 'id-consultorios' consultorio.idConsultorio %}><input type="button" class="btn btn-info btn-sm" value="Ver"></a>&nbsp;
-                                <a href={% url 'edit-consultorios' consultorio.idConsultorio %}><input type="button" class="btn btn-info btn-sm" value="Editar"></a>&nbsp;
-                                <a href={% url 'delete-consultorios' consultorio.idConsultorio %}><input type="button" class="btn btn-danger btn-sm" value="Borrar"></a>&nbsp;
+                                <a href="{% url 'id-consultorios' consultorio.idConsultorio %}"><input type="button" class="btn btn-info btn-sm" value="Ver"></a>&nbsp;
+                                <a href="{% url 'edit-consultorios' consultorio.idConsultorio %}"><input type="button" class="btn btn-info btn-sm" value="Editar"></a>&nbsp;
+                                <a href="{% url 'delete-consultorios' consultorio.idConsultorio %}"><input type="button" class="btn btn-danger btn-sm" value="Borrar"></a>&nbsp;
                             </div>
                         </td>
                    </tr>
@@ -96,8 +96,8 @@
 
     	<!-- Botones de acción -->
         <div class="div-botones">
-            <a href={% url 'create-consultorios' %}><input type="button" class="btn btn-info" value="Nuevo consultorio"></a>
-		    <a href={% url 'menu-clinica' %}><input type="button" class="btn btn-info" value="Menu de clínica"></a>
+            <a href="{% url 'create-consultorios' %}"><input type="button" class="btn btn-info" value="Nuevo consultorio"></a>
+		    <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
         </div>
 
         </section>

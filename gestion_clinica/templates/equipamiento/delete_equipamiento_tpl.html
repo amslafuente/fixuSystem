@@ -43,26 +43,27 @@
                 <table class="tbl-general tbl-forms tbl-40 table-striped">
 
                     <!-- Texto con el contenido -->
-                    <caption class="tbl-capt">Borrar consultorio/dependencia</caption>
-
-                    <!-- Errores en el form -->
-                    {% include 'errors_consultorios.html' %}
+                    <caption class="tbl-capt">Borrar equipamiento/material</caption>
 
                     <!-- Datos personales -->
 		   	        <tr>
 	    		        <th class="tbl-th" colspan="2">¿ Confirma el borrado ?</th>
                     </tr>
                     <tr>
-        			    <td class="tbl-td-40">Denom./Identif.:</td><td>{{ consultorios.officeID }}</td>
+        			    <td class="tbl-td-50">Denom./Identif.:</td><td>{{ equipamientos.equipID }}</td>
                     </tr>
                     <tr>
-            		    <td class="tbl-td-40">Descripción:</td><td>{{ consultorios.officeDesc }}</td>
+            		    <td class="tbl-td-50">Descripción:</td><td>{{ equipamientos.equipDesc }}</td>
                     </tr>
+                    <tr>
+            		    <td class="tbl-td-50">Tipo:</td><td>{{ equipamientos.equipType|upper }}</td>
+                    </tr>
+
 	            	<tr>
-		    		    <td class="tbl-td-40">Situación (edif./planta):</td><td>{{ consultorios.officeLocation }}</td>
+		    		    <td class="tbl-td-50">Situación (edif./planta):</td><td>{{ equipamientos.fk_Location }}</td>
                     </tr>
                     <tr>
-			    	    <td class="tbl-td-40">Departamento:</td><td>{{ consultorios.officeDepartment }}
+			    	    <td class="tbl-td-50">Departamento:</td><td>{{ equipamientos.equipDepartment }}
                     </tr>
         		</table>
 

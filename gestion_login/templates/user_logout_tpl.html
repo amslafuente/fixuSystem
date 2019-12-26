@@ -46,7 +46,7 @@
                         <form method="post">
 		                    {% csrf_token %}
 				            <input type="submit" class="btn btn-info" value="Desconectar">
-				            <a href={% url 'home-page' %}><input type="button" class="btn btn-info" value="Cancelar"></a>
+				            <a href="{% url 'home-page' %}"><input type="button" class="btn btn-info" value="Cancelar"></a>
 	                    </form>
                     </div>
                 </td>

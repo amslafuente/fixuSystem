@@ -1,8 +1,3 @@
-
-<!-- ************************ -->
-<!--   create_citas_grid_tpl  -->
-<!-- ************************ -->
-
 {% extends 'base.html' %}
 
     <!-- **************** -->
@@ -79,8 +74,8 @@
             	<!-- Botones de acción -->
                 <div class="div-botones">
 		        	<input type="submit" class="btn btn-info" value="Aceptar">
-                    <a href={% url 'citas-hoy' %}><input type="button" class="btn btn-info" value="Citas para hoy"></a>
-                    <a href={% url 'menu-citas' %}><input type="button" class="btn btn-info" value="Menu de citas"></a>
+                    <a href="{% url 'citas-hoy' %}"><input type="button" class="btn btn-info" value="Citas para hoy"></a>
+                    <a href="{% url 'menu-citas' %}"><input type="button" class="btn btn-info" value="Menu de citas"></a>
                 </div>
             </form>
 

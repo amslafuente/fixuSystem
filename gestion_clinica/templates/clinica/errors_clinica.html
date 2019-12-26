@@ -1,6 +1,5 @@
-<!-- ************************************
-ERRORES DE LOS CAMPOS DEL MODELO CLINICA
-************************************* -->
+<!-- Errores en el form -->
+{{ form.non_field_errors }}
 
 <!-- Si hay mensajes pendientes -->
 {% for message in messages %}
@@ -9,5 +8,3 @@ ERRORES DE LOS CAMPOS DEL MODELO CLINICA
     </th>
 {% endfor %}
 
-<!-- Errores en el form -->
-{{ form.non_field_errors }}

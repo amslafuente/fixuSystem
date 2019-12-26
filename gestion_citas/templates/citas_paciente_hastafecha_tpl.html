@@ -1,8 +1,3 @@
-
-<!-- ******************************** -->
-<!--   citas_paciente_desdefecha_tpl  -->
-<!-- ******************************** -->
-
 {% extends 'base.html' %}
 
     <!-- **************** -->
@@ -119,11 +114,11 @@
 
     	<!-- Botones de acción -->
         <div class="div-botones">
-            <a href={% url 'citas-paciente-desdefecha' idPaciente desde_fecha %}><input type="button" class="btn btn-info" value="Citas pendientes"></a>
-            <a href={% url 'citas-paciente-todas' idPaciente %}><input type="button" class="btn btn-info" value="Todas las citas"></a>
-            <a href={% url 'menu-pacientes' %}><input type="button" class="btn btn-info" value="Menu de pacientes"></a>
-            <a href={% url 'menu-citas' %}><input type="button" class="btn btn-info" value="Menu de citas"></a>
-            <a href={% url 'citas-dia-grid' idPaciente fecha_cita %}><input type="button" class="btn btn-danger" value="Nueva cita"></a>
+            <a href="{% url 'citas-paciente-desdefecha' idPaciente desde_fecha %}"><input type="button" class="btn btn-info" value="Citas pendientes"></a>
+            <a href="{% url 'citas-paciente-todas' idPaciente %}"><input type="button" class="btn btn-info" value="Todas las citas"></a>
+            <a href="{% url 'menu-pacientes' %}"><input type="button" class="btn btn-info" value="Menu de pacientes"></a>
+            <a href="{% url 'menu-citas' %}"><input type="button" class="btn btn-info" value="Menu de citas"></a>
+            <a href="{% url 'citas-dia-grid' idPaciente fecha_cita %}"><input type="button" class="btn btn-danger" value="Nueva cita"></a>
         </div>
 
         </section>

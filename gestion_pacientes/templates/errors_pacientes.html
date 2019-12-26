@@ -1,14 +1,3 @@
-<!-- ************************************
-ERRORES DE LOS CAMPOS DEL MODELO PACIENTE
-************************************* -->
-
-<!-- Si hay mensajes pendientes -->
-{% for message in messages %}
-    <th colspan="6" style="text-align: center; font-family: serif; font-variant: small-caps; padding: 5px; color: white; background-color: rgb(224, 89, 36);">
-        {{ message }}
-    </th>
-{% endfor %}
-
 <!-- Errores en el form -->
 {{ form.non_field_errors }}
 
@@ -44,3 +33,10 @@ ERRORES DE LOS CAMPOS DEL MODELO PACIENTE
     </th>
 </tr>
 {% endif %}
+
+<!-- Si hay mensajes pendientes -->
+{% for message in messages %}
+    <th colspan="6" style="text-align: center; font-family: serif; font-variant: small-caps; padding: 5px; color: white; background-color: rgb(224, 89, 36);">
+        {{ message }}
+    </th>
+{% endfor %}

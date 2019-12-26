@@ -1,3 +1,7 @@
+<!-- ************************* -->
+<!--   delete_consultorio_tpl  -->
+<!-- ************************* -->
+
 {% extends 'base.html' %}
 
     <!-- **************** -->
@@ -6,8 +10,7 @@
 
     {% block JS %}
 
-
-    {% endblock JS %}
+    {% endblock %}
 
     <!-- **************** -->
     <!-- Título de página -->
@@ -40,51 +43,32 @@
                 <table class="tbl-general tbl-forms tbl-40 table-striped">
 
                     <!-- Texto con el contenido -->
-                    <caption class="tbl-capt">Nuevo consultorio/dependencia</caption>
+                    <caption class="tbl-capt">Borrar proveedor</caption>
 
                     <!-- Errores en el form -->
                     {% include 'errors_consultorios.html' %}
 
                     <!-- Datos personales -->
 		   	        <tr>
-	    		        <th class="tbl-th" colspan="4">Descripción</th>
+	    		        <th class="tbl-th" colspan="2">¿ Confirma el borrado ?</th>
                     </tr>
                     <tr>
-        			    <td class="tbl-td-20">Denom./Identif.:</td><td colspan="3">{{ form.officeID.as_widget }}</td>
+        			    <td class="tbl-td-40">Denom./Identif.:</td><td>{{ consultorios.officeID }}</td>
                     </tr>
                     <tr>
-            		    <td class="tbl-td-20">Descripción:</td><td colspan="3">{{ form.officeDesc.as_widget }}</td>
-                    </tr>
-		   	        <tr>
-	    		        <th class="tbl-th" colspan="4">Situación y disponibilidad</th>
+            		    <td class="tbl-td-40">Descripción:</td><td>{{ consultorios.officeDesc }}</td>
                     </tr>
 	            	<tr>
-		    		    <td class="tbl-td-20">Situación (edif./planta):</td><td colspan="3">{{ form.officeLocation.as_widget }}</td>
+		    		    <td class="tbl-td-40">Situación (edif./planta):</td><td>{{ consultorios.officeLocation }}</td>
                     </tr>
                     <tr>
-			    	    <td class="tbl-td-20">Departamento:</td><td colspan="3">{{ form.officeDepartment.as_widget }}
+			    	    <td class="tbl-td-40">Departamento:</td><td>{{ consultorios.officeDepartment }}
                     </tr>
-	    		    <tr>
-                        <td class="tbl-td">Teléfono:</td><td>{{ form.officePhone.as_widget }}
-
-                        <td class="tbl-td">Operativo:</td><td>{{ form.officeIsavail.as_widget }}</td>
-
-       				</tr>
-		   	        <tr>
-	    		        <th class="tbl-th" colspan="4">Equipamiento y notas</th>
-                    </tr>
-                    <tr>
-                        <td class="tbl-td-20">Equipamiento:</td><td colspan="3">{{ form.officeEquipment.as_widget }}
-   			    	</tr>
-	    		    <tr>
-                        <td class="tbl-td-20">Notas:</td><td colspan="3">{{ form.officeNotes.as_widget }}
-   			    	</tr>
-
         		</table>
 
     	    	<!-- Botones -->
                 <div class="div-botones">
-		        	<input type="submit" class="btn btn-info" value="Aceptar">
+		        	<input type="submit" class="btn btn-danger" value="Confirmar borrado">
 	    	    	<a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
                 </div>
 

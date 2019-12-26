@@ -17,5 +17,4 @@ def get_datos_clinica(request):
         clinica['clinica'] = Clinica.objects.first()
     except:
         clinica['clinica'] = None
-    # Devuelve una variable para pasar al contexto
     return clinica

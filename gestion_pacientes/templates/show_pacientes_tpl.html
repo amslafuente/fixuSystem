@@ -64,10 +64,10 @@
                         <!-- Enlaces a abrir, edit y crear cita -->
                         <td>
                             <div class="div-fechas">
-                                <a href={% url 'id-pacientes' paciente.idPaciente %}><input type="button" class="btn btn-info btn-sm" value="Abrir"></a>&nbsp;
-                                <a href={% url 'edit-id-pacientes' paciente.idPaciente %}><input type="button" class="btn btn-info btn-sm" value="Editar"></a>&nbsp;
-                                <a href={% url 'citas-paciente-desdefecha' paciente.idPaciente desde_fecha %}><input type="button" class="btn btn-info btn-sm" value="Citas"></a>&nbsp;
-                                <a href={% url 'menu-pacientes' %}><input type="button" class="btn btn-info btn-sm" value="Consultas"></a>
+                                <a href="{% url 'id-pacientes' paciente.idPaciente %}"><input type="button" class="btn btn-info btn-sm" value="Abrir"></a>&nbsp;
+                                <a href="{% url 'edit-id-pacientes' paciente.idPaciente %}"><input type="button" class="btn btn-info btn-sm" value="Editar"></a>&nbsp;
+                                <a href="{% url 'citas-paciente-desdefecha' paciente.idPaciente desde_fecha %}"><input type="button" class="btn btn-info btn-sm" value="Citas"></a>&nbsp;
+                                <a href="{% url 'menu-pacientes' %}"><input type="button" class="btn btn-info btn-sm" value="Consultas"></a>
                             </div>
                         </td>
                    </tr>
@@ -78,11 +78,11 @@
         </table>
 
         <!-- Incluye PAGINADOR-->
-        {% include 'paginador.html' %}
+        {% include 'paginador_pacientes.html' %}
 
     	<!-- Botones de acción -->
         <div class="div-botones">
-		    <a href={% url 'menu-pacientes' %}><input type="button" class="btn btn-info" value="Menu de pacientes"></a>
+		    <a href="{% url 'menu-pacientes' %}"><input type="button" class="btn btn-info" value="Menu de pacientes"></a>
         </div>
 
         </section>

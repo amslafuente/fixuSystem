@@ -1,0 +1,45 @@
+<!-- PAGINADOR -->
+
+{% if is_paginated %}
+
+<p>
+    <ul style="background-color: transparent" class="pagination pagination-sm justify-content-center">
+
+        <!-- PAGINA PREVIA -->
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Prev.</a>
+            </li>
+        {% else %}
+            <li class="page-item">
+                <span class="page-link">Prev.</span>
+            </li>
+        {% endif %}
+
+        <!-- PAGINAS CENTRALES -->
+        {% for i in paginator.page_range %}
+            {% if page_obj.number == i %}
+                <span class="page-link">{{ i }}</span>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        <!-- PAGINA SIGUIENTE -->
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Sig.</a>
+            </li>
+        {% else %}
+            <li class="page-item">
+                <span class="page-link">Sig.</span>
+            </li>
+        {% endif %}
+
+    </ul>
+</p>
+
+{% endif %}
+

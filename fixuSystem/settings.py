@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'gestion_clinica',
     'gestion_citas',
     'gestion_consultas',
-    'estadisticas',
+    'fixu_estadisticas',
 ]
 
 MIDDLEWARE = [
@@ -84,7 +84,7 @@ TEMPLATES = [
                 'gestion_clinica/templates/proveedores',
                 'gestion_citas/templates',
                 'gestion_consultas/templates',
-                'estadisticas/templates',
+                'fixu_estadisticas/templates',
 
             ],
         'APP_DIRS': True,

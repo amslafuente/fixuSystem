@@ -1,8 +1,3 @@
-
-<!-- ********************* -->
-<!--   citas_diagrids_tpl  -->
-<!-- ********************* -->
-
 {% extends 'base.html' %}
 
     <!-- **************** -->
@@ -192,9 +187,9 @@
 
     	<!-- Botones de acción -->
         <div class="div-botones">
-            <a href={% url 'citas-hoy' %}><input type="button" class="btn btn-info" value="Citas para hoy"></a>
-            <a href={% url 'citas-dia' idPaciente ctx_dias.current_date_url %}><input type="button" class="btn btn-info" value="Modo lista"></a>
-            <a href={% url 'menu-citas' %}><input type="button" class="btn btn-info" value="Menu de citas"></a>
+            <a href="{% url 'citas-hoy' %}"><input type="button" class="btn btn-info" value="Citas para hoy"></a>
+            <a href="{% url 'citas-dia' idPaciente ctx_dias.current_date_url %}"><input type="button" class="btn btn-info" value="Modo lista"></a>
+            <a href="{% url 'menu-citas' %}"><input type="button" class="btn btn-info" value="Menu de citas"></a>
         </div>
 
         </section>

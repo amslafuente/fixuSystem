@@ -314,7 +314,6 @@ class create_consultorios_view(CreateView):
 
         return super().get(request)
 
-
 @method_decorator(login_required, name='dispatch')
 class edit_consultorios_view(UpdateView):
 
@@ -355,15 +354,9 @@ class delete_consultorios_view(DeleteView):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) or (not request.user.is_staff):
-            return HttpResponseRedirect(reverse('privilegios'))
+            return HttpResponseRedirect(reverse('error-privilegios'))
 
         return super().get(request)
-
-# Error si el usuario NO ES SUPERUSUARIO
-@method_decorator(login_required, name='dispatch')
-class error_consultorios_usuario_view(TemplateView):
-
-    template_name = 'error_consultorios_usuario_tpl.html'
 
 ##################################################
 #                   EQUIPAMIENTO                 #
@@ -432,7 +425,7 @@ class listado_equipamiento_view(ListView):
         # Pasa el form y el contexto
         ctx = super().get_context_data(**kwargs)
 
-        filterform = customTipoForm(self.request.GET) or customTipoForm()
+        filterform = customEquipamientoForm(self.request.GET) or customEquipamientoForm()
         ctx['form'] = filterform
 
         # Obtiene el filtro y condicion actual del GET   
@@ -444,7 +437,7 @@ class listado_equipamiento_view(ListView):
         return ctx
 
 # Widget de filtrado
-class customTipoWidget(widgets.Select):
+class customEquipamientoWidget(widgets.Select):
 
     def __init__(self, *args, **kwargs) :
         super().__init__(*args, **kwargs)
@@ -454,13 +447,12 @@ class customTipoWidget(widgets.Select):
         self.choices = list_choices
 
 # Form que muestra el customwidget
-class customTipoForm(forms.Form):
+class customEquipamientoForm(forms.Form):
 
-    filter_ = fields.CharField(label = 'Filtro', widget = customTipoWidget())
+    filter_ = fields.CharField(label = 'Filtro', widget = customEquipamientoWidget())
     condition = fields.CharField(label = 'Condición', required = False, max_length = 10)
     condition.widget = widgets.TextInput(attrs={'style': 'width: 80px'})
     ctrl = fields.CharField(label = 'Ctrl', required = False, max_length = 10)
-    ctrl.widget = widgets.TextInput(attrs={'style': 'width: 80px'})
     ctrl.widget = widgets.Select(attrs={'style': 'width: 80px'}, choices=[('', ''), ('oper', 'Oper'), ('stock', 'Stock')])
 
 ##### CREACION Y EDICION DE EQUIPAMIENTO #####
@@ -561,13 +553,28 @@ class edit_equipamiento_view(UpdateView):
 
 @method_decorator(login_required, name='dispatch')
 class delete_equipamiento_view(DeleteView):
-    pass
 
-# Error si el usuario NO ES SUPERUSUARIO
-@method_decorator(login_required, name='dispatch')
-class error_equipamiento_usuario_view(TemplateView):
+    model = Equipamiento
+    context_object_name = 'equipamientos'
+    pk_url_kwarg = 'idEquipamiento'
+    template_name = 'delete_equipamiento_tpl.html'
+    success_url = reverse_lazy('listado-equipamiento')
 
-    template_name = 'error_equipamiento_usuario_tpl.html'
+    def get_queryset(self):
+
+        # Extrae el consultorio en cuestion
+        qs = Equipamiento.objects.filter(idEquipamiento__exact = self.kwargs['idEquipamiento'])
+
+        return qs
+
+    # GET al llamar a la view
+    def get(self, request, **kwargs):
+
+        # Si el usuario no es o staff no permite acceder a los datos de la clinica
+        if (not request.user.is_superuser) or (not request.user.is_staff):
+            return HttpResponseRedirect(reverse('error-privilegios'))
+
+        return super().get(request)
 
 ##################################################
 #                   PROVEEDORES                  #
@@ -730,12 +737,28 @@ class edit_proveedores_view(UpdateView):
 
 @method_decorator(login_required, name='dispatch')
 class delete_proveedores_view(DeleteView):
-    pass
 
+    model = Proveedor
+    context_object_name = 'proveedores'
+    pk_url_kwarg = 'idProveedor'
+    template_name = 'delete_proveedores_tpl.html'
+    success_url = reverse_lazy('listado-proveedores')
 
+    def get_queryset(self):
 
+        # Extrae el consultorio en cuestion
+        qs = Proveedor.objects.filter(idProveedor__exact = self.kwargs['idProveedor'])
 
+        return qs
 
+    # GET al llamar a la view
+    def get(self, request, **kwargs):
+
+        # Si el usuario no es o staff no permite acceder a los datos de la clinica
+        if (not request.user.is_superuser) or (not request.user.is_staff):
+            return HttpResponseRedirect(reverse('error-privilegios'))
+
+        return super().get(request)
 
 #############################################################
 
