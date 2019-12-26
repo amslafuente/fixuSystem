@@ -1,0 +1,80 @@
+<!-- ************************* -->
+<!--   delete_consultorio_tpl  -->
+<!-- ************************* -->
+
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!--     Script JS    -->
+    <!-- **************** -->
+
+    {% block JS %}
+
+    {% endblock %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+    	<title>fixuSystem - Fisioterapia - Gestión de clínica</title>
+
+    {% endblock %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+		<!-- Menú principal con imágenes -->
+        <section class="sect-home-page-menu">
+
+            <!-- Formularion de nuevo consultorio -->
+            <!-- enctype="multipart/form-data se usa para poder subir imagenes binarias -->
+	        <form method="post">
+
+    	    	{% csrf_token %}
+
+             	<!-- Tabla del consultorio -->
+                <table class="tbl-general tbl-forms tbl-40 table-striped">
+
+                    <!-- Texto con el contenido -->
+                    <caption class="tbl-capt">Borrar equipamiento/material</caption>
+
+                    <!-- Datos personales -->
+		   	        <tr>
+	    		        <th class="tbl-th" colspan="2">¿ Confirma el borrado ?</th>
+                    </tr>
+                    <tr>
+        			    <td class="tbl-td-50">Denom./Identif.:</td><td>{{ equipamientos.equipID }}</td>
+                    </tr>
+                    <tr>
+            		    <td class="tbl-td-50">Descripción:</td><td>{{ equipamientos.equipDesc }}</td>
+                    </tr>
+                    <tr>
+            		    <td class="tbl-td-50">Tipo:</td><td>{{ equipamientos.equipType|upper }}</td>
+                    </tr>
+
+	            	<tr>
+		    		    <td class="tbl-td-50">Situación (edif./planta):</td><td>{{ equipamientos.fk_Location }}</td>
+                    </tr>
+                    <tr>
+			    	    <td class="tbl-td-50">Departamento:</td><td>{{ equipamientos.equipDepartment }}
+                    </tr>
+        		</table>
+
+    	    	<!-- Botones -->
+                <div class="div-botones">
+		        	<input type="submit" class="btn btn-danger" value="Confirmar borrado">
+	    	    	<a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
+                </div>
+
+	        </form>
+
+        </section>
+
+    {% endblock %}

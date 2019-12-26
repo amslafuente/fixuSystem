@@ -30,7 +30,7 @@
             <!-- Texto con el contenido -->
 	    	<caption class="tbl-capt">Listado de pacientes
                 {% if is_paginated %}
-                    <span> - Página {{ page_obj.number }}</span>
+                    <span> - Página {{ page_obj.number }} de {{ paginator.num_pages }}</span>
                 {% endif %}
             </caption>
 
@@ -78,11 +78,11 @@
         </table>
 
         <!-- Incluye PAGINADOR-->
-        {% include 'paginador.html' %}
+        {% include 'paginador_pacientes.html' %}
 
     	<!-- Botones de acción -->
         <div class="div-botones">
-		    <a href={% url 'menu-pacientes' %}><input type="button" class="btn btn-info" value="Menu de pacientes"></a>
+		    <a href="{% url 'menu-pacientes' %}"><input type="button" class="btn btn-info" value="Menu de pacientes"></a>
         </div>
 
         </section>

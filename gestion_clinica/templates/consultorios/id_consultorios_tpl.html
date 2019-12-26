@@ -1,7 +1,3 @@
-<!-- ********************** -->
-<!--   id_consultorio_tpl  -->
-<!-- ********************** -->
-
 {% extends 'base.html' %}
 
     <!-- **************** -->
@@ -37,7 +33,7 @@
             <table class="tbl-general tbl-forms tbl-40 table-striped">
 
                 <!-- Texto con el contenido -->
-                <caption class="tbl-capt">Consultorio: {{consultorios.officeID }}</caption>
+                <caption class="tbl-capt">Consultorio/Dependencia: {{consultorios.officeID }}</caption>
 
                 <!-- Datos personales -->
 		        <tr>
@@ -58,9 +54,9 @@
 	    		<tr>
                     <td class="tbl-td tbl-td-40">Teléfono:</td><td>{{ consultorios.officePhone }}</td>
                         {% if consultorios.officeIsavail %}
-                            <td class="tbl-td avail">Disponible:</td><td class="avail">Si</td>
+                            <td>Disponible:</td><td class="tbl-td-centro avail">Si</td>
                         {% else %}
-                            <td class="tbl-td not-avail">Disponible:</td><td class="not-avail">No</td>
+                            <td>Disponible:</td><td class="tbl-td-centro not-avail">No</td>
                         {% endif %}
 		   	    <tr>
 	    		    <th class="tbl-th" colspan="4">Equipamiento y notas</th>
@@ -76,9 +72,9 @@
 
     	    <!-- Botones -->
             <div class="div-botones">
-                <a href={% url 'listado-consultorios' %}><input type="button" class="btn btn-info" value="Aceptar"></a>
-	    	    <a href={% url 'menu-clinica' %}><input type="button" class="btn btn-info" value="Menu de clínica"></a>
-            </div
+                <a href="{% url 'listado-consultorios' %}"><input type="button" class="btn btn-info" value="Aceptar"></a>
+	    	    <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
+            </div>
 
         </section>
 

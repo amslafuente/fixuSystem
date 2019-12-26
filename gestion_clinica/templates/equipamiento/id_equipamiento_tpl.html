@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!--     Script JS    -->
+    <!-- **************** -->
+
+    {% block JS %}
+
+    {% endblock %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+    	<title>fixuSystem - Fisioterapia - Gestión de clínica</title>
+
+    {% endblock %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+		<!-- Menú principal con imágenes -->
+        <section class="sect-home-page-menu">
+
+            <!-- Tabla del consultorio -->
+            <table class="tbl-general tbl-forms tbl-60 table-striped">
+
+                <!-- Texto con el contenido -->
+                <caption class="tbl-capt">Equipamiento: ID: {{ equipamientos.idEquipamiento }} / {{ equipamientos.equipID }}</caption>
+
+                <!-- Descripción -->
+		        <tr>
+	                <th class="tbl-th" colspan="6">Descripción y localización</th>
+                </tr>
+                <tr>
+                    <td>Descripción:</td><td  class="tbl-60" colspan="2">{{ equipamientos.equipDesc }}</td>
+                    <td>Tipo equip.:</td><td colspan="2">{{ equipamientos.equipType|upper }}</td>
+                </tr>
+                <tr>
+			        <td>Departamento:</td><td colspan="2">{{ equipamientos.equipDepartment }}
+                    <td>Localización:</td><td colspan="2">{{ equipamiento.fk_Location|default_if_none:"Indet." }}</td>
+                </tr>                
+	              
+                <!-- Disponibilidad/Stock -->
+                <!-- Si hay control de stock no hay operatividad y viceversa -->
+                
+                <!-- Stock -->
+                {% if equipamientos.stockwarning %}
+                <tr>
+                    <th class="tbl-th" colspan="6">Control de Stock</th>
+                </tr>
+
+                <tr>
+                    <td colspan="6">
+                        <table class="tbl-in-tbl tbl-100">
+                            <tr>
+                                <th class="tbl-td-centro">Aviso de falta de material</th>
+                                <th class="tbl-td-centro">Límite del aviso</th>
+                                <th class="tbl-td-centro">Cantidad en stock</th>
+                            </tr>
+                            <tr>
+                                <td class="tbl-td-40 tbl-td-centro" style="vertical-align: middle;">Si - Actual: {{ equipamientos.stockratio }}% -
+                                    {% if equipamientos.stockavail == 0 %}
+                                        <progress class="stock-bar" style="background-color:red; vertical-align: middle;" max="{{ equipamientos.stocklimit }}" value="{{ equipamientos.stockavail }}"></progress>
+                                    {% else %}                                
+                                        <progress class="stock-bar" style="vertical-align: middle;" max="{{ equipamientos.stocklimit }}" value="{{ equipamientos.stockavail }}"></progress>
+                                    {% endif %}
+                                </td> 
+                                <td class="tbl-td-30 tbl-td-centro">{{ equipamientos.stocklimit }} unids.</td>
+                                <td class="tbl-tbl-td-30 tbl-td-centro">{{ equipamientos.stockavail }} unids.</td>                   
+               
+                            </tr>
+                        </table>
+                    </td>                    
+                </tr>
+                
+                    <!-- Disponibilidad -->
+                {% else %}
+                <tr>
+                    <th class="tbl-th" colspan="6">Control de Operatividad</th>
+                </tr>
+                <tr>
+                    <td class="tbl-td-centro" colspan="6"> Operativo:&nbsp;
+                        {% if equipamientos.equipIsavail %}
+                            <span class="tbl-td-centro avail">Si</span>
+                        {% else %}
+                            <span class="tbl-td-centro not-avail">No</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endif %}
+
+                <!-- Fabricantes -->
+                <tr>
+	    		    <th class="tbl-th" colspan="6">Fabricantes y proveedores</th>
+                </tr>
+                <tr>
+                    <td>Fabricante:</td><td class="tbl-td-30">
+                        {{ equipamientos.fk_Manufact|default_if_none:"Indet." }}
+                    </td>
+                    <td>Proveedor:</td><td  class="tbl-td-30">
+                        {{ equipamientos.fk_Proveedor|default_if_none:"Indet." }}
+                    </td>
+                    <td>S.A.T.:</td><td class="tbl-td-40">
+                        {{ equipamientos.fk_SAT|default_if_none:"Indet." }}
+                    </td>                     
+                </tr>
+                <tr>
+ 	    		    <th class="tbl-th" colspan="6">Notas</th>
+                </tr>
+ 	    		<tr>
+                    <td>Notas:</td><td colspan="5">{{ equipamientos.notes }}
+   			    </tr>
+
+        	</table>
+
+    	    <!-- Botones -->
+            <div class="div-botones">
+                <a href="{% url 'listado-equipamiento' %}"><input type="button" class="btn btn-info" value="Listado de equipamiento"></a>
+                <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
+            </div>
+
+        </section>
+
+    {% endblock %}

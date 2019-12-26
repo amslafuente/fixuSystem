@@ -1,7 +1,3 @@
-<!-- ******************* -->
-<!--   info_clinica_tpl  -->
-<!-- ******************* -->
-
 {% extends 'base.html' %}
 
     <!-- **************** -->
@@ -109,8 +105,8 @@
 
 		        <!-- Botones de acción -->
                 <div class="div-botones">
-                    <a href={% url 'edit-info-clinica' clinica.idClinica %}><input type="button" class="btn btn-info" value="Editar datos"></a>
-                    <a href={% url 'menu-clinica' %}><input type="button" class="btn btn-info" value="Menú de clinica"></a>
+                    <a href="{% url 'edit-info-clinica' clinica.idClinica %}"><input type="button" class="btn btn-info" value="Editar datos"></a>
+                    <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menú de clinica"></a>
                 </div>
 
     		{% else %}
@@ -126,8 +122,8 @@
 
 		        <!-- Botones de acción -->
                 <div class="div-botones">
-                    <a href={% url 'init-clinica' %}><input type="button" class="btn btn-info" value="Si"></a>
-                    <a href={% url 'home-page' %}><input type="button" class="btn btn-info" value="No"></a>
+                    <a href="{% url 'init-clinica' %}"><input type="button" class="btn btn-info" value="Si"></a>
+                    <a href="{% url 'home-page' %}"><input type="button" class="btn btn-info" value="No"></a>
                 </div>
 
             {% endif %}

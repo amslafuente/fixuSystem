@@ -162,10 +162,10 @@
 
 		        <!-- Botones de acción -->
                 <div class="div-botones">
-                    <a href={% url 'edit-id-pacientes' paciente.idPaciente %}><input type="button" class="btn btn-info" value="Editar"></a>
-                    <a href={% url 'citas-paciente-desdefecha' paciente.idPaciente desde_fecha %}><input type="button" class="btn btn-info" value="Citas"></a>
-                    <a href={% url 'menu-pacientes' %}><input type="button" class="btn btn-info" value="Consultas"></a>
-                    <a href={% url 'menu-pacientes' %}><input type="button" class="btn btn-info" value="Menu de pacientes"></a>
+                    <a href="{% url 'edit-id-pacientes' paciente.idPaciente %}"><input type="button" class="btn btn-info" value="Editar"></a>
+                    <a href="{% url 'citas-paciente-desdefecha' paciente.idPaciente desde_fecha %}"><input type="button" class="btn btn-info" value="Citas"></a>
+                    <a href="{% url 'menu-pacientes' %}"><input type="button" class="btn btn-info" value="Consultas"></a>
+                    <a href="{% url 'menu-pacientes' %}"><input type="button" class="btn btn-info" value="Menu de pacientes"></a>
                 </div>
 
     		{% endfor %}

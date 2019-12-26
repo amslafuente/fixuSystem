@@ -1,8 +1,3 @@
-
-<!-- ************************ -->
-<!--   create_citas_grid_tpl  -->
-<!-- ************************ -->
-
 {% extends 'base.html' %}
 
     <!-- **************** -->
@@ -51,7 +46,7 @@
                 <!-- Botones de acción -->
                 <div class="div-botones">
                     <a href="{{ next|safe }}"><input type="button" class="btn btn-info" value="Volver"></a>
-                    <a href={% url 'menu-citas' %}><input type="button" class="btn btn-info" value="Menú de citas"></a>
+                    <a href="{% url 'menu-citas' %}"><input type="button" class="btn btn-info" value="Menú de citas"></a>
                 </div>
 
             {% else %}
@@ -105,7 +100,7 @@
 		            	<input type="submit" class="btn btn-danger" value="Confirmar modificación">
                         <input type="hidden" name="next" value={{ next }}>
                         <a href="{{ next|safe }}"><input type="button" class="btn btn-info" value="Volver"></a>
-                        <a href={% url 'menu-citas' %}><input type="button" class="btn btn-info" value="Menú de citas"></a>
+                        <a href="{% url 'menu-citas' %}"><input type="button" class="btn btn-info" value="Menú de citas"></a>
                     </div>
                     
                 </form>

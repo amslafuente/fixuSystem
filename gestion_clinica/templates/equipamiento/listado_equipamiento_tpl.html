@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+		<title>fixuSystem - Fisioterapia  - Gestión de clínica</title>
+
+    {% endblock title %}
+
+    <!-- **************** -->
+    <!--        JS        -->
+    <!-- **************** -->
+
+    {% block JS %}
+
+        <script type="text/javascript">
+
+            // Limpia campos de filtro al pulsar un boton
+            function cleanType() {
+                document.getElementById('id_filter_').value = 'todos';
+            }
+            function cleanCondit() {
+                document.getElementById('id_condition').value = '';
+            }
+            function cleanCtrl() {
+                document.getElementById('id_ctrl').value = '';
+            }
+            // Pone el criterio de ordenacion al pinchar en la cabecera
+            function setOrder (order) {
+
+                // Reset buttons css
+                document.getElementById("btn-equipType").classList.remove("btn-warning");
+                document.getElementById("btn-equipID").classList.remove("btn-warning");
+                document.getElementById("btn-equipDesc").classList.remove("btn-warning");
+                document.getElementById("btn-equipIsavail").classList.remove("btn-warning");
+                document.getElementById("btn-stockratio").classList.remove("btn-warning");
+
+                // Set button css and value
+                var btn_target = "btn-" + order;
+                document.getElementById(btn_target).classList.add("btn-warning");
+                origen = document.getElementById("id_orderby");
+                origen.value = order;
+            }
+
+        </script>
+
+    {% endblock JS %}
+
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+        <section class="sect-home-page-menu">
+
+        <!-- Tabla mostrando consultorios -->
+        <table class="tbl-general tbl-forms tbl-100 table-striped">
+
+            <!-- Texto con el contenido -->
+	    	<caption class="tbl-capt">Listado de equipamiento/material
+                {% if is_paginated %}
+                    <span> - Página {{ page_obj.number }} de {{ paginator.num_pages }}</span>
+                {% endif %}
+            </caption>
+
+            <!-- Filtrado -->
+            <tr>
+                <td colspan="11">
+                    <div class="div-filtro-equip">
+                        <button class="btn btn-success btn-sm" style="font-size: 0.8em;">F:&nbsp;{{ filter|upper }}&nbsp;{{ condition|upper }}&nbsp;{{ ctrl|upper }}&nbsp;O:&nbsp;{{ orderby|upper }}</button>   
+                        <div class="div-filtro-equip-der">
+                            <form method="GET">                            
+                                <button type="button" onclick="cleanType()" class="btn btn-info btn-sm">Filtrar por:</button>{{ form.filter_ }}
+                                <button type="button" onclick="cleanCondit()" class="btn btn-info btn-sm">con descripción:</button>{{ form.condition }}
+                                <button type="button" onclick="cleanCtrl()" class="btn btn-info btn-sm">con control de:</button>{{ form.ctrl }}
+                                <input type="hidden" name="orderby" id="id_orderby" value="">
+                                <input class="btn btn-danger btn-sm" type="submit" value="Filtrar">
+                            </form>
+                        </div>
+                    </div>
+                </td>
+          </tr>
+
+            <!-- Cabecera de la tabla -->
+            <!-- Con cada form pasa la ordenacion y todos los parametros de filtro -->
+
+	    	<tr>
+                <th class="tbl-th-izq">
+                    <button id="btn-equipType" onclick="setOrder('equipType')" type="button" class="btn btn-info btn-sm">Tipo</button>
+                </th> 
+                <th class="tbl-th-izq">
+                    <button id="btn-equipID" onclick="setOrder('equipID')" type="button" class="btn btn-info btn-sm">Ref./Ident./Serie</button>
+                </th> 
+                <th class="tbl-th-izq">
+                    <button id="btn-equipDesc" onclick="setOrder('equipDesc')" type="button" class="btn btn-info btn-sm">Descr.</button>
+                </th> 
+                <th class="tbl-th-izq">Local.</th>
+                <th class="tbl-th-izq">Depto.</th>
+                <th class="tbl-th tbl-td-5">
+                    <button id="btn-equipIsavail" onclick="setOrder('equipIsavail')" type="button" class="btn btn-info btn-sm">Operat.</button>
+                </th> 
+                <th class="tbl-th tbl-td-10">
+                    <button id="btn-stockratio" onclick="setOrder('stockratio')" type="button" class="btn btn-info btn-sm">Stock</button>
+                </th> 
+                <th class="tbl-th tbl-td-10" colspan="3">Acciones</th>
+            </tr>
+
+            <!-- NO devuelve ningun equipamiento avisa y cierra la tabla -->
+            {% if not equipamientos %}
+	    	    <tr>
+                    <th colspan="11" class="field-errors">
+                        <span>Ningún equipamiento devuelto</span>
+                    </th>
+                </tr>
+
+            <!-- SI devuelve algun equipamiento muestra y cierra la tabla -->
+            {% else %}
+
+                <!-- Devuelve los equipamientos en un querySet llamada equipamientos -->
+                {% for equipamiento in equipamientos %}
+               		<tr class="grid-smalltxt">
+                        <td class="tbl-td">{{ equipamiento.equipType }}</td>   
+                        <td class="tbl-td">{{ equipamiento.equipID }}</td>
+                        <td class="tbl-td">{{ equipamiento.equipDesc }}</td>
+                        <td class="tbl-td">{{ equipamiento.fk_Location|default_if_none:"Indet." }}</td>
+                        <td class="tbl-td">{{ equipamiento.equipDepartment }}</td>
+
+                        <!-- Controla stock y disponibilidad-->
+                        <!-- Si se mide en stock no se pone operatividad -->
+                        <!-- Si se mide en operatividad no se pone stock -->
+                        {% if equipamiento.stockwarning %}
+                            <td class="tbl-td-centro">&nbsp;</td>
+                            <td class="tbl-td-centro">
+                                {{ equipamiento.stockratio }}%<br/>
+                                {% if equipamiento.stockavail == 0 %}
+                                    <progress class="stock-bar" style="background-color:red;" max="{{ equipamiento.stocklimit }}" value="{{ equipamiento.stockavail }}"></progress>                              
+                                {% else %}
+                                    <progress class="stock-bar" max="{{ equipamiento.stocklimit }}" value="{{ equipamiento.stockavail }}"></progress>                          
+                                {% endif %}
+                            </td>
+                        {% else %}
+                            {% if equipamiento.equipIsavail %}
+                                <td class="tbl-td-centro avail">Si</td>
+                            {% else %}
+                                <td class="tbl-td-centro not-avail">No</td>
+                            {% endif %}
+                            <td>&nbsp;</td>
+                        {% endif %}                     
+
+                        <!-- Enlaces a abrir, editar y borrar equipamiento -->
+                        <td><a href="{% url 'id-equipamiento' equipamiento.idEquipamiento %}"><button type="button" class="btn btn-info btn-sm">Abrir</button></a></td>
+                        <td><a href="{% url 'edit-equipamiento' equipamiento.idEquipamiento %}"><button type="button" class="btn btn-info btn-sm">Editar</button></a></td>
+                        <td><a href="{% url 'delete-equipamiento' equipamiento.idEquipamiento %}"><button type="button" class="btn btn-danger btn-sm">Borrar</button></a></td>
+                   </tr>
+                {% endfor %}
+
+      		{% endif%}
+
+        </table>
+
+        <!-- Incluye PAGINADOR-->
+        {% include 'paginador_equipamiento.html' %}
+
+    	<!-- Botones de acción -->
+        <div class="div-botones">
+            <a href="{% url 'create-equipamiento' %}"><input type="button" class="btn btn-info" value="Nuevo equipamiento"></a>
+		    <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
+        </div>
+
+        </section>
+
+    {% endblock content %}

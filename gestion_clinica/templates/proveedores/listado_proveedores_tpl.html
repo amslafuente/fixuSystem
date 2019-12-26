@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+		<title>fixuSystem - Fisioterapia  - Gestión de clínica</title>
+
+    {% endblock title %}
+
+    <!-- **************** -->
+    <!--        JS        -->
+    <!-- **************** -->
+
+    {% block JS %}
+
+        <script type="text/javascript">
+
+            // Limpia campos de filtro al pulsar un boton
+            function cleanFullname() {
+                document.getElementById('id_filtername').value = '';
+            }
+            function cleanArea() {
+                document.getElementById('id_filterarea').value = '';
+            }
+            // Pone el criterio de ordenacion al pinchar en la cabecera
+            function setOrder (order) {
+
+                // Reset buttons css
+                document.getElementById("btn-fullname").classList.remove("btn-warning");
+                document.getElementById("btn-area").classList.remove("btn-warning");
+ 
+                // Set button css and value
+                var btn_target = "btn-" + order;
+                document.getElementById(btn_target).classList.add("btn-warning");
+                origen = document.getElementById("id_orderby");
+                origen.value = order;
+            }
+
+        </script>
+
+    {% endblock JS %}
+
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+        <section class="sect-home-page-menu">
+
+        <!-- Tabla mostrando consultorios -->
+        <table class="tbl-general tbl-forms tbl-100 table-striped">
+
+            <!-- Texto con el contenido -->
+	    	<caption class="tbl-capt">Listado de proveedores
+                {% if is_paginated %}
+                    <span> - Página {{ page_obj.number }} de {{ paginator.num_pages }}</span>
+                {% endif %}
+            </caption>
+
+            <!-- Filtrado -->
+            <tr>
+                <td colspan="11">
+                    <div class="div-filtro-equip">
+                        <button class="btn btn-success btn-sm" style="font-size: 0.8em;">F:&nbsp;{{ filtername|upper }}&nbsp;{{ filterarea|upper }}&nbsp;O:&nbsp;{{ orderby|upper }}</button>   
+                        <div class="div-filtro-equip-der">
+                            <form method="GET">                            
+                                <button type="button" onclick="cleanFullname()" class="btn btn-info btn-sm">Filtrar por nombre:</button>{{ form.filtername }}
+                                <button type="button" onclick="cleanArea()" class="btn btn-info btn-sm">y área:</button>{{ form.filterarea }}
+                                <input type="hidden" name="orderby" id="id_orderby" value="">
+                                <input class="btn btn-danger btn-sm" type="submit" value="Filtrar">
+                            </form>
+                        </div>
+                    </div>
+                </td>
+          </tr>
+
+            <!-- Cabecera de la tabla -->
+            <!-- Con cada form pasa la ordenacion y todos los parametros de filtro -->
+
+	    	<tr>
+                <th class="tbl-th-izq">
+                    <button id="btn-fullname" onclick="setOrder('fullname')" type="button" class="btn btn-info btn-sm">Empresa</button>
+                </th> 
+                <th class="tbl-th-izq">
+                    <button id="btn-area" onclick="setOrder('area')" type="button" class="btn btn-info btn-sm">Area</button>
+                </th> 
+                <th class="tbl-th tbl-td-10">Fabr.</th> 
+                <th class="tbl-th tbl-td-10">Prov.</th>
+                <th class="tbl-th tbl-td-10">SAT</th>
+                <th class="tbl-th-izq tbl-td-20">Notas</th> 
+                <th class="tbl-th tbl-td-10" colspan="3">Acciones</th>
+            </tr>
+
+            <!-- NO devuelve ningun equipamiento avisa y cierra la tabla -->
+            {% if not proveedores %}
+	    	    <tr>
+                    <th colspan="9" class="field-errors">
+                        <span>Ningún proveedor devuelto</span>
+                    </th>
+                </tr>
+
+            <!-- SI devuelve algun equipamiento muestra y cierra la tabla -->
+            {% else %}
+
+                <!-- Devuelve los equipamientos en un querySet llamada equipamientos -->
+                {% for proveedor in proveedores %}
+               		<tr class="grid-smalltxt">
+                        <td class="tbl-td">{{ proveedor.fullname }}</td>   
+                        <td class="tbl-td">{{ proveedor.area }}</td>
+                        <td class="tbl-td-centro">{{ proveedor.isManufact|yesno:"Si,No,Indet." }}</td>
+                        <td class="tbl-td-centro">{{ proveedor.isProveedor|yesno:"Si,No,Indet." }}</td>
+                        <td class="tbl-td-centro">{{ proveedor.isSAT|yesno:"Si,No,Indet." }}</td>
+                        <td class="tbl-td">{{ proveedor.notas }}</td>
+
+                        <!-- Enlaces a abrir, editar y borrar proveedor -->
+                        <td><a href="{% url 'id-proveedores' proveedor.idProveedor %}"><button type="button" class="btn btn-info btn-sm">Abrir</button></a></td>
+                        <td><a href="{% url 'edit-proveedores' proveedor.idProveedor %}"><button type="button" class="btn btn-info btn-sm">Editar</button></a></td>
+                        <td><a href="{% url 'delete-proveedores' proveedor.idProveedor %}"><button type="button" class="btn btn-danger btn-sm">Borrar</button></a></td>
+                   </tr>
+                {% endfor %}
+
+      		{% endif%}
+
+        </table>
+
+        <!-- Incluye PAGINADOR-->
+        {% include 'paginador_proveedores.html' %}
+
+    	<!-- Botones de acción -->
+        <div class="div-botones">
+            <a href="{% url 'create-proveedores' %}"><input type="button" class="btn btn-info" value="Nuevo proveedor"></a>
+		    <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
+        </div>
+
+        </section>
+
+    {% endblock content %}

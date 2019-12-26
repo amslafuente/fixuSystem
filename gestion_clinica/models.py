@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
+from fixuSystem.progvars import selTipoEquip
 
 ########## TABLA DE GESTION DE CLINICA ##########
 
@@ -52,7 +53,7 @@ class Profesional(models.Model):
     city = models.CharField("Ciudad", max_length = 50)                                              # Ciudad
     province = models.CharField("Provincia", max_length = 50, blank = True)                         # Provincia
     country = models.CharField("País", max_length = 50, blank = True)                               # País
-    email2 = models.EmailField("Correo electrónico", max_length = 50)                               # Correo electrónico
+    email = models.EmailField("Correo electrónico", max_length = 50)                               # Correo electrónico
     phone1 = models.PositiveIntegerField("Teléfono principal")                                      # Teléfono 1
     phone2 = models.PositiveIntegerField("Teléfono alternativo", blank = True, null = True)         # Teléfono 2
     notes = models.TextField("Notas", blank = True)
@@ -81,7 +82,7 @@ class Profesional(models.Model):
 class Consultorio(models.Model):
 
     idConsultorio = models.AutoField(primary_key = True, unique = True)
-    officeID = models.CharField("Número/Identificación", max_length = 10)
+    officeID = models.CharField("Número/Identificación", max_length = 10, unique = True)
     officeDesc = models.CharField("Descripción", max_length = 100, blank = True)
     officeIsavail = models.BooleanField("Disponible", default = True)                               # Disponible o no para consultas
     officeLocation = models.CharField("Localización", max_length = 50, blank = True)
@@ -94,7 +95,6 @@ class Consultorio(models.Model):
     lastupdated = models.DateTimeField("Fecha actualización", auto_now = True)                      # Fecha de la última modificación
     modifiedby = models.CharField("Modificado por", max_length = 50, blank = True, default = 'fixuUser')    # Modificado por
 
-
     def __str__(self):
         return self.officeID
 
@@ -105,3 +105,87 @@ class Consultorio(models.Model):
         verbose_name = 'Consultorio'
         verbose_name_plural = 'Consultorios'
         ordering =['officeID']
+
+########## TABLA DE GESTION DE PROVEEDORES ##########
+
+class Proveedor(models.Model):
+
+    idProveedor = models.AutoField(primary_key = True, unique = True)                            
+    fullname = models.CharField("Nombre Empresa", max_length = 100)
+    area = models.CharField("Area/Ambito", max_length = 150, blank = True)
+    fulladdress = models.CharField("Dirección", max_length = 250)    
+    nif = models.CharField("NIF", max_length = 25, blank = True)                      
+    owner = models.CharField("Propietario", blank = True, max_length = 25)
+    
+    isManufact = models.BooleanField("Es fabricante", default = False)
+    phoneManufact = models.PositiveIntegerField("Teléfono", blank = True, null = True)
+    contactManufact = models.CharField('Persona de contacto', max_length = 100, blank = True)
+    emailManufact = models.EmailField('Correo electrónico', max_length = 75, blank = True)
+
+    isProveedor = models.BooleanField("Es proveedor", default = False)
+    phoneProveedor = models.PositiveIntegerField("Teléfono", blank = True, null = True) 
+    contactProveedor = models.CharField('Persona de contacto', max_length = 100, blank = True)
+    emailProveedor = models.EmailField('Correo electrónico', max_length = 75, blank = True)   
+    
+    isSAT = models.BooleanField("Es SAT", default = False)
+    phoneSAT = models.PositiveIntegerField("Teléfono fabricante", blank = True, null = True)
+    contactSAT = models.CharField('Persona de contacto', max_length = 100, blank = True)
+    emailSAT = models.EmailField('Correo electrónico', max_length = 75, blank = True)   
+    
+    notas = models.TextField("Notas", blank = True)
+    # Campos de control
+    firstupdated = models.DateTimeField("Fecha registro", auto_now_add = True)                      # Fecha de registro
+    lastupdated = models.DateTimeField("Fecha actualización", auto_now = True)                      # Fecha de la última modificación
+    modifiedby = models.CharField("Modificado por", max_length = 50, blank = True, default = 'fixuUser')    # Modificado por
+
+    def __str__(self):
+        return self.fullname
+
+    def get_absolute_url(self):
+        return reverse('id-proveedores', args=[self.idProveedor])
+
+    class Meta:
+        verbose_name = 'Proveedor'
+        verbose_name_plural = 'Proveedores'
+        ordering =['fullname']
+
+########## TABLA DE GESTION DE EQUIPAMIENTOS ##########
+
+class Equipamiento(models.Model):
+
+    idEquipamiento = models.AutoField(primary_key = True, unique = True)
+    equipID = models.CharField("Refer./Ident./Num. Serie", max_length = 50, unique = True)
+    equipDesc = models.CharField("Descripción", max_length = 100)
+    equipType = models.CharField('Tipo', max_length = 5, choices = selTipoEquip, default = 'otros')
+   
+    equipIsavail = models.BooleanField("Operativo", default = True)                               # Disponible o no para consultas
+    fk_Location = models.ForeignKey(Consultorio, on_delete = models.PROTECT, related_name = 'localizaciones', blank = True, null = True)
+    equipDepartment = models.CharField("Departamento", max_length = 50, blank = True)
+    
+    fk_Manufact = models.ForeignKey(Proveedor, on_delete = models.PROTECT, related_name = 'fabricantess', blank = True, null = True)
+    fk_Proveedor = models.ForeignKey(Proveedor, on_delete = models.PROTECT, related_name = 'proveedores', blank = True, null = True)
+    fk_SAT = models.ForeignKey(Proveedor, on_delete = models.PROTECT, related_name = 'sats', blank = True, null = True)
+    
+    stockwarning = models.BooleanField("Aviso de falta de material", default = True)
+    stocklimit = models.PositiveIntegerField('Límite para aviso', default = 10)
+    stockavail = models.PositiveIntegerField('Cantidad disponible', default = 0)
+    stockratio = models.PositiveIntegerField(blank = True, default = 0)
+
+    notes = models.TextField("Notas", blank = True)
+    # Campos de control
+    firstupdated = models.DateTimeField("Fecha registro", auto_now_add = True)                      # Fecha de registro
+    lastupdated = models.DateTimeField("Fecha actualización", auto_now = True)                      # Fecha de la última modificación
+    modifiedby = models.CharField("Modificado por", max_length = 50, blank = True, default = 'fixuUser')    # Modificado por
+
+    def __str__(self):
+        return self.equipID
+
+    def get_absolute_url(self):
+        return reverse('id-equipamiento', args=[self.idEquipamiento])
+ 
+    class Meta:
+        verbose_name = 'Equipamiento'
+        verbose_name_plural = 'Equipamientos'
+        ordering =['equipID']
+    
+

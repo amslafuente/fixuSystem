@@ -1,8 +1,3 @@
-
-<!-- ***************** -->
-<!--   citas_dias_tpl  -->
-<!-- ***************** -->
-
 {% extends 'base.html' %}
 
     <!-- **************** -->
@@ -78,19 +73,8 @@
                		<tr>
 		       		    <td class="tbl-td-centro">{{ cita.apptime|date:'H:i' }}</td>
 			       	    <td>{{ cita.fk_Paciente }}</td>
-                        
-                        {% if cita.fk_Profesional %}
-                           <td>{{ cita.fk_Profesional }}</td>
-                        {% else %}
-                            <td>Indet.</td>
-                        {% endif %}
-                       
-                        {% if cita.fk_Consultorio %}
-                           <td class="tbl-td-centro">{{ cita.fk_Consultorio }}</td>
-                        {% else %}
-                            <td class="tbl-td-centro">Indet.</td>
-                        {% endif %}
-
+                        <td>{{ cita.fk_Profesional|default_if_none:"Indet." }}</td>
+                        <td class="tbl-td-centro">{{ cita.fk_Consultorio|default_if_none:"Indet." }}</td>
                         <td class="tbl-td-15">{{ cita.notes }}</td>
 
                         <!-- Estatus -->
@@ -144,10 +128,10 @@
 
     	<!-- Botones de acción -->
         <div class="div-botones">
-            <a href={% url 'citas-hoy' %}><input type="button" class="btn btn-info" value="Citas para hoy"></a>
-            <a href={% url 'citas-dia-grid' idPaciente ctx_dias.current_date_url %}><input type="button" class="btn btn-info" value="Modo rejilla"></a>
-            <a href={% url 'menu-citas' %}><input type="button" class="btn btn-info" value="Menu de citas"></a>
-            <a href={% url 'citas-dia-grid' idPaciente ctx_dias.current_date_url %}><input type="button" class="btn btn-danger" value="Nueva cita"></a>
+            <a href="{% url 'citas-hoy' %}"><input type="button" class="btn btn-info" value="Citas para hoy"></a>
+            <a href="{% url 'citas-dia-grid' idPaciente ctx_dias.current_date_url %}"><input type="button" class="btn btn-info" value="Modo rejilla"></a>
+            <a href="{% url 'menu-citas' %}"><input type="button" class="btn btn-info" value="Menu de citas"></a>
+            <a href="{% url 'citas-dia-grid' idPaciente ctx_dias.current_date_url %}"><input type="button" class="btn btn-danger" value="Nueva cita"></a>
         </div>
 
         </section>

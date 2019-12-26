@@ -1,5 +1,5 @@
 <!-- ************************* -->
-<!--   init_error_clinica_tpl  -->
+<!--   init_error_usuario_tpl  -->
 <!-- ************************* -->
 
 {% extends 'base.html' %}
@@ -10,7 +10,7 @@
 
     {% block title %}
 
-    	<title>fixuSystem - Fisioterapia - Gestión de cĺínica</title>
+    	<title>fixuSystem - Fisioterapia - Gestión de clínica</title>
 
     {% endblock %}
 
@@ -28,15 +28,15 @@
            	<!-- Informa de que no se pueden crear datos -->
             <table class="tbl-general tbl-forms tbl-40 table-striped">
                 <!-- Texto con el contenido -->
-                <caption class="tbl-capt">YA EXISTEN DATOS DE UNA CLINICA</caption>
+                <caption class="tbl-capt">ERROR DE PRIVILEGIOS</caption>
                 <tr>
-    	        	<td class="tbl-td-centro">Sólo puede existir una clínica en la base de datos.</td>
+    	        	<td class="tbl-td-centro">Este usuario no puede modificar datos de la clinica.</td>
     		    </tr>
             </table>
 
 		    <!-- Botones de acción -->
             <div class="div-botones">
-                <a href={% url 'info-clinica' %}><input type="button" class="btn btn-info" value="Volver"></a>
+                <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Volver"></a>
             </div>
 
         </section>

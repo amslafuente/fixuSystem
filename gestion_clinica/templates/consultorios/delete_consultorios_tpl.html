@@ -43,14 +43,14 @@
                 <table class="tbl-general tbl-forms tbl-40 table-striped">
 
                     <!-- Texto con el contenido -->
-                    <caption class="tbl-capt">Borrar consultorio</caption>
+                    <caption class="tbl-capt">Borrar consultorio/dependencia</caption>
 
                     <!-- Errores en el form -->
                     {% include 'errors_consultorios.html' %}
 
                     <!-- Datos personales -->
 		   	        <tr>
-	    		        <th class="tbl-th" colspan="2">¿ Confirma el borrado de esta dependencia ?</th>
+	    		        <th class="tbl-th" colspan="2">¿ Confirma el borrado ?</th>
                     </tr>
                     <tr>
         			    <td class="tbl-td-40">Denom./Identif.:</td><td>{{ consultorios.officeID }}</td>
@@ -69,8 +69,8 @@
     	    	<!-- Botones -->
                 <div class="div-botones">
 		        	<input type="submit" class="btn btn-danger" value="Confirmar borrado">
-	    	    	<a href={% url 'menu-clinica' %}><input type="button" class="btn btn-info" value="Menu de clínica"></a>
-                </div
+	    	    	<a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
+                </div>
 
 	        </form>
 

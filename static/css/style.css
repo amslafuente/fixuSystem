@@ -136,6 +136,28 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
 
 }
 
+.div-filtro-equip {/* --- Filtrado de tipos --- */
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.div-filtro-equip-der { /* --- Filtrado de tipos --- */
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 5px;
+    font-size: 0.75em;
+}
+
+.div-control-stock {
+    display: flex;
+    justify-content: flex-start;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 50%
+}
+
 /*---------- DIVS DE MENUS ----------*/
 .div-cabecera-menu {
     display: flex;
@@ -242,7 +264,7 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
 
 .grid-smalltxt { /*--- Texto pequeño para el grid ---*/
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    font-size: small;
+    font-size: 0.9em;
     font-variant: normal;
     font-weight: bold;
     padding-left: 10px;
@@ -268,6 +290,14 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
 .btn-shadow { /* --- Sombra de los botones ---*/
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
 
+}
+
+/*---------- BARRA DE PROGRESO ----------*/
+.stock-bar {
+    margin: auto;
+    width: 80px;
+    height: 20px;
+ 
 }
 
 /*---------- TABLAS GENERAL ----------*/
@@ -320,6 +350,19 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
     border-bottom-width: 1px;
     padding: 8px;
     background-color:rgb(230, 219, 209);
+}
+
+.tbl-th-filter { /* Header de filtrado */
+    vertical-align: middle;
+    text-align: left;
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    padding: 4px;
+    color:yellow;
+    background-color:rgb(104, 74, 50);
+
 }
 
 .tbl-th-dark { /* --- TH header general --- */
@@ -395,7 +438,7 @@ td { /* --- Padding por defecto ---*/
 .avail {
     background-color:darkgreen;
     color: white;
-    padding-left: 5px;
+    padding: 5px;
     font-weight: bold;
 
 }
@@ -403,7 +446,7 @@ td { /* --- Padding por defecto ---*/
 .not-avail {
     background-color: darkred;
     color: white;
-    padding-left: 5px;
+    padding: 5px;
     font-weight: bold;
 
 }

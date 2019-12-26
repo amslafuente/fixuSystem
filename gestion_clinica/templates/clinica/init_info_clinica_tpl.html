@@ -1,7 +1,3 @@
-<!-- ************************ -->
-<!--   edit_info_clinica_tpl  -->
-<!-- ************************ -->
-
 {% extends 'base.html' %}
 
     <!-- **************** -->
@@ -35,7 +31,7 @@
                 <table class="tbl-general tbl-forms tbl-60 table-striped">
 
                     <!-- Texto con el contenido -->
-                    <caption class="tbl-capt">Editar datos de la clinica</caption>
+                    <caption class="tbl-capt">Introducir datos de la clinica</caption>
 
                     <!-- Errores en el form -->
                     {% include 'errors_clinica.html' %}
@@ -51,31 +47,27 @@
                     <tr>
                         <td>Titular (nombre completo):</td>
                         <td>{{ form.ownerfullname.as_widget }}</td>
-                        <td>Logo:</td>
+                        <td>Archivo de foto:</td>
                         <td>{{ form.picturefile.as_widget }}</td>
                     </tr>
                     <tr>
                         <td>DNI:</td>
                         <td>{{ form.dni.as_widget }}</td>
-               		    <td>Núm. Colegiado/a:</td>
+               		    <td>Núm Colegiado/a:</td>
                         <td>{{ form.numcolegiado.as_widget }}</td>
    			    	</tr>
-
+      
                     <!-- Domicilio -->
 		       	    <tr>
 	    	    	    <th class="tbl-th" colspan="4">Domicilio</th>
                     </tr>
     	    		<tr>
-	    	    		<td>Dirección:</td>
-                        <td>{{ form.fulladdress.as_widget }}</td>
-                        <td>Localidad:</td>
-                        <td>{{ form.city.as_widget }}</td>
+	    	    		<td>Dirección:</td><td>{{ form.fulladdress.as_widget }}</td>
+                        <td>Localidad:</td><td>{{ form.city.as_widget }}</td>
                     </tr>
                     <tr>
-                        <td>Código postal:</td>
-                        <td>{{ form.postcode.as_widget }}</td>
-		    	    	<td>Provincia:</td>
-                        <td>{{ form.province.as_widget }}</td>
+                        <td>Código postal:</td><td>{{ form.postcode.as_widget }}</td>
+		    	    	<td>Provincia:</td><td>{{ form.province.as_widget }}</td>
         			</tr>
 
                     <!-- Datos de contacto -->
@@ -95,7 +87,7 @@
 
                     <!-- Notas -->
 	    	   	    <tr>
-	        		    <th class="tbl-th" colspan="4" >Notas</th>
+	        		    <th class="tbl-th" colspan="4">Notas</th>
                     </tr>
 	    		    <tr>
     				    <td class="tbl-td-centro" colspan="4">{{ form.notes }}</td>
@@ -106,8 +98,8 @@
      	    	<!-- Botones -->
                 <div class="div-botones">
 		        	<input type="submit" class="btn btn-info" value="Aceptar">
-	    	    	<a href={% url 'menu-clinica' %}><input type="button" class="btn btn-info" value="Menu de clínica"></a>
-                </div
+	    	    	<a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
+                </div>
 
 	        </form>
 

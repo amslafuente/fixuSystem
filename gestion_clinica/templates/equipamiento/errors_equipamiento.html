@@ -1,0 +1,31 @@
+<!-- Errores en el form -->
+{{ form.non_field_errors }}
+
+{% if form.equipID.errors %}
+<tr>
+    <th colspan="4" class ="field-errors">
+        {% for error in form.equipID.errors %}
+            {{ form.equipID.label }} : {{ error }}
+        {% endfor %}
+    </th>
+</tr>
+{% endif %}
+
+{% if form.equipDesc.errors %}
+<tr>
+    <th colspan="4" class ="field-errors">
+        {% for error in form.equipDesc.errors %}
+            {{ form.equipDesc.label }} : {{ error }}
+        {% endfor %}
+    </th>
+</tr>
+{% endif %}
+
+<!-- Si hay mensajes pendientes -->
+{% for message in messages %}
+<tr>
+    <th colspan="4" class ="field-errors">
+        {{ message }}
+    </th>
+</tr>
+{% endfor %}

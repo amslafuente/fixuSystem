@@ -29,21 +29,27 @@
 
             <div class="div-cuerpo-menu">
                 <div>
-                    <a href={% url 'info-clinica' %}>
+                    <a href="{% url 'info-clinica' %}">
                         <img width="200" src="{% static "img/menu_clinica_iniciar.png" %}" alt="Información sobre la Clínica">
                     </a>
                 </div>
                 <div>
-                    <a href={% url 'instalac-servic' %}>
+                    <a href="{% url 'profesionales' %}">
+                        <img width="200" src="{% static "img/menu_clinica_profes.png" %}" alt="Profesionales">
+                    </a>
+                </div>
+                <div>
+                    <a href="{% url 'instalac-servic' %}">
                         <img width="200" src="{% static "img/menu_clinica_instalac.png" %}" alt="Instalaciones y Servicios">
                     </a>
                 </div>
                 <div>
-                    <a href={% url 'profesionales' %}>
-                        <img width="200" src="{% static "img/menu_clinica_profes.png" %}" alt="Profesionales">
+                    <a href="#">
+                        <img width="200" src="{% static "img/menu_clinica_estadis.png" %}" alt="Estadísticas">
                     </a>
                 </div>
-            </div>
+
+           </div>
 
         </section>
 

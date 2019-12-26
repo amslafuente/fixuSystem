@@ -3,6 +3,8 @@ Variables to be used in different apps.
 
 """
 
+from fixuSystem.secrets import EMAIL_PASSWD
+
 ##### VERSION DEL PROGRAMA #####
 
 PROG_VERS = '0.60'
@@ -303,5 +305,24 @@ citasStatus = [
     ('Pasa a consulta', 'Pasa a consulta'),
     ('Cancelada', 'Cancelada')
 ]
+##### CONFIG: VARIABLES DE LA APP GESTION_CLINICA #####
 
+##### Choices para el tipo de material/equipamiento #####
+selTipoEquip = [
+    ('infor', 'Equipos informáticos'),
+    ('muscl', 'Máquinas musculación'),
+    ('eqtrm', 'Equipos tratamiento'),
+    ('enfer', 'Enfermería'),
+    ('fung', 'Fungible'),
+    ('mobi', 'Mobiliario'),
+    ('papel', 'Papelería'),    
+    ('limp', 'Limpieza'),
+    ('otros', 'Otros'),
+]
+##### Servidores de correo #####
 
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'fixuUser'
+EMAIL_HOST_PASSWORD = EMAIL_PASSWD
+EMAIL_USE_TLS = True

@@ -1,7 +1,3 @@
-<!-- ********************** -->
-<!--   create_consultorio_tpl  -->
-<!-- ********************** -->
-
 {% extends 'base.html' %}
 
     <!-- **************** -->
@@ -44,7 +40,7 @@
                 <table class="tbl-general tbl-forms tbl-40 table-striped">
 
                     <!-- Texto con el contenido -->
-                    <caption class="tbl-capt">Nuevo consultorio</caption>
+                    <caption class="tbl-capt">Nuevo consultorio/dependencia</caption>
 
                     <!-- Errores en el form -->
                     {% include 'errors_consultorios.html' %}
@@ -89,8 +85,8 @@
     	    	<!-- Botones -->
                 <div class="div-botones">
 		        	<input type="submit" class="btn btn-info" value="Aceptar">
-	    	    	<a href={% url 'menu-clinica' %}><input type="button" class="btn btn-info" value="Menu de clínica"></a>
-                </div
+	    	    	<a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
+                </div>
 
 	        </form>
 
