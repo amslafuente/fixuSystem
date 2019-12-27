@@ -130,7 +130,6 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
 
 }
 
-<<<<<<< HEAD
 .div-filtro-equip {/* --- Filtrado de tipos --- */
     display: flex;
     justify-content: space-between;
@@ -153,14 +152,12 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
     padding-left: 50%
 }
 
-=======
 .img-paciente { /*--- Imagen del paciente ---*/
     float: right;
     overflow: auto;
 
 }
 
->>>>>>> 88c1d3114b8296e3a027bfb2764ecc8410bb3191
 /*---------- DIVS DE MENUS ----------*/
 .div-cabecera-menu {
     display: flex;

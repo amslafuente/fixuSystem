@@ -117,7 +117,7 @@
                     </tr>
                     <tr>
 	            		<td class="tbl-td">Notificar citas / Vía:</td>
-                        <td class="tbl-td">{{ paciente.notifyappoint }} / {{ paciente.notifyvia }}</td>
+                        <td class="tbl-td">{{ paciente.notifyappoint|yesno:'Si,No,Indet.' }} / {{ paciente.notifyvia }}</td>
     			    </tr>
 		        </table>
 

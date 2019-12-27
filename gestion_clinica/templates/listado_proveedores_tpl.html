@@ -71,8 +71,8 @@
                         <button class="btn btn-success btn-sm" style="font-size: 0.8em;">F:&nbsp;{{ filtername|upper }}&nbsp;{{ filterarea|upper }}&nbsp;O:&nbsp;{{ orderby|upper }}</button>   
                         <div class="div-filtro-equip-der">
                             <form method="GET">                            
-                                <button type="button" onclick="cleanFullname()" class="btn btn-info btn-sm">Filtrar por nombre:</button>{{ form.filtername }}
-                                <button type="button" onclick="cleanArea()" class="btn btn-info btn-sm">y área:</button>{{ form.filterarea }}
+                                <button type="button" onclick="cleanFullname()" class="btn btn-info btn-sm">Empresa:</button>{{ form.filtername }}
+                                <button type="button" onclick="cleanArea()" class="btn btn-info btn-sm">Area:</button>{{ form.filterarea }}
                                 <input type="hidden" name="orderby" id="id_orderby" value="">
                                 <input class="btn btn-danger btn-sm" type="submit" value="Filtrar">
                             </form>

@@ -1,7 +1,3 @@
-<!-- ************************ -->
-<!--   edit_id_pacientes_tpl  -->
-<!-- ************************ -->
-
 {% extends 'base.html' %}
 
     <!-- **************** -->
@@ -27,12 +23,12 @@
 
             <!-- Formularion de nuevo paciente -->
             <!-- enctype="multipart/form-data se usa para poder subir imagenes binarias -->
-	        <form method="post" enctype="multipart/form-data">
+	        <form method="POST" enctype="multipart/form-data">
 
     	    	{% csrf_token %}
 
                 <!-- Tabla del paciente -->
-                <table class="tbl-general tbl-forms tbl-70 table-striped">
+                <table class="tbl-forms table-striped tbl-general tbl-60">
 
                     <!-- Texto con el contenido -->
                     <caption class="tbl-capt">Editar paciente - ID: {{ idPaciente }}</caption>
@@ -42,70 +38,58 @@
 
                     <!-- Datos personales -->
 		   	        <tr>
-	    		        <th class="tbl-th" colspan="6">Datos personales</th>
+	    		        <th class="tbl-th">Datos personales</th>
                     </tr>
                     <tr>
-        			    <td>Nombre:</td><td>{{ form.name.as_widget }}</td>
-            		    <td>Apellidos:</td><td>{{ form.familyname.as_widget }}</td>
+        			    <td>
+							Nombre: {{ form.name.as_widget }}&nbsp;
+							Apellidos: {{ form.familyname.as_widget }}
+						</td>
                     </tr>
 	            	<tr>
-			    	    <td>Fecha de nacimiento:</td><td>{{ form.birthdate.as_widget }}
-                        <td>Sexo:</td><td>{{ form.sex.as_widget }}
+			    	    <td>
+							Fecha nacim.: {{ form.birthdate.as_widget }}&nbsp;
+                        	Sexo: {{ form.sex.as_widget }}&nbsp;
+							Ocupación: {{ form.job.as_widget }}
+						</td>							
                     </tr>
 	    		    <tr>
-                        <td>Ocupación:</td><td>{{ form.job.as_widget }}</td>
-		    		    <td>Archivo de foto:</td><td colspan="5">{{ form.picturefile.as_widget }}</td>
+	    		    	<td class="tbl-td-centro">Foto: {{ form.picturefile.as_widget }}</td>
    			    	</tr>
-
-        		</table>
-
-    		    <br>
-
-                <table class="tbl-general tbl-forms tbl-70 table-striped">
-
                     <!-- Domicilio -->
 		       	    <tr>
-	    	    	    <th class="tbl-th" colspan="4">Domicilio</th>
+	    	    	    <th class="tbl-th">Domicilio</th>
                     </tr>
     	    		<tr>
-	    	    		<td>Dirección:</td><td>{{ form.address.as_widget }}</td>
-		        		<td>Localidad:</td><td>{{ form.city.as_widget }}</td>
+	    	    		<td>
+							Dirección: {{ form.address.as_widget }}&nbsp;
+							Localidad: {{ form.city.as_widget }}
+						</td>
                     </tr>
                     <tr>
-                        <td>Código postal:</td><td>{{ form.postcode.as_widget }}</td>
-		    	    	<td>Provincia:</td><td>{{ form.province.as_widget }}</td>
-        			</tr>
-                    <tr>
-			    	    <td>País:</td><td colspan="4">{{ form.country.as_widget }}</td>
+                        <td>
+							Código postal: {{ form.postcode.as_widget }}&nbsp;
+							Provincia: {{ form.province.as_widget }}&nbsp;
+							País: {{ form.country.as_widget }}
+						</td>
        				</tr>
-
-        		</table>
-
-	    	    <br>
-
-                <table class="tbl-general tbl-forms tbl-70 table-striped">
-
                     <!-- Datos de contacto -->
 	    	   	    <tr>
-	        		    <th class="tbl-th" colspan="6">Datos de contacto</th>
+	        		    <th class="tbl-th">Datos de contacto</th>
                     </tr>
     	    		<tr>
-	    	    		<td>E-mail:</td><td>{{ form.email }}</td>
-		    	    	<td>Teléfono principal:</td><td>{{ form.phone1 }}</td>
-			    	    <td>Teléfono alternativo:</td><td>{{ form.phone2 }}</td>
+	    	    		<td>
+							E-mail: {{ form.email }}&nbsp;
+							Teléfono 1: {{ form.phone1 }}&nbsp;
+							Teléfono 2: {{ form.phone2 }}							
+						</td>
        				</tr>
         			<tr>
-	        			<td>Notificar cita:</td><td>{{ form.notifyappoint }}</td>
-		        		<td>Notificar vía:</td><td>{{ form.notifyvia }}</td>
+	        			<td class="tbl-td-centro">
+							Notificar cita: {{ form.notifyappoint }}&nbsp;
+							Notificar vía: {{ form.notifyvia }}
+						</td>
     			    </tr>
-
-        		</table>
-
-                <br>
-
-                <table class="tbl-general tbl-forms tbl-70 table-striped">
-
-                    <!-- Notas -->
 	    	   	    <tr>
 	        		    <th class="tbl-th">Notas</th>
                     </tr>
