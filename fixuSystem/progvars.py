@@ -3,7 +3,7 @@ Variables to be used in different apps.
 
 """
 
-from fixuSystem.secrets import EMAIL_PASSWD
+from .secrets import EMAIL_PASSWD
 
 ##### VERSION DEL PROGRAMA #####
 
