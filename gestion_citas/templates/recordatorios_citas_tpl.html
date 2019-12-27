@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+		<title>fixuSystem - Fisioterapia  - Gestión de citas</title>
+
+    {% endblock title %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+		<!-- Taba principal con imágenes -->
+        <section class="sect-home-page-menu">
+        
+            <form method="POST">
+            {% csrf_token %}
+        
+            <table class="tbl-general tbl-forms tbl-35 table-striped">
+
+                <!-- Texto con el contenido -->
+                <caption class="tbl-capt">Notificación de citas</caption>
+                
+                {% include 'errors_recordatorios.html' %}
+
+                {% if numregsemail > 0 or numregstelef > 0 %}
+                    <tr>
+                        <th colspan="2" class="field-errors">
+                            {{ mensaje }}
+                        </th>
+                    </tr>
+                    <tr>
+                        <td class="tbl-td-40">Por e-mail: {{ numregsemail }}</td>
+                        <td class="tbl-td-40">Por teléfono: {{ numregstelef }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Notificar citas con {{ form.day }} días de antelación.</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Notificar también las de los días intermedios: {{ form.untilday }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <th class="tbl-td-centro">{{ mensaje }}</th>
+                    </tr>
+                {% endif %}
+
+            </table>
+
+            <!-- Botones de acción -->
+
+                <div class="div-botones">
+                    {% if numregsemail > 0 or numregstelef > 0 %}                
+                        <input type="submit" class="btn btn-danger" value="Notificar citas con los valores por defecto">
+                        <input type="submit" class="btn btn-danger" value="Modificar los dias y notificar citas">    
+                    {% endif %}
+                    <a href="{% url 'procesar-citas' %}">
+                        <button type="button" class="btn btn-info">Volver</button>
+                    </a>
+                </div>
+
+            </form>
+
+        </section>
+
+    {% endblock content %}

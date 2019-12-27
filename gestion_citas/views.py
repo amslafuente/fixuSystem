@@ -6,15 +6,21 @@ from django.http import request, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 import datetime
-from .models import Cita
+from .models import Cita, NotificaCita, ProcesaCita
 from gestion_pacientes.models import Paciente
 from django.views.generic.edit import UpdateView
 from django.views.generic.list import ListView
+from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views import View
 from .funct import contexto_dias, app_timegrid
 from .forms import create_citas_form, create_citas_paciente_form, edit_citas_form
 from django.contrib import messages
+from django.db.models import Q
+from fixuSystem.progvars import NOTIFICAR_CON
+from django.forms import forms, fields, widgets
+from django.forms.widgets import NumberInput
+from django.core.mail import send_mass_mail
 
 #########################################################
 #                                                       #
@@ -231,6 +237,10 @@ class citas_paciente_todas_view(ListView):
 #              CREACION Y EDICION DE CITAS              #
 #                                                       #
 #########################################################
+
+@method_decorator(login_required, name='dispatch')
+class id_citas_view(DetailView):
+    pass
 
 ######  CREA CITA DESDE EL GRID, CON FECHA Y HORA PRESELECIONADAS #######
 
@@ -516,6 +526,199 @@ class modif_citas_view(DetailView):
         # Regresa donde se llamó
         return HttpResponseRedirect(kwarg_next)
 
+######  PROCESAR CITAS #######
+
+@method_decorator(login_required, name='dispatch')
+class procesar_citas_view(View):
+
+    def get(self, request):
+
+        ctx = dict()
+
+        notif = NotificaCita.objects.last()
+        proc = ProcesaCita.objects.last()
+        try:
+            ctx['last_notif'] = notif.notifLastrun
+        except:
+            ctx['last_notif'] = 'Sin fecha'
+        try:
+            ctx['last_proc'] = proc.procLastrun
+        except:
+            ctx['last_proc'] = 'Sin fecha'
+
+        return render(request, 'procesar_citas_tpl.html', ctx)
+
+@method_decorator(login_required, name='dispatch')
+class recordatorios_citas_view(View):
+
+    def post(self, request):
+        
+        # Comprueba si es superuser
+        if not request.user.is_superuser:
+
+            return HttpResponseRedirect(reverse('procesar-citas'))
+
+        # Inicializa contexto
+        ctx = dict()
+
+        # Rellena el form con el POST y la añade  al contexto
+        form = customNotifDias(request.POST)
+        ctx['form'] = form
+
+        # SI los datos son válidos
+        if form.is_valid:
+
+            kwarg_day = int(request.POST['day'])
+            try:
+                kwarg_untilday = request.POST['untilday']
+            except:
+                kwarg_untilday = False
+            kwarg_date = datetime.date.today()
+            kwarg_notifydate = kwarg_date + datetime.timedelta(days = kwarg_day)
+
+            # Queries
+            # Si no selecciona interdays
+            if not kwarg_untilday:
+                emailcount = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').count()
+                qsemail = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email')
+                qstelef = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email')
+            # Si selecciona interdays
+            else:
+                emailcount = Cita.objects.filter(appdate__gt = kwarg_notifydate, appdate__lte = kwarg_date).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').count() 
+                qsemail = Cita.objects.filter(appdate__gt = kwarg_notifydate, appdate__lte = kwarg_date).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email')
+                qstelef = Cita.objects.filter(appdate__gt = kwarg_notifydate, appdate__lte = kwarg_date).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email')
+
+            # Notifica por email
+            resemail = list()
+            qsemail = qsemail.values('fk_Paciente__familyname', 'fk_Paciente__name', 'fk_Paciente__phone1', 'fk_Paciente__phone2', 'appdate', 'apptime')
+            resemail.append(('Apellidos', 'Nombre', 'Email', 'Fecha cita', 'Hora cita'))
+            for email in qsemail:
+
+                message1 = ('Subject here', 'Here is the message', 'from@example.com', ['first@example.com', 'other@example.com'])
+                message2 = ('Another Subject', 'Here is another message', 'from@example.com', ['second@test.com'])
+                emailsuccess = send_mass_mail((message1, message2), fail_silently=False) 
+            ctx['emailcount'] = emailcount
+            ctx['emailsuccess'] = emailsuccess
+            ctx['resemail'] = resemail
+
+            # Lista de notificacion por telefono
+            restelef = list()
+            qstelef = qstelef.values('fk_Paciente__familyname', 'fk_Paciente__name', 'fk_Paciente__phone1', 'fk_Paciente__phone2', 'appdate', 'apptime')
+            restelef.append(('Apellidos', 'Nombre', 'Telef. 1', 'Telef. 2', 'Fecha cita', 'Hora cita'))
+            for telef in qstelef:
+                restelef.append((telef['fk_Paciente__familyname'], telef['fk_Paciente__name'], telef['fk_Paciente__phone1'], telef['fk_Paciente__phone2'], telef['appdate'], telef['apptime']))
+            ctx['restelef'] = restelef
+
+            return render(request, 'recordatorios_result_citas_tpl.html', ctx)
+
+        # Si no son validos
+        else:
+
+            messages.warning(request, 'Error en el formulario.')
+            return render(request, 'recordatorios_citas_tpl.html', ctx)
+
+    def get(self, request):
+        
+        # Comprueba si es superuser
+        if not request.user.is_superuser:
+
+            return HttpResponseRedirect(reverse('procesar-citas'))
+
+        # Si es superuser
+        ctx = dict()
+        
+        # Dias de antelacion por defecto
+        ctx['dias'] = NOTIFICAR_CON
+
+        # Pasa la form con dias a modificar
+        form = customNotifDias(initial={'day': NOTIFICAR_CON, 'untilday': False})
+        ctx['form'] = form
+
+        # Cuenta los registros que cumplen las condiciones de ser notificados por email o telefono
+        kwarg_date = datetime.date.today()
+        kwarg_notifydate = kwarg_date + datetime.timedelta(days = NOTIFICAR_CON)
+
+        numregsemail = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').count()
+        numregstelef = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email').count()
+
+        if (numregsemail > 0 or numregstelef > 0):
+            ctx['mensaje'] = 'Se van a notificar las siguientes citas pendientes:'
+            ctx['numregsemail'] = numregsemail
+            ctx['numregstelef'] = numregstelef
+        else:
+            ctx['mensaje'] = 'No hay citas para notificar.'            
+
+        return render(request, 'recordatorios_citas_tpl.html', ctx)
+
+class customNotifDias(forms.Form):
+    
+    day = fields.IntegerField(required = False)
+    untilday = fields.BooleanField(required = False)
+    day.widget = widgets.NumberInput(attrs={'style': 'width: 50px', 'min': 0, 'max': 99})   
+
+@method_decorator(login_required, name='dispatch')
+class pasadas_canceladas_citas_view(View):
+
+    def post(self, request):
+        
+         # Comprueba si es superuser
+        if not request.user.is_superuser:
+
+            return HttpResponseRedirect(reverse('procesar-citas'))
+
+        # Si es superuser continua
+        ctx = dict()
+
+        # Query
+        queryexclude = Q(status__iexact = 'Pasa a consulta')
+        querydelete = (Q(appdate__lt = datetime.date.today()) | Q(status__iexact = 'Cancelada'))
+        try:
+            qscita = Cita.objects.exclude(queryexclude).filter(querydelete).count()
+            numregs = 0
+            qsproc = ProcesaCita()
+            # Se pone modifiedby
+            if str(request.user) != 'AmonymousUser':
+                qsproc.modifiedby = str(request.user)
+            else:
+                qsproc.modifiedby = 'unix:' + str(request.META['USERNAME'])
+            qsproc.save()
+        except:
+            numregs = Cita.objects.exclude(queryexclude).filter(querydelete).count()
+
+        if numregs > 0:
+            ctx['mensaje'] = 'Error al procesar la base de datos.'
+            ctx['numregs'] = numregs
+        else:
+            ctx['mensaje'] = 'No hay citas más para procesar.'            
+
+        return render(request, 'pasadas_canceladas_citas_tpl.html', ctx)
+
+    def get(self, request):
+        
+        ctx = dict()
+        
+        # Comprueba si es superuser
+        if not request.user.is_superuser:
+
+            return HttpResponseRedirect(reverse('procesar-citas'))
+     
+        # Cuenta los registros que cumplen las condiciones de ser pasada, canceladas y sin consulta
+        queryexclude = Q(status__iexact = 'Pasa a consulta')
+        querydelete = (Q(appdate__lt = datetime.date.today()) | Q(status__iexact = 'Cancelada'))
+        
+        try:
+            numregs = Cita.objects.exclude(queryexclude).filter(querydelete).count()
+        except:
+            numregs = 0
+        
+        if numregs > 0:
+            ctx['mensaje'] = 'Se va a proceder a BORRAR de la base de datos las citas ya pasadas, o canceladas, que no han generado ninguna ficha de consulta.'
+            ctx['numregs'] = numregs
+        else:
+            ctx['mensaje'] = 'No hay citas para procesar.'            
+
+        return render(request, 'pasadas_canceladas_citas_tpl.html', ctx)
+
 #####################################################################################
 
 @method_decorator(login_required, name='dispatch')
@@ -526,6 +729,4 @@ class citas_semana_view(View):
 class citas_mes_view(View):
     pass
 
-@method_decorator(login_required, name='dispatch')
-class id_citas_view(DetailView):
-    pass
+
