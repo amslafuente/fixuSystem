@@ -1,7 +1,3 @@
-#################################################
-#           VIEWS DE GESTION_PACIENTES          #
-#################################################
-
 from django.shortcuts import render, reverse
 from django.http import request, HttpResponseRedirect
 from .forms import select_pacientes_form, create_pacientes_form
@@ -22,28 +18,17 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
 ########## MENU PACIENTES VIEW ##########
-# View para mostrar el menu de pacientes
-# Usa el template menu_pacientes_tpl
 
 class menu_pacientes_view(TemplateView):
-
-    # Template para usar
     template_name = 'menu_pacientes_tpl.html'
 
 ########## CREATE PACIENTES VIEW ##########
-
-# View para crear pacientes para mostrar
-# Usa la form create_pacientes_form
-# Usa el template create_pacientes_tpl
 
 @method_decorator(login_required, name='dispatch')
 class create_pacientes_view(View):
 
     def post(self, request):
-
-        # Inicializa contexto
         ctx = dict()
-
         # Rellena el form con el POST y la añade  al contexto
         form = create_pacientes_form(request.POST, request.FILES)
         ctx['form'] = form
@@ -76,7 +61,6 @@ class create_pacientes_view(View):
 
                 # Si se introduce un nombre de archivo
                 split_name = str(inter_paciente.picturefile)
-
                 if split_name != '':
 
                     # Trocea el nombre de la ruta por "/" y "."
@@ -95,44 +79,30 @@ class create_pacientes_view(View):
 
                     # Cambia el nombre del archivo en el disco
                     os.rename(str(settings.MEDIA_ROOT + '/' + split_name), str(settings.MEDIA_ROOT +'/' + new_name))
+            
             except:
-
                 messages.warning(request, 'Error procesando archivo de imagen')
 
-            # Devuelve al menu principal
             return HttpResponseRedirect(reverse('create-pacientes-confirm'))
 
         # El form NO es validado
         else:
-
-            # Devuelve si hay errores para corregir
             return render(request, 'create_pacientes_tpl.html', ctx)
 
     def get(self, request):
-
-        # Inicializa contexto
         ctx = dict()
-
         # El form limpio lo añade al contexto
         form = create_pacientes_form()
         ctx['form'] = form
-
-        # Devuelve si hay errores para corregir
         return render(request, 'create_pacientes_tpl.html', ctx)
 
 ########## CONFIRMA LA CREACION DEL PACIENTE ##########
 
 @method_decorator(login_required, name='dispatch')
 class create_pacientes_confirm_view(TemplateView):
-
-    # Template para usar
     template_name = 'create_pacientes_success_tpl.html'
 
 ########## SELECT PACIENTES VIEW ##########
-
-# View para seleccionar pacientes para mostrar
-# Usa la form select_pacientes_form
-# Usa el template select_pacientes_tpl
 
 @method_decorator(login_required, name='dispatch')
 class select_pacientes_view(View):
@@ -140,9 +110,7 @@ class select_pacientes_view(View):
     # POST
     def post(self, request):
 
-        # Inicializa el contexto
         ctx = dict()
-
         # Rellena el form con el POST y añade al contexto
         form = select_pacientes_form(request.POST)
         ctx['form'] = form
@@ -160,12 +128,10 @@ class select_pacientes_view(View):
                 show_str['familyname'] = form.cleaned_data['familyname']
             show_str['orderby'] = form.cleaned_data['orderby']
 
-            # Reenvia a la view de show-pacientes
             return HttpResponseRedirect(reverse('show-pacientes', kwargs = show_str))
 
         # El form NO es validado
         else:
-
             # Limpia el form y añade al contexto
             form = select_pacientes_form()
             ctx['form'] = form
@@ -173,27 +139,17 @@ class select_pacientes_view(View):
             # Mensaje de error en contexto
             messages.warning(request, 'El formulario contiene errores')
 
-            # Devuelve si hay errores
             return render(request, 'select_pacientes_tpl.html', ctx)
 
     # GET
     def get(self, request):
-
-        # Inicializa contexto
         ctx = dict()
-
         # Limpia el form y lo añade al contexto
         form = select_pacientes_form()
         ctx['form'] = form
-
-        # Muestra la página
         return render(request, 'select_pacientes_tpl.html', ctx)
 
 ########## SHOW PACIENTES VIEW ##########
-
-# View para mostrar pacientes seleccionados
-# Usa una listview con un query que incluye la seleccion hecha
-# Usa el template show_pacientes_tpl
 
 @method_decorator(login_required, name='dispatch')
 class show_pacientes_view(ListView):
@@ -226,29 +182,18 @@ class show_pacientes_view(ListView):
         else:
              qs = qs.order_by('idPaciente').values('idPaciente', 'dni', 'name', 'familyname')
 
-        # Regresa el queryset modificado
         return qs
 
     # Añade las cabeceras de la tabla al contexto y la ordenacion para poner el orden de las cabeceras
     def get_context_data(self, **kwargs):
-
-        # Recupera contexto
         context = super().get_context_data(**kwargs)
-
         # Pasa la fecha de hoy para crear el enlace a las citas pendientes
         context['desde_fecha'] = datetime.date.today().strftime('%d_%m_%Y')
-
         # Pasa la ordenacion de la lista de pacientes
         context['head_order'] = self.kwargs['orderby']
-
-        # Devuelve
         return context
 
 ########## ID PACIENTES VIEW ##########
-
-# View para mostrar pacientes seleccionados
-# Usa una listview con un query para solo ese paciente
-# Usa el template id_pacientes_tpl
 
 @method_decorator(login_required, name='dispatch')
 class id_pacientes_view(ListView):
@@ -257,16 +202,13 @@ class id_pacientes_view(ListView):
     template_name = 'id_pacientes_tpl.html'
 
     def get_queryset(self):
-
         # Se filtra el query para mostrar el idPaciente unico
         qs = super().get_queryset()
         qs = qs.filter(idPaciente = self.kwargs['idPaciente'])
-
         return qs
 
     def get_context_data(self, **kwargs):
 
-        # Recupera contexto
         context = super().get_context_data(**kwargs)
 
         # Obtiene la edad a partir de la fecha de nacimiento
@@ -280,7 +222,6 @@ class id_pacientes_view(ListView):
         # Prepara en el contexto la fecha actual para pasarla como DESDE_FECHA
         context['desde_fecha'] = datetime.date.today().strftime('%d_%m_%Y')
 
-        # Devuelve
         return context
 
     # Funcion que calcula la edad a partir de la fecha de nacimiento
@@ -291,19 +232,13 @@ class id_pacientes_view(ListView):
 
 ########## SELECT UN PACIENTE PARA EDITAR VIEW ##########
 
-# View para elegir un paciente que editar
-# Usa la form select_onepaciente_form
-# Usa el template select_onepaciente_tpl
-
 @method_decorator(login_required, name='dispatch')
 class edit_pacientes_view(View):
 
     # POST
     def post(self, request):
 
-        # Inicializa contexto
         ctx = dict()
-
         # Rellena el form con el POST y añade al contexto
         form = edit_pacientes_form(request.POST)
         ctx['form'] = form
@@ -368,25 +303,17 @@ class edit_pacientes_view(View):
             # Mensaje de error en contexto
             ctx['select_pacientes_error'] = 'El formulario contiene errores'
 
-            # Devuelve si hay errores
             return render(request, 'edit_pacientes_tpl.html', ctx)
 
     # GET
-    def get(self, request):
-
+    def get(self, request):        
+        ctx = dict()
         # Limpia el form y lo añade al contexto
         form = edit_pacientes_form()
-        ctx = dict()
         ctx['form'] = form
-
-        # Devuelve
         return render(request, 'edit_pacientes_tpl.html', ctx)
 
 ########## ID para EDIT PACIENTES VIEW ##########
-
-# View para Editar el paciente seleccionados
-# Usa una listview con un query para solo ese paciente
-# Usa el template edit_pacientes_tpl
 
 @method_decorator(login_required, name='dispatch')
 class edit_id_pacientes_view(UpdateView):
@@ -399,8 +326,6 @@ class edit_id_pacientes_view(UpdateView):
 
     # Arregla el contexto y pasa idPaciente al template
     def get_context_data(self, **kwargs):
-
-        # Recupera contexto
         context = super().get_context_data(**kwargs)
         # Coge el registro de ese paciente
         context["idPaciente"] = self.kwargs['idPaciente']
@@ -458,85 +383,6 @@ class edit_id_pacientes_view(UpdateView):
                     os.rename(str(settings.MEDIA_ROOT + '/' + split_name), str(settings.MEDIA_ROOT +'/' + new_name))
 
             except:
-
                 messages.warning(request, 'Error procesando archivo de imagen')
 
-        # Devuelve la form
         return HttpResponseRedirect(reverse('id-pacientes', kwargs = {'idPaciente' : paciente.idPaciente}))
-
-########## SELECT UN PACIENTE PARA DELETE VIEW ##########
-
-# View para elegit un paciente que borrar
-# Usa la form select_onepaciente_form
-# Usa el template select_onepaciente_tpl
-
-@method_decorator(login_required, name='dispatch')
-class delete_pacientes_view(View):
-
-    # POST
-    def post(self, request):
-        # Rellena el form con el POST y añade al contexto
-        form = edit_pacientes_form(request.POST)
-        ctx = dict()
-        ctx['form'] = form
-
-        # El form SI es validado
-        if form.is_valid():
-            # Devuelve el id o el DNI
-            show_str = dict()
-
-            # Si devuelve un id comprueba que existe y pasa a edicion...
-            if form.cleaned_data['id'] != '':
-                # Filtra ese id convirtiendolo a numero si se puede
-                try:
-                    inter_id = int(form.cleaned_data['id'])
-                except ValueError:
-                    inter_id = 0
-                existe_id = Paciente.objects.filter(idPaciente = inter_id)
-                # Si existe...
-                if existe_id:
-                    show_str['idPaciente'] = int(form.cleaned_data['id'])
-                    return HttpResponseRedirect(reverse('delete-id-pacientes', kwargs = show_str))
-                # Si no existe pasa a seleccion general
-                else:
-                    messages.warning(request, 'No existe esa ID.')
-                    return HttpResponseRedirect(reverse('menu-pacientes'))
-
-            # Si devuevle un DNI, recupera el registro y lee el id para pasarlo...
-            elif form.cleaned_data['dni'] != '':
-                # Filtra ese DNI
-                existe_dni = Paciente.objects.filter(dni__iexact = form.cleaned_data['dni'])
-                # Si existe...
-                if existe_dni:
-                    inter_paciente = Paciente.objects.get(dni__iexact = form.cleaned_data['dni'])
-                    show_str['idPaciente'] = inter_paciente.idPaciente
-                    return HttpResponseRedirect(reverse('delete-id-pacientes', kwargs = show_str))
-                # Si no existe pasa a seleccion general
-                else:
-                    messages.warning(request, 'No existe ese DNI.')
-                    return HttpResponseRedirect(reverse('menu-pacientes'))
-
-            # Si no marca nada manda a la ventana select general
-            else:
-                return HttpResponseRedirect(reverse('menu-pacientes'))
-
-        # El form NO es validado
-        else:
-            # Limpia el form y añade al contexto
-            form = edit_pacientes_form()
-            ctx['form'] = form
-            # Mensaje de error en contexto
-            ctx['select_pacientes_error'] = 'El formulario contiene errores'
-            # Devuelve si hay errores
-            return render(request, 'delete_pacientes_tpl.html', ctx)
-
-    # GET
-    def get(self, request):
-        # Limpia el form y lo añade al contexto
-        form = edit_pacientes_form()
-        ctx = dict()
-        ctx['form'] = form
-        # Devuelve
-        return render(request, 'delete_pacientes_tpl.html', ctx)
-
-###############################################################################

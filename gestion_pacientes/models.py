@@ -9,7 +9,6 @@ class Paciente(models.Model):
 
     idPaciente = models.AutoField(primary_key = True, unique = True)
     dni = models.CharField("DNI", max_length = 9, db_index = True, unique = True)
-    # Campos normales
     name = models.CharField("Nombre", max_length = 50)
     familyname = models.CharField("Apellidos", max_length = 100)
     birthdate = models.DateField("Fecha de nacimiento", help_text="DD/MM/AAAA")
@@ -24,9 +23,7 @@ class Paciente(models.Model):
     phone2 = models.PositiveIntegerField("Teléfono alternativo", null = True, blank = True)
     job = models.CharField("Ocupación", max_length = 20, blank = True)
     notes = models.TextField("Notas", blank = True)
-    # Foto
     picturefile = models.ImageField("Archivo foto", upload_to = 'pacientes/',  null = True, blank = True)
-    # Notificar la cita... via...
     notifyappoint = models.BooleanField("Notificar citas", default = False)
     notifyvia = models.CharField("Notificar por", max_length = 10, choices = modeVia, default = 'Email')
     # Campos de control

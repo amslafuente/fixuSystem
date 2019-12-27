@@ -1,22 +1,10 @@
-<!-- ******************* -->
-<!--   id_pacientes_tpl  -->
-<!-- ******************* -->
-
 {% extends 'base.html' %}
-
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
 
     {% block title %}
 
     	<title>fixuSystem - Fisioterapia - Gestión de pacientes</title>
 
     {% endblock %}
-
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
 
     {% block content %}
 
@@ -25,13 +13,11 @@
 		<!-- Menú principal con imágenes -->
         <section class="sect-home-page-menu">
 
-
        		<!-- Devuelve los datos del paciente en varias tablas -->
         	{% for paciente in paciente_list %}
 
-
            		<!-- Tabla del paciente -->
-                <table class="tbl-general tbl-forms tbl-60 table-striped">
+                <table class="tbl-forms table-striped tbl-general tbl-60">
 
                     <!-- Texto con el contenido -->
                     <caption class="tbl-capt">Paciente : {{ paciente.name }} {{ paciente.familyname }} </caption>
@@ -79,7 +65,7 @@
 	            </table>
 
           		<!-- Domicilio -->
-                <table class="tbl-general tbl-forms tbl-60 table-striped">
+                <table class="tbl-forms table-striped tbl-general tbl-60">
 
                     <caption class="tbl-capt">Domicilio</caption>
 
@@ -103,7 +89,7 @@
         	    </table>
 
                	<!-- Datos de contacto -->
-	            <table class="tbl-general tbl-forms tbl-60 table-striped">
+	            <table class="tbl-forms table-striped tbl-general tbl-60">
 
                     <caption class="tbl-capt">Datos de contacto</caption>
 
@@ -122,7 +108,7 @@
 		        </table>
 
            		<!-- Otros datos -->
-	            <table class="tbl-general tbl-forms tbl-60 table-striped">
+	            <table class="tbl-forms table-striped tbl-general tbl-60">
 
                     <caption class="tbl-capt">Otros datos</caption>
 
@@ -141,7 +127,7 @@
         	    </table>
 
                 <!-- Datos de control -->
-                <table class="tbl-general tbl-60 table-striped table-dark">
+                <table class="table-striped table-dark tbl-general tbl-60">
 
                     <caption class="tbl-capt">Datos de control</caption>
 

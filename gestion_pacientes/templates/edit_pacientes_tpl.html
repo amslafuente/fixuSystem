@@ -1,23 +1,10 @@
-<!-- ********************* -->
-<!--   edit_pacientes_tpl  -->
-<!-- ********************* -->
-
-
 {% extends 'base.html' %}
-
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
 
     {% block title %}
 
 		<title>fixuSystem - Fisioterapia  - Gestión de pacientes</title>
 
     {% endblock %}
-
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
 
     {% block content %}
 
@@ -31,30 +18,31 @@
                 <!-- Texto con el contenido -->
             	<caption class="tbl-capt">Criterios de edición</caption>
 
-                <!-- Si hay mensajes pendientes -->
-                {% for message in messages %}
-                    <th colspan="2" style="text-align: center; font-family: serif; font-variant: small-caps; padding: 5px; color: white; background-color: rgb(224, 89, 36);">
-                        {{ message }}
-                    </th>
-                {% endfor %}
+                    <!-- Si hay mensajes pendientes -->
+                    {% for message in messages %}
+                        <th colspan="2" style="text-align: center; font-family: serif; font-variant: small-caps; padding: 5px; color: white; background-color: rgb(224, 89, 36);">
+                            {{ message }}
+                        </th>
+                    {% endfor %}
 
                     <!-- Form ID y DNI -->
                     <tr>
-                        <form method="post">
+                        <form method="POST">
             	    	    {% csrf_token %}
-                            <td class="tbl-td-der">{{ form.id.label }}</td>
-                            <td>{{ form.id.as_widget }}</td>
+                            <td class="tbl-td">ID Paciente:</td>
+                            <td>{{ form.idpaciente.as_widget }}</td>
                             <td ><input type="submit" class="btn btn-info" value=" Buscar ID"></td>
                         </form>
                     </tr>
                     <tr>
-                        <form method="post">
+                        <form method="POST">
 	    	                {% csrf_token %}
-                            <td class="tbl-td-der">{{ form.dni.label }}</td>
+                            <td class="tbl-td">DNI:</td>
                             <td>{{ form.dni.as_widget }}</td>
                             <td><input type="submit" class="btn btn-info" value=" Buscar DNI"></td>
                         </form>
                     </tr>
+                    
                 </table>
 
     	    <!-- Botones -->
