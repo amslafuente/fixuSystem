@@ -14,6 +14,7 @@ from django.views import View
 from django.contrib import messages
 from .models import Clinica, Profesional, Consultorio, Equipamiento, Proveedor
 from .forms import init_edit_info_clinica_form, create_edit_consultorios_form, create_edit_equipamiento_form
+from .forms import customConsultorioForm, customEquipamientoForm, customProveedorForm
 from .forms import create_edit_proveedores_form
 import os
 from pathlib import Path
@@ -270,10 +271,47 @@ class listado_consultorios_view(ListView):
     template_name = 'listado_consultorios_tpl.html'
 
     def get_queryset(self):
+    
+        qs = super().get_queryset()
 
-        # Todos los consultorios ordenados por officeID
-        qs = Consultorio.objects.all().order_by('officeID')
+        # Extrae registros del GET o los pone por defecto
+        kwarg_filterdesc = (self.request.GET.get('filterdesc') or '').lower()
+        kwarg_filterlocat = (self.request.GET.get('filterlocat') or '').lower()
+        kwarg_orderby = (self.request.GET.get('orderby') or '')
+
+       # Fullname
+        if kwarg_filterdesc == '':
+            qs = Consultorio.objects.all().order_by('officeID')
+        else:
+            qs = Consultorio.objects.filter(officeID__icontains = kwarg_filterdesc).order_by('officeID')
+
+        # Area
+        if kwarg_filterlocat != '':
+            qs = qs.filter(officeLocation__icontains = kwarg_filterlocat)
+        
+        # OrderBy ASC
+        if kwarg_orderby != '':
+            # OrderBy DESC
+            # if kwarg_orderby == 'officeIsavail':
+            #    kwarg_orderby = str('-') + kwarg_orderby
+            qs = qs.order_by(kwarg_orderby)
+
         return qs
+
+    def get_context_data(self, **kwargs):
+    
+        # Pasa el form y el contexto
+        ctx = super().get_context_data(**kwargs)
+
+        filterform = customConsultorioForm(self.request.GET) or customConsultorioForm()
+        ctx['form'] = filterform
+
+        # Obtiene el filtro y condicion actual del GET   
+        ctx['filterdesc'] = (self.request.GET.get('filterdesc') or '').lower()
+        ctx['filterlocat'] = (self.request.GET.get('filterlocat') or '').lower()
+        ctx['orderby'] = (self.request.GET.get('orderby') or '')
+
+        return ctx
 
 ########## EDITA DATOS DE CLINICA ##########
 
@@ -414,8 +452,11 @@ class listado_equipamiento_view(ListView):
         elif kwarg_ctrl == 'oper':
             qs = qs.filter(stockwarning = False)
 
-        # OrderBy
+        # OrderBy ASC
         if kwarg_orderby != '':
+            # OrderBy DESC
+            # if kwarg_orderby == 'equipIsavail':
+            #    kwarg_orderby = str('-') + kwarg_orderby
             qs = qs.order_by(kwarg_orderby)
 
         return qs
@@ -435,25 +476,6 @@ class listado_equipamiento_view(ListView):
         ctx['orderby'] = (self.request.GET.get('orderby') or '')
 
         return ctx
-
-# Widget de filtrado
-class customEquipamientoWidget(widgets.Select):
-
-    def __init__(self, *args, **kwargs) :
-        super().__init__(*args, **kwargs)
-        list_choices = list()
-        list_choices.append(('todos', 'Todos'))
-        list_choices.extend(selTipoEquip)
-        self.choices = list_choices
-
-# Form que muestra el customwidget
-class customEquipamientoForm(forms.Form):
-
-    filter_ = fields.CharField(label = 'Filtro', widget = customEquipamientoWidget())
-    condition = fields.CharField(label = 'Condición', required = False, max_length = 10)
-    condition.widget = widgets.TextInput(attrs={'style': 'width: 80px'})
-    ctrl = fields.CharField(label = 'Ctrl', required = False, max_length = 10)
-    ctrl.widget = widgets.Select(attrs={'style': 'width: 80px'}, choices=[('', ''), ('oper', 'Oper'), ('stock', 'Stock')])
 
 ##### CREACION Y EDICION DE EQUIPAMIENTO #####
 
@@ -645,14 +667,6 @@ class listado_proveedores_view(ListView):
         ctx['orderby'] = (self.request.GET.get('orderby') or '')
 
         return ctx
-
-# Form que muestra la ordenacion
-class customProveedorForm(forms.Form):
-
-    filtername = fields.CharField(label = 'Empresa', required = False, max_length = 10)
-    filtername.widget = widgets.TextInput(attrs={'style': 'width: 100px'})
-    filterarea = fields.CharField(label = 'Area', required = False, max_length = 10)
-    filterarea.widget = widgets.TextInput(attrs={'style': 'width: 100px'})
 
 ##### CREACION Y EDICION DE PROVEEDORES #####
 

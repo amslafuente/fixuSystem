@@ -2,6 +2,8 @@
 
 from django import forms
 from django.forms import ModelForm, Textarea, TextInput, NumberInput, Select, EmailInput
+from django.forms import forms, fields, widgets
+from fixuSystem.progvars import selTipoEquip
 from .models import Clinica, Consultorio, Equipamiento, Proveedor
 from django.conf import settings
 
@@ -9,7 +11,7 @@ from django.conf import settings
 
 # Form para crear clinica
 
-class init_edit_info_clinica_form(forms.ModelForm):
+class init_edit_info_clinica_form(ModelForm):
 
     class Meta:
         model = Clinica
@@ -22,7 +24,7 @@ class init_edit_info_clinica_form(forms.ModelForm):
 
 # Form para crear consultorios
 
-class create_edit_consultorios_form(forms.ModelForm):
+class create_edit_consultorios_form(ModelForm):
 
     class Meta:
         model = Consultorio
@@ -37,11 +39,19 @@ class create_edit_consultorios_form(forms.ModelForm):
             'officeNotes': Textarea(attrs={'cols': 40, 'rows': 3})
             }
 
+# Form de consultorio para filtros
+class customConsultorioForm(forms.Form):
+
+    filterdesc = fields.CharField(label = 'Descrip.', required = False, max_length = 10)
+    filterdesc.widget = widgets.TextInput(attrs={'style': 'width: 100px'})
+    filterlocat = fields.CharField(label = 'Situac.', required = False, max_length = 10)
+    filterlocat.widget = widgets.TextInput(attrs={'style': 'width: 100px'})
+
 ###############################################################################
 
 # Form para crear equipamiento
 
-class create_edit_equipamiento_form(forms.ModelForm):
+class create_edit_equipamiento_form(ModelForm):
 
     class Meta:
         model = Equipamiento
@@ -60,11 +70,29 @@ class create_edit_equipamiento_form(forms.ModelForm):
             'notes': Textarea(attrs={'cols': 57, 'rows': 2})
             }
 
+# Widget de filtrado
+class customEquipamientoWidget(widgets.Select):
+
+    def __init__(self, *args, **kwargs) :
+        super().__init__(*args, **kwargs)
+        list_choices = list()
+        list_choices.append(('todos', 'Todos'))
+        list_choices.extend(selTipoEquip)
+        self.choices = list_choices
+
+# Form de euipamiento para filtros
+class customEquipamientoForm(forms.Form):
+
+    filter_ = fields.CharField(label = 'Filtro', widget = customEquipamientoWidget())
+    condition = fields.CharField(label = 'Condición', required = False, max_length = 10)
+    condition.widget = widgets.TextInput(attrs={'style': 'width: 80px'})
+    ctrl = fields.CharField(label = 'Ctrl', required = False, max_length = 10)
+    ctrl.widget = widgets.Select(attrs={'style': 'width: 80px'}, choices=[('', ''), ('oper', 'Oper'), ('stock', 'Stock')])
+
 ###############################################################################
 
 # Form para crear proveedores
-
-class create_edit_proveedores_form(forms.ModelForm):
+class create_edit_proveedores_form(ModelForm):
 
     class Meta:
         model = Proveedor
@@ -86,3 +114,11 @@ class create_edit_proveedores_form(forms.ModelForm):
             'emailSAT': EmailInput(attrs={'style': 'width: 315px'}),
             'notas': Textarea(attrs={'cols': 82, 'rows': 2})
             }
+
+# Form de proveedor para filtros
+class customProveedorForm(forms.Form):
+
+    filtername = fields.CharField(label = 'Empresa', required = False, max_length = 10)
+    filtername.widget = widgets.TextInput(attrs={'style': 'width: 100px'})
+    filterarea = fields.CharField(label = 'Area', required = False, max_length = 10)
+    filterarea.widget = widgets.TextInput(attrs={'style': 'width: 100px'})
