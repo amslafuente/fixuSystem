@@ -29,7 +29,7 @@ SECRET_KEY = SECRET_KEY_PROD
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-# DEBUG = False
+#DEBUG = False
 
 # ALLOWED_HOSTS = []
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.1.*']
@@ -78,10 +78,6 @@ TEMPLATES = [
                 'gestion_login/templates',
                 'gestion_pacientes/templates',                
                 'gestion_clinica/templates',
-                'gestion_clinica/templates/clinica',
-                'gestion_clinica/templates/consultorios',
-                'gestion_clinica/templates/equipamiento',
-                'gestion_clinica/templates/proveedores',
                 'gestion_citas/templates',
                 'gestion_consultas/templates',
                 'fixu_estadisticas/templates',
