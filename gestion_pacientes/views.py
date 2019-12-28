@@ -250,18 +250,18 @@ class edit_pacientes_view(View):
             show_str = dict()
 
             # Si devuelve un id comprueba que existe y pasa a edicion...
-            if form.cleaned_data['id'] != '':
+            if form.cleaned_data['idpac'] != '':
 
                 # Filtra ese id convirtiendolo a numero si se puede
                 try:
-                    inter_id = int(form.cleaned_data['id'])
+                    inter_id = int(form.cleaned_data['idpac'])
                 except ValueError:
                     inter_id = 0
                 existe_id = Paciente.objects.filter(idPaciente = inter_id)
 
                 # Si existe...
                 if existe_id:
-                    show_str['idPaciente'] = int(form.cleaned_data['id'])
+                    show_str['idPaciente'] = int(form.cleaned_data['idpac'])
                     return HttpResponseRedirect(reverse('edit-id-pacientes', kwargs = show_str))
 
                 # Si no existe pasa a seleccion general

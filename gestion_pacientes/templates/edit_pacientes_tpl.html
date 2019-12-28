@@ -13,7 +13,7 @@
             {% load static %}
 
    	        <!-- Formularios de entrada de ID y DNI -->
-            <table class="tbl-general tbl-forms tbl-40 table-striped">
+            <table class="tbl-general tbl-forms tbl-35 table-striped">
 
                 <!-- Texto con el contenido -->
             	<caption class="tbl-capt">Criterios de edición</caption>
@@ -30,7 +30,7 @@
                         <form method="POST">
             	    	    {% csrf_token %}
                             <td class="tbl-td">ID Paciente:</td>
-                            <td>{{ form.idpaciente.as_widget }}</td>
+                            <td>{{ form.idpac.as_widget }}</td>
                             <td ><input type="submit" class="btn btn-info" value=" Buscar ID"></td>
                         </form>
                     </tr>

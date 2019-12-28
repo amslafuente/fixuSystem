@@ -27,7 +27,7 @@
     	    	{% csrf_token %}
 
              	<!-- Campos de  citas -->
-                <table class="tbl-general tbl-35 table-striped table-dark">
+                <table class="tbl-forms table-striped tbl-general tbl-30">
 
                     <!-- Texto con el contenido -->
                     <caption class="tbl-capt">Nueva cita</caption>
@@ -37,26 +37,21 @@
 
                     <!-- Datos -->
 		   	        <tr>
-	    		        <th class="tbl-th-dark" colspan="2">Datos preseleccionados</th>
+	    		        <th colspan="2">Datos preseleccionados</th>
                     </tr>
                     <!-- En el campo Paciente, la entrada {{ form.fk_Paciente }} es el campo REAL, que esta HIDDEN pero pasa el valor -->
                     <tr>
 		    		    <td class="tbl-td-30">Paciente:</td><td>{{ paciente.familyname }}, {{ paciente.name }} {{ form.fk_Paciente }}</td>
                     </tr>
                     <tr>
-		    		    <td class="tbl-td-30">Fecha de la cita:</td><td>{{ form.appdate.as_widget }}</td>
+		    		    <td class="tbl-td-30">Fecha cita:</td><td>{{ form.appdate.as_widget }}</td>
                     </tr>
                     <tr>
-			    	    <td>Hora de la cita:</td><td>{{ form.apptime.as_widget }}
+			    	    <td>Hora cita:</td><td>{{ form.apptime.as_widget }}
                     </tr>
                     <tr>
-                        <td class="tbl-td-centro grid-smalltxt" colspan="2">Puede modificar los minutos dentro de la franja horaria seleccionada</td>
+                        <td class="tbl-td-centro grid-smalltxt" colspan="2">Puede modificar los minutos dentro de la franja horaria seleccionada.</td>
                     </tr>
-        		</table>
-
-    		    <br>
-
-                <table class="tbl-general tbl-forms tbl-35 table-striped">
                     <tr>
                         <th class="tbl-th" colspan="2">Datos de la cita</th>
                     </tr>
@@ -66,19 +61,15 @@
                     <tr>
         			    <td>Consultorio:</td><td>{{ form.fk_Consultorio.as_widget }}</td>
     		        </tr>
+                    <!-- En el campo status, la entrada {{ form.status }} es el campo REAL, que esta HIDDEN pero pasa el valor -->
                     <tr>
-        			    <td>Estado:</td><td>{{ form.status.as_widget }}</td>
-    		        </tr>
-                </table>
-
-                <br>
-
-                <table class="tbl-general tbl-forms tbl-35 table-striped">
+        			    <td>Estado:</td><td>Pendiente {{ form.status.as_widget }}</td>
+                    </tr>
 	    	   	    <tr>
-	        		    <th class="tbl-th">Notas</th>
+	        		    <th class="tbl-th" colspan="2">Notas</th>
                     </tr>
 	    		    <tr>
-    				    <td class="tbl-td-centro">{{ form.notes.as_widget }}</td>
+    				    <td class="tbl-td-centro" colspan="2">{{ form.notes.as_widget }}</td>
     			    </tr>
                 </table>
 

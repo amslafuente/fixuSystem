@@ -98,9 +98,12 @@
                             {% else %}
                                 <span>
                             {% endif %}
-                            {{ cita.3|default_if_none:"Indet." }}
+                            {% if cita.3 != 'None' %}
+                                {{ cita.3|default_if_none:'Indet.' }}
+                            {% else %}
+                                Indet.
+                            {% endif %}
                             </span><br/>
-
                         {% endif %}
                     {% endfor %}
                     </td>
@@ -114,7 +117,7 @@
                             {% else %}
                                 <span>
                             {% endif %}
-                            {{ cita.4|default_if_none:"Indet." }}
+                            {{ cita.4|default_if_none:'Indet.' }}
                             </span><br/>
 
                         {% endif %}

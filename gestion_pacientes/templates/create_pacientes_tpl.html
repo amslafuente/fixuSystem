@@ -38,9 +38,8 @@
             		    <td class="tbl-td-10">Apellidos:</td><td>{{ form.familyname.as_widget }}</td>
                     </tr>
 	            	<tr>
-		    		    
-			    	    <td class="tbl-td-10">Fecha nacim.:</td><td>{{ form.birthdate.as_widget }}
-                        <td class="tbl-td-10">Sexo:</td><td>{{ form.sex.as_widget }}
+			    	    <td class="tbl-td-10">F.nacim.:</td><td>{{ form.birthdate.as_widget }}</td>
+                        <td class="tbl-td-10">Sexo:</td><td>{{ form.sex.as_widget }}</td>
 						<td class="tbl-td-10">Ocupación:</td><td>{{ form.job.as_widget }}</td>
       				</tr>
 	    		    <tr>
@@ -51,26 +50,26 @@
 	    	    	    <th class="tbl-th" colspan="6">Domicilio</th>
                     </tr>
     	    		<tr>
-	    	    		<td class="tbl-td-10">Dirección:</td><td>{{ form.address.as_widget }}</td>
-                        <td class="tbl-td-10">C.P.:</td><td>{{ form.postcode.as_widget }}</td>
+	    	    		<td class="tbl-td-10">Dirección:</td><td colspan="3">{{ form.address.as_widget }}</td>
 						<td class="tbl-td-10">Localidad:</td><td>{{ form.city.as_widget }}</td>
                     </tr>
                     <tr>
+						<td class="tbl-td-10">C.P.:</td><td>{{ form.postcode.as_widget }}</td>
 		    	    	<td class="tbl-td-10">Provincia:</td><td>{{ form.province.as_widget }}</td>
- 			    	    <td class="tbl-td-10">País:</td><td colspan="3">{{ form.country.as_widget }}</td>
+ 			    	    <td class="tbl-td-10">País:</td><td >{{ form.country.as_widget }}</td>
        				</tr>
                     <!-- Datos de contacto -->
 	    	   	    <tr>
 	        		    <th class="tbl-th" colspan="6">Datos de contacto</th>
                     </tr>
     	    		<tr>
-		    	    	<td class="tbl-td-10">Teléfono 1:</td class="tbl-td-10"><td>{{ form.phone1.as_widget }}</td>
-						<td class="tbl-td-10">Teléfono 2:</td class="tbl-td-10"><td>{{ form.phone2.as_widget }}</td>
+		    	    	<td class="tbl-td-10">Teléf.1:</td class="tbl-td-10"><td>{{ form.phone1.as_widget }}</td>
+						<td class="tbl-td-10">Teléf.2:</td class="tbl-td-10"><td>{{ form.phone2.as_widget }}</td>
                         <td class="tbl-td-10">E-mail:</td><td>{{ form.email.as_widget }}</td>
        				</tr>
         			<tr>
-	        			<td class="tbl-td-10" colspan="3">Notificar cita:&nbsp;{{ form.notifyappoint.as_widget }}</td>
-						<td class="tbl-td-10">Notificar vía:</td><td colspan="2">{{ form.notifyvia.as_widget }}</td>
+	        			<td class="tbl-td-10" colspan="2">Notifica cita:&nbsp;&nbsp;&nbsp;{{ form.notifyappoint.as_widget }} ............</td>
+						<td class="tbl-td-10">por:</td><td colspan="2">{{ form.notifyvia.as_widget }}</td>
    			    	</tr>
                     <!-- Notas -->
 	    	   	    <tr>

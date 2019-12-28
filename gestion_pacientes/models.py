@@ -1,7 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.db.models.fields.related import ForeignKey
-from fixuSystem.progvars import modeVia, countries, sexDef
+from fixuSystem.progvars import modeVia, sexDef
 
 ########## TABLA DE GESTION DE PACIENTES ##########
 
@@ -17,7 +17,7 @@ class Paciente(models.Model):
     postcode = models.PositiveIntegerField("C. Postal")
     city = models.CharField("Ciudad", max_length = 50)
     province = models.CharField("Provincia", max_length = 50,  null = True, blank = True)
-    country = models.CharField("País", max_length = 60, choices = countries, default = 'ESPAÑA')
+    country = models.CharField("País", max_length = 60,  null = True, blank = True, default = 'España')
     email = models.EmailField("Correo electrónico", max_length = 75, blank = True, null = True)
     phone1 = models.PositiveIntegerField("Teléfono principal")
     phone2 = models.PositiveIntegerField("Teléfono alternativo", null = True, blank = True)

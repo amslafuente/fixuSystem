@@ -118,7 +118,7 @@ class citas_dia_grid_view(ListView):
         for cita in qs:
             cita_row = (cita.idCita, cita.fk_Paciente, cita.appdate, cita.apptime, cita.fk_Profesional, cita.fk_Consultorio, cita.status, cita.notes)
             citas.append(cita_row)
-
+        print(citas)
         # Contexto que genera las fechas actuales, anteriores y siguentes
         ctx['ctx_dias'] = contexto_dias(kwarg_date)
 

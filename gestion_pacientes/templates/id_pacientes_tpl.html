@@ -98,8 +98,8 @@
                         <td class="tbl-td">{{ paciente.email }}</td>
                     </tr>
                     <tr>
-    	    	    	<td class="tbl-td">Teléfono 1 / Teléfono 2:</td>
-                        <td class="tbl-td">{{ paciente.phone1 }} / {{ paciente.phone2 }}</td>
+    	    	    	<td class="tbl-td">Tel.1 / Tel.2:</td>
+                        <td class="tbl-td">{{ paciente.phone1 }} / {{ paciente.phone2|default_if_none:'Indet.' }}</td>
                     </tr>
                     <tr>
 	            		<td class="tbl-td">Notificar citas / Vía:</td>
@@ -120,33 +120,9 @@
     	    	    	<td class="tbl-td">Notas</td>
 	    	    	    <td class="tbl-td">{{ paciente.notes }}</td>
                     </tr>
-                    <tr>
-        		    	<td class="tbl-td">Archivo foto</td>
-                        <td class="tbl-td">{{ paciente.picturefile }}</td>
-   			        </tr>
         	    </table>
 
-                <!-- Datos de control -->
-                <table class="table-striped table-dark tbl-general tbl-60">
-
-                    <caption class="tbl-capt">Datos de control</caption>
-
-        	        <tr>
-            		    <th class="tbl-td-centro">Id Paciente</th>
-	            	    <th class="tbl-td-centro">Fecha registro</th>
-    	        		<th class="tbl-td-centro">Ultima modificación</th>
-	    	        	<th class="tbl-td-centro">Modificado por</th>
-        	        </tr>
-                    <tr>
-	        	   	    <td class="tbl-td-centro">{{ paciente.idPaciente }}</td>
-    	    	       	<td class="tbl-td-centro">{{ paciente.firstupdated|date:'d/m/Y H:i' }}</td>
-        	    	   	<td class="tbl-td-centro">{{ paciente.lastupdated|date:'d/m/Y H:i' }}</td>
-	        	       	<td class="tbl-td-centro">{{ paciente.modifiedby }}</td>
-    		        </tr>
-	    	    </table>
-
-
-		        <!-- Botones de acción -->
+ 		        <!-- Botones de acción -->
                 <div class="div-botones">
                     <a href="{% url 'edit-id-pacientes' paciente.idPaciente %}"><input type="button" class="btn btn-info" value="Editar"></a>
                     <a href="{% url 'citas-paciente-desdefecha' paciente.idPaciente desde_fecha %}"><input type="button" class="btn btn-info" value="Citas"></a>

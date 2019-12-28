@@ -57,8 +57,8 @@
                		<tr>
 		    	        <td class="tbl-td-centro">{{ cita.appdate|date:'d/M/Y' }}
                         <td class="tbl-td-centro">{{ cita.apptime|date:'H:i' }}</td>
-                        <td>{{ cita.fk_Profesional }}</td>
-                        <td class="tbl-td-centro">{{ cita.fk_Consultorio }}</td>
+                        <td>{{ cita.fk_Profesional|default_if_none:'Indet.' }}</td>
+                        <td class="tbl-td-centro">{{ cita.fk_Consultorio|default_if_none:'Indet.' }}</td>
 
                         <!-- Notas -->
                         <td>{{ cita.notes }}</td>
