@@ -21,11 +21,79 @@
 		<!-- Taba principal con imágenes -->
         <section class="sect-home-page-menu">
         
-            <table class="tbl-general tbl-forms tbl-35 table-striped">
+            <table class="tbl-general tbl-forms tbl-60 table-striped">
+                <!-- Texto con el contenido -->
+                <caption class="tbl-capt">Resultados de las notificaciones por email</caption>
+ 
+                <tr>
+                    <th class="tbl-th" colspan="2">Notificaciones para el {{ notifydate }} {{ untilday}}</th>
+                </tr>
+
+                {% if emailcount == 0 %}
+    	    	    <tr>
+                        <th colspan="2" class="field-errors">
+                            <span>Ninguna cita a notificar</span>
+                        </th>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td class="tbl-td-centro" colspan="2">Procesados: {{ emailcount }} / Enviados: {{ emailsent }} / Errores: {{ emailunsent }}</td>
+                    </tr>
+                    {% if emailunsent > 0 %}
+                        <tr>
+                            <th class="tbl-th" colspan="2">Errores en el envío</th>
+                        </tr>
+                        <tr>
+                            <th class="tbl-th-izq">Email no entregado</th>
+                            <th class="tbl-th-izq">Mensaje de error</th>
+                        </tr>
+                        {% for error in emailerrors %}
+                            <tr>
+                                <td>{{ error.0 }}</td>
+                                <td>{{ error.1 }}</td>
+                            </tr>
+                        {% endfor %}
+                     {% endif %}
+                {% endif %}
+
+            </table>
+
+            <br/>
+
+            <!-- Notifiaciones de telefono -->
+            <table class="tbl-general tbl-forms tbl-60 table-striped"> 
 
                 <!-- Texto con el contenido -->
-                <caption class="tbl-capt">Resultados de las notificaciones</caption>
-                
+                <caption class="tbl-capt">Notificaciones a hacer por teléfono</caption>
+               
+                <tr>
+                    <th class="tbl-th" colspan="5">Notificaciones para el {{ notifydate }} {{ untilday}}</th>
+                </tr>
+ 
+                {% if not restelef %}
+	    	        <tr>
+                        <th colspan="5" class="field-errors">
+                            <span>Ninguna cita a notificar</span>
+                        </th>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <th>Paciente</th>
+                        <th>Telef.1</th>
+                        <th>Telef.2</th>
+                        <th>Fecha cita</th>
+                        <th>Hora cita</th>                
+                    </tr>
+                {% for telef in restelef %}
+                        <tr>
+                            <td>{{ telef.0 }}, {{ telef.1 }}</td>
+                            <td>{{ telef.2 }}</td>
+                            <td>{{ telef.3|default_if_none:'Indet.' }}</td>
+                            <td>{{ telef.4|date:'d/M/Y' }}</td>
+                            <td>{{ telef.5|date:'H:i' }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
             </table>
 
             <!-- Botones de acción -->

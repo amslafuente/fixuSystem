@@ -47,6 +47,7 @@ class NotificaCita(models.Model):
 
     idNotificaCita = models.AutoField(primary_key = True, unique = True)
     notifLastrun = models.DateTimeField('Ultima fecha de notificación', auto_now = True)
+    witherrors = models.BooleanField('Con errores', blank = True, null = True, default = False)
     # Datos de control
     firstupdated = models.DateTimeField("Fecha registro", auto_now_add = True)
     lastupdated = models.DateTimeField("Fecha actualización", auto_now = True)

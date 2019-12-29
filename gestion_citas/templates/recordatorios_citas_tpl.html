@@ -59,8 +59,7 @@
 
                 <div class="div-botones">
                     {% if numregsemail > 0 or numregstelef > 0 %}                
-                        <input type="submit" class="btn btn-danger" value="Notificar citas con los valores por defecto">
-                        <input type="submit" class="btn btn-danger" value="Modificar los dias y notificar citas">    
+                        <input type="submit" class="btn btn-danger" value="Notificar citas">
                     {% endif %}
                     <a href="{% url 'procesar-citas' %}">
                         <button type="button" class="btn btn-info">Volver</button>

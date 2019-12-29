@@ -3,8 +3,6 @@ Variables to be used in different apps.
 
 """
 
-from fixuSystem.secrets import EMAIL_PASSWD
-
 ##### VERSION DEL PROGRAMA #####
 
 PROG_VERS = '0.60'
@@ -70,10 +68,3 @@ selTipoEquip = [
     ('limp', 'Limpieza'),
     ('otros', 'Otros'),
 ]
-##### Servidores de correo #####
-
-EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'fixuUser'
-EMAIL_HOST_PASSWORD = EMAIL_PASSWD
-EMAIL_USE_TLS = True

@@ -358,9 +358,9 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
     background-color:rgb(82, 82, 82);
 }
 
-.tr-dark {
+.tbl-tr-dark {
     color: white;
-    background-color:rgb(82, 82, 82);   
+    background-color:rgb(100, 95, 95);   
 }
 
 .tbl-th-izq { /* --- TH header izquierda --- */

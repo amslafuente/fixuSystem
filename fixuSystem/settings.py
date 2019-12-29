@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 from .secrets import SECRET_KEY_PROD
 from .secrets import DB_USR, DB_PASSWD
+from .secrets import EMAIL_USR, EMAIL_PASSWD
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -158,7 +159,7 @@ DATE_TIME_FORMAT = ['%d/%m/%Y %H:%M',
                     '%Y/%m/%d %H:%M',
                     '%Y-%m-%d %H:%M']
 
-# Login y logout URL
+##### Login y logout URL #####
 
 LOGIN_URL = '/fixuSystem/access/login/'
 LOGOUT_REDIRECT_URL = '/'
@@ -166,7 +167,14 @@ LOGOUT_REDIRECT_URL = '/'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Session expiration on close
 SESSION_COOKIE_AGE = 3600 # User logs out after 60 minutes (3600 secs) of inactivity but...
 SESSION_SAVE_EVERY_REQUEST = True # timer may be reset in every request
-#AUTO_LOGOUT_DELAY = 60  # User logout after 60 minutes
+
+##### Servidores de correo #####
+
+EMAIL_HOST = 'smtp.mydomain.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = EMAIL_USR
+EMAIL_HOST_PASSWORD = EMAIL_PASSWD
+EMAIL_USE_TLS = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/

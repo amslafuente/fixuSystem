@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 import datetime
 from .models import Cita, NotificaCita, ProcesaCita
+from gestion_clinica.models import Clinica
 from gestion_pacientes.models import Paciente
 from django.views.generic.edit import UpdateView
 from django.views.generic.list import ListView
@@ -20,7 +21,9 @@ from django.db.models import Q
 from fixuSystem.progvars import NOTIFICAR_CON
 from django.forms import forms, fields, widgets
 from django.forms.widgets import NumberInput
-from django.core.mail import send_mass_mail
+from django.core.mail import send_mail
+import locale
+import smtplib
 
 #########################################################
 #                                                       #
@@ -539,6 +542,7 @@ class procesar_citas_view(View):
         proc = ProcesaCita.objects.last()
         try:
             ctx['last_notif'] = notif.notifLastrun
+            ctx['with_errors'] = notif.witherrors
         except:
             ctx['last_notif'] = 'Sin fecha'
         try:
@@ -563,6 +567,7 @@ class recordatorios_citas_view(View):
 
         # Rellena el form con el POST y la añade  al contexto
         form = customNotifDias(request.POST)
+        
         ctx['form'] = form
 
         # SI los datos son válidos
@@ -575,6 +580,12 @@ class recordatorios_citas_view(View):
                 kwarg_untilday = False
             kwarg_date = datetime.date.today()
             kwarg_notifydate = kwarg_date + datetime.timedelta(days = kwarg_day)
+            
+            ctx['notifydate'] = kwarg_notifydate
+           
+            if kwarg_untilday:
+                
+                ctx['untilday'] = 'y anteriores'
 
             # Queries
             # Si no selecciona interdays
@@ -584,30 +595,84 @@ class recordatorios_citas_view(View):
                 qstelef = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email')
             # Si selecciona interdays
             else:
-                emailcount = Cita.objects.filter(appdate__gt = kwarg_notifydate, appdate__lte = kwarg_date).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').count() 
-                qsemail = Cita.objects.filter(appdate__gt = kwarg_notifydate, appdate__lte = kwarg_date).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email')
-                qstelef = Cita.objects.filter(appdate__gt = kwarg_notifydate, appdate__lte = kwarg_date).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email')
-
-            # Notifica por email
-            resemail = list()
-            qsemail = qsemail.values('fk_Paciente__familyname', 'fk_Paciente__name', 'fk_Paciente__phone1', 'fk_Paciente__phone2', 'appdate', 'apptime')
-            resemail.append(('Apellidos', 'Nombre', 'Email', 'Fecha cita', 'Hora cita'))
-            for email in qsemail:
-
-                message1 = ('Subject here', 'Here is the message', 'from@example.com', ['first@example.com', 'other@example.com'])
-                message2 = ('Another Subject', 'Here is another message', 'from@example.com', ['second@test.com'])
-                emailsuccess = send_mass_mail((message1, message2), fail_silently=False) 
+                emailcount = Cita.objects.filter(appdate__gt = kwarg_date, appdate__lte = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').count() 
+                qsemail = Cita.objects.filter(appdate__gt = kwarg_date, appdate__lte = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email')
+                qstelef = Cita.objects.filter(appdate__gt = kwarg_date, appdate__lte = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email')
+           
             ctx['emailcount'] = emailcount
-            ctx['emailsuccess'] = emailsuccess
-            ctx['resemail'] = resemail
+            
+            ##### Notifica por email #####
+
+            # Recupera datos de la clinica (from)
+            clinica = Clinica.objects.first()
+            # Recupera campos de las citas
+            qsemail = qsemail.values('fk_Paciente__familyname', 'fk_Paciente__email', 'appdate', 'apptime')
+
+            # Construye tupla de cada mensaje
+            # asunto, mensaje, from, to
+            locale.setlocale(locale.LC_ALL,'es_ES')
+            
+            lista_emails = list()          
+            for email in qsemail:
+                asunto = 'Recordatorio de cita'
+                mensaje = 'Estimado/a Sr./Sra. ' + email['fk_Paciente__familyname']+ ':\r\n\n'
+                mensaje = mensaje + 'Le recordamos que tiene una cita pendiente en ' + clinica.clinicname + ' '
+                mensaje = mensaje + 'el ' + datetime.date.strftime(email['appdate'], '%A, %d de %B de %Y') + ', a las ' + datetime.time.strftime(email['apptime'], '%H:%M') + ' horas.\r\n\n'
+                mensaje = mensaje + '---\r\n'
+                mensaje = mensaje + '  ' + clinica.clinicname + '\r\n'
+                mensaje = mensaje + '  ' + clinica.fulladdress + '\r\n'
+                mensaje = mensaje + '  Teléfono : ' + str(clinica.phone1) + '\r\n'
+                mensaje = mensaje + '  Email : ' + clinica.email + '\r\n'
+                email_from = clinica.email
+                email_to = email['fk_Paciente__email']
+                lista_emails.append((asunto, mensaje, email_from, email_to))
+           
+            locale.resetlocale(category=locale.LC_ALL)
+            
+            # Gestiona el envio de los email
+            emails_enviados = 0
+            emails_noenviados = 0
+            emails_errores = list()
+
+            for i in range(0, len(lista_emails)):
+                try:
+                    asunto = lista_emails[i][0]
+                    mensaje = lista_emails[i][1]
+                    correo_de = lista_emails[i][2]
+                    correo_para = list()
+                    correo_para.append(lista_emails[i][3])
+                    emails_enviados = emails_enviados + send_mail(asunto, mensaje, correo_de, correo_para, fail_silently = False)
+                except Exception as e:
+                    emails_noenviados += 1
+                    emails_errores.append((correo_para, e))
+
+            ctx['emailsent'] = emails_enviados
+            ctx['emailunsent'] = emails_noenviados
+            ctx['emailerrors'] = emails_errores
+
+            ##### Notifica por telefono #####           
 
             # Lista de notificacion por telefono
             restelef = list()
             qstelef = qstelef.values('fk_Paciente__familyname', 'fk_Paciente__name', 'fk_Paciente__phone1', 'fk_Paciente__phone2', 'appdate', 'apptime')
-            restelef.append(('Apellidos', 'Nombre', 'Telef. 1', 'Telef. 2', 'Fecha cita', 'Hora cita'))
             for telef in qstelef:
                 restelef.append((telef['fk_Paciente__familyname'], telef['fk_Paciente__name'], telef['fk_Paciente__phone1'], telef['fk_Paciente__phone2'], telef['appdate'], telef['apptime']))
+
             ctx['restelef'] = restelef
+
+            ##### Coloca el registro que indica la ultima fecha de actualización #####
+            qsnotif = NotificaCita()
+            # Si ha habido errores en el envio de email lo indica
+            if emails_noenviados > 0:
+                qsnotif.witherrors = True
+            else:
+                qsnotif.witherrors = False
+            # Se pone modifiedby
+            if str(request.user) != 'AmonymousUser':
+                qsnotif.modifiedby = str(request.user)
+            else:
+                qsnotif.modifiedby = 'unix:' + str(request.META['USERNAME'])
+            qsnotif.save()
 
             return render(request, 'recordatorios_result_citas_tpl.html', ctx)
 
