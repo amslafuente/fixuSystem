@@ -21,45 +21,41 @@
 		<!-- Taba principal con imágenes -->
         <section class="sect-home-page-menu">
         
-            <form method="POST">
-            {% csrf_token %}
-        
-            <table class="tbl-general tbl-forms tbl-35 table-striped">
+            <form method="GET">
+    
+                <table class="tbl-forms tbl-general tbl-70">
 
-                <!-- Texto con el contenido -->
-                <caption class="tbl-capt">Notificación de citas</caption>
+                    <!-- Texto con el contenido -->
+                    <caption class="tbl-capt">Número de citas pendientes de notificar</caption>
                 
-                {% include 'errors_recordatorios.html' %}
+                    <tr>
+                        <th class="tbl-th tbl-td-50">Citas a notificar por e-mail: {{ numregsemail }}</th>
+                        <th class="tbl-th tbl-td-50">Citas a notificar por teléfono: {{ numregstelef }}</th>
+                    </tr>
+                    <tr>
+                        <td>Notificar citas para dentro de {{ form.day.as_widget }} días.</td>
+                        <td rowspan="2" class="tbl-td-centro">
+                            <input type="submit" class="btn btn-info" value="Recalcular número de citas"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Notificar también para los días intermedios: {{ form.untilday.as_widget }}</td>
+                    </tr>
 
-                {% if numregsemail > 0 or numregstelef > 0 %}
-                    <tr>
-                        <th colspan="2" class="field-errors">
-                            {{ mensaje }}
-                        </th>
-                    </tr>
-                    <tr>
-                        <td class="tbl-td-40">Por e-mail: {{ numregsemail }}</td>
-                        <td class="tbl-td-40">Por teléfono: {{ numregstelef }}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Notificar citas con {{ form.day }} días de antelación.</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">Notificar también las de los días intermedios: {{ form.untilday }}</td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <th class="tbl-td-centro">{{ mensaje }}</th>
-                    </tr>
-                {% endif %}
+                </table>
 
-            </table>
+            </form>
 
-            <!-- Botones de acción -->
+            <form method="POST">
 
+                {% csrf_token %}
+
+                <!-- Botones de acción -->
                 <div class="div-botones">
-                    {% if numregsemail > 0 or numregstelef > 0 %}                
-                        <input type="submit" class="btn btn-danger" value="Notificar citas">
+                    {% if numregsemail > 0 or numregstelef > 0 %}
+                        <input type="submit" class="btn btn-danger" value="Notificar citas"/>
+                        <input type="hidden" name="day" value="{{ form.day.value }}" />
+                        <input type="hidden" name="untilday" value="{{ form.untilday.value }}" />
                     {% endif %}
                     <a href="{% url 'procesar-citas' %}">
                         <button type="button" class="btn btn-info">Volver</button>

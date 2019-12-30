@@ -26,7 +26,7 @@
                 <caption class="tbl-capt">Resultados de las notificaciones por email</caption>
  
                 <tr>
-                    <th class="tbl-th" colspan="2">Notificaciones para el {{ notifydate }} {{ untilday}}</th>
+                    <th class="tbl-th" colspan="2">Citas para el día {{ notifydate }} {{ untilday}}</th>
                 </tr>
 
                 {% if emailcount == 0 %}
@@ -37,7 +37,7 @@
                     </tr>
                 {% else %}
                     <tr>
-                        <td class="tbl-td-centro" colspan="2">Procesados: {{ emailcount }} / Enviados: {{ emailsent }} / Errores: {{ emailunsent }}</td>
+                        <td class="tbl-td-centro" colspan="2">Procesadas: {{ emailcount }} / Enviadas: {{ emailsent }} / Errores: {{ emailunsent }}</td>
                     </tr>
                     {% if emailunsent > 0 %}
                         <tr>
@@ -67,7 +67,7 @@
                 <caption class="tbl-capt">Notificaciones a hacer por teléfono</caption>
                
                 <tr>
-                    <th class="tbl-th" colspan="5">Notificaciones para el {{ notifydate }} {{ untilday}}</th>
+                    <th class="tbl-th" colspan="5">Citas para el día {{ notifydate }} {{ untilday}}</th>
                 </tr>
  
                 {% if not restelef %}

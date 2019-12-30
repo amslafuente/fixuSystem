@@ -550,6 +550,9 @@ class procesar_citas_view(View):
         except:
             ctx['last_proc'] = 'Sin fecha'
 
+        ctx['day'] = NOTIFICAR_CON
+        ctx['untilday'] = 0
+
         return render(request, 'procesar_citas_tpl.html', ctx)
 
 @method_decorator(login_required, name='dispatch')
@@ -566,8 +569,7 @@ class recordatorios_citas_view(View):
         ctx = dict()
 
         # Rellena el form con el POST y la añade  al contexto
-        form = customNotifDias(request.POST)
-        
+        form = customNotifDias(request.POST)        
         ctx['form'] = form
 
         # SI los datos son válidos
@@ -680,39 +682,42 @@ class recordatorios_citas_view(View):
         else:
 
             messages.warning(request, 'Error en el formulario.')
+
             return render(request, 'recordatorios_citas_tpl.html', ctx)
 
     def get(self, request):
-        
-        # Comprueba si es superuser
-        if not request.user.is_superuser:
 
-            return HttpResponseRedirect(reverse('procesar-citas'))
-
-        # Si es superuser
         ctx = dict()
-        
-        # Dias de antelacion por defecto
-        ctx['dias'] = NOTIFICAR_CON
+
+        # Dias de antelacion pasados en el GET o por defecto
+        kwarg_day = int(request.GET.get('day', default = NOTIFICAR_CON))
+        kwarg_untilday = request.GET.get('untilday', default = False)
+        if kwarg_untilday == 'on':
+            kwarg_untilday = True
+        else:
+            kwarg_untilday = False
 
         # Pasa la form con dias a modificar
-        form = customNotifDias(initial={'day': NOTIFICAR_CON, 'untilday': False})
+        form = customNotifDias(initial={'day': kwarg_day, 'untilday': kwarg_untilday})
         ctx['form'] = form
 
         # Cuenta los registros que cumplen las condiciones de ser notificados por email o telefono
         kwarg_date = datetime.date.today()
-        kwarg_notifydate = kwarg_date + datetime.timedelta(days = NOTIFICAR_CON)
-
-        numregsemail = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').count()
-        numregstelef = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email').count()
-
-        if (numregsemail > 0 or numregstelef > 0):
-            ctx['mensaje'] = 'Se van a notificar las siguientes citas pendientes:'
-            ctx['numregsemail'] = numregsemail
-            ctx['numregstelef'] = numregstelef
+        kwarg_notifydate = kwarg_date + datetime.timedelta(days = kwarg_day)
+   
+        # Si se señala UNTILDAYS, se incluye en la busqueda el rango de fechas
+        # Si no se indica UNTILDAYS solo se usca una fecha concreta
+        if not kwarg_untilday:
+            numregsemail = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').count()
+            numregstelef = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email').count()
         else:
-            ctx['mensaje'] = 'No hay citas para notificar.'            
-
+            numregsemail = Cita.objects.filter(appdate__gt = kwarg_date, appdate__lte = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').count()
+            numregstelef = Cita.objects.filter(appdate__gt = kwarg_date, appdate__lte = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email').count()
+        
+        # Muestra lo que hay a notificar 
+        ctx['numregsemail'] = numregsemail
+        ctx['numregstelef'] = numregstelef
+        
         return render(request, 'recordatorios_citas_tpl.html', ctx)
 
 class customNotifDias(forms.Form):
@@ -720,7 +725,7 @@ class customNotifDias(forms.Form):
     day = fields.IntegerField(required = False)
     untilday = fields.BooleanField(required = False)
     day.widget = widgets.NumberInput(attrs={'style': 'width: 50px', 'min': 0, 'max': 99})   
-
+  
 @method_decorator(login_required, name='dispatch')
 class pasadas_canceladas_citas_view(View):
 
