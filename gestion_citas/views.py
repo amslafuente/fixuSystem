@@ -608,7 +608,7 @@ class recordatorios_citas_view(View):
             # Recupera datos de la clinica (from)
             clinica = Clinica.objects.first()
             # Recupera campos de las citas
-            qsemail = qsemail.values('fk_Paciente__familyname', 'fk_Paciente__email', 'appdate', 'apptime')
+            qsemail = qsemail.values('fk_Paciente__familyname', 'fk_Paciente__name', 'fk_Paciente__email', 'fk_Paciente__phone1', 'fk_Paciente__phone2', 'appdate', 'apptime')
 
             # Construye tupla de cada mensaje
             # asunto, mensaje, from, to
@@ -616,25 +616,32 @@ class recordatorios_citas_view(View):
             
             lista_emails = list()          
             for email in qsemail:
-                asunto = 'Recordatorio de cita'
-                mensaje = 'Estimado/a Sr./Sra. ' + email['fk_Paciente__familyname']+ ':\r\n\n'
+                asunto = 'Recordatorio de cita'                
+                apellidos = email['fk_Paciente__familyname']
+                nombre = email['fk_Paciente__name']
+                fechacita = email['appdate']
+                horacita = email['apptime']
+                mensaje = 'Estimado/a Sr./Sra. ' + apellidos + ':\r\n\n'
                 mensaje = mensaje + 'Le recordamos que tiene una cita pendiente en ' + clinica.clinicname + ' '
-                mensaje = mensaje + 'el ' + datetime.date.strftime(email['appdate'], '%A, %d de %B de %Y') + ', a las ' + datetime.time.strftime(email['apptime'], '%H:%M') + ' horas.\r\n\n'
+                mensaje = mensaje + 'el ' + datetime.date.strftime(fechacita, '%A, %d de %B de %Y') + ', a las ' + datetime.time.strftime(horacita, '%H:%M')  + ' horas.\r\n\n'
                 mensaje = mensaje + '---\r\n'
                 mensaje = mensaje + '  ' + clinica.clinicname + '\r\n'
                 mensaje = mensaje + '  ' + clinica.fulladdress + '\r\n'
                 mensaje = mensaje + '  Teléfono : ' + str(clinica.phone1) + '\r\n'
-                mensaje = mensaje + '  Email : ' + clinica.email + '\r\n'
+                mensaje = mensaje + '  Email : ' + clinica.email + '\r\n'                
                 email_from = clinica.email
-                email_to = email['fk_Paciente__email']
-                lista_emails.append((asunto, mensaje, email_from, email_to))
-           
+                email_to = email['fk_Paciente__email']                
+                telef1 = email['fk_Paciente__phone1']
+                telef2 = email['fk_Paciente__phone2']                
+                lista_emails.append((asunto, mensaje, email_from, email_to, apellidos, nombre, telef1, telef2, fechacita, horacita))
+
             locale.resetlocale(category=locale.LC_ALL)
             
             # Gestiona el envio de los email
             emails_enviados = 0
             emails_noenviados = 0
             emails_errores = list()
+            emails_to_phone = list()
 
             for i in range(0, len(lista_emails)):
                 try:
@@ -644,13 +651,22 @@ class recordatorios_citas_view(View):
                     correo_para = list()
                     correo_para.append(lista_emails[i][3])
                     emails_enviados = emails_enviados + send_mail(asunto, mensaje, correo_de, correo_para, fail_silently = False)
+                # Si falla en el envío guarda el mensaje para notificar por telefono
                 except Exception as e:
                     emails_noenviados += 1
                     emails_errores.append((correo_para, e))
+                    apellidos = lista_emails[i][4]
+                    nombre = lista_emails[i][5]
+                    telef1 = lista_emails[i][6]
+                    telef2 = lista_emails[i][7]
+                    fechacita = lista_emails[i][8]
+                    horacita = lista_emails[i][9]
+                    emails_to_phone.append((apellidos, nombre, telef1, telef2, fechacita, horacita))
 
             ctx['emailsent'] = emails_enviados
             ctx['emailunsent'] = emails_noenviados
             ctx['emailerrors'] = emails_errores
+            ctx['emails2phone'] = emails_to_phone
 
             ##### Notifica por telefono #####           
 
@@ -658,7 +674,13 @@ class recordatorios_citas_view(View):
             restelef = list()
             qstelef = qstelef.values('fk_Paciente__familyname', 'fk_Paciente__name', 'fk_Paciente__phone1', 'fk_Paciente__phone2', 'appdate', 'apptime')
             for telef in qstelef:
-                restelef.append((telef['fk_Paciente__familyname'], telef['fk_Paciente__name'], telef['fk_Paciente__phone1'], telef['fk_Paciente__phone2'], telef['appdate'], telef['apptime']))
+                apellidos = telef['fk_Paciente__familyname']
+                nombre = telef['fk_Paciente__name']
+                telef1 = telef['fk_Paciente__phone1']
+                telef2 = telef['fk_Paciente__phone2']                
+                fechacita = telef['appdate']
+                horacita = telef['apptime']
+                restelef.append((apellidos, nombre, telef1, telef2, fechacita, horacita))
 
             ctx['restelef'] = restelef
 

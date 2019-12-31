@@ -14,6 +14,23 @@
     <!-- Centro de página -->
     <!-- **************** -->
 
+    {% block JS %}
+
+    <script type="text/javascript">
+    
+        function infoProc() {
+            // Informa de que se está procesando el correo
+            document.getElementById('id_infoProc').innerHTML = "PROCESANDO NOTIFICACIONES...";
+        }
+    
+    </script> 
+
+    {% endblock JS %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
     {% block content %}
 
         {% load static %}
@@ -26,7 +43,7 @@
                 <table class="tbl-forms tbl-general tbl-70">
 
                     <!-- Texto con el contenido -->
-                    <caption class="tbl-capt">Número de citas pendientes de notificar</caption>
+                    <caption id="id_infoProc" class="tbl-capt">Número de citas pendientes de notificar</caption>
                 
                     <tr>
                         <th class="tbl-th tbl-td-50">Citas a notificar por e-mail: {{ numregsemail }}</th>
@@ -53,7 +70,7 @@
                 <!-- Botones de acción -->
                 <div class="div-botones">
                     {% if numregsemail > 0 or numregstelef > 0 %}
-                        <input type="submit" class="btn btn-danger" value="Notificar citas"/>
+                        <input onclick="infoProc()" type="submit" class="btn btn-danger" value="Notificar citas"/>
                         <input type="hidden" name="day" value="{{ form.day.value }}" />
                         <input type="hidden" name="untilday" value="{{ form.untilday.value }}" />
                     {% endif %}

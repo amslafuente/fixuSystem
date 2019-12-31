@@ -41,7 +41,10 @@
                     </tr>
                     {% if emailunsent > 0 %}
                         <tr>
-                            <th class="tbl-th" colspan="2">Errores en el envío</th>
+                            <th class="tbl-th field-errors" colspan="2">
+                                Errores en el envío de email. <br/>
+                                Estas citas aparecerán en la lista de notificaciones telefónicas.
+                            </th>
                         </tr>
                         <tr>
                             <th class="tbl-th-izq">Email no entregado</th>
@@ -81,19 +84,42 @@
                         <th>Paciente</th>
                         <th>Telef.1</th>
                         <th>Telef.2</th>
-                        <th>Fecha cita</th>
-                        <th>Hora cita</th>                
+                        <th class="tbl-td-centro">Fecha cita</th>
+                        <th class="tbl-td-centro">Hora cita</th>                
                     </tr>
-                {% for telef in restelef %}
+                    {% for telef in restelef %}
                         <tr>
                             <td>{{ telef.0 }}, {{ telef.1 }}</td>
                             <td>{{ telef.2 }}</td>
                             <td>{{ telef.3|default_if_none:'Indet.' }}</td>
-                            <td>{{ telef.4|date:'d/M/Y' }}</td>
-                            <td>{{ telef.5|date:'H:i' }}</td>
+                            <td class="tbl-td-centro">{{ telef.4|date:'D, j/M/Y' }}</td>
+                            <td class="tbl-td-centro">{{ telef.5|date:'H:i' }} h.</td>
                         </tr>
                     {% endfor %}
                 {% endif %}
+
+                {% if emails2phone %}
+                    <th colspan="5" class="tbl-th">
+                        <span>Notificar por teléfono por errores en el envío de email</span>
+                    </th>
+                    <tr>
+                        <th>Paciente</th>
+                        <th>Telef.1</th>
+                        <th>Telef.2</th>
+                        <th class="tbl-td-centro">Fecha cita</th>
+                        <th class="tbl-td-centro">Hora cita</th>                
+                    </tr>
+                    {% for telef in emails2phone %}
+                        <tr>
+                            <td>{{ telef.0 }}, {{ telef.1 }}</td>
+                            <td>{{ telef.2 }}</td>
+                            <td>{{ telef.3|default_if_none:'Indet.' }}</td>
+                            <td class="tbl-td-centro">{{ telef.4|date:'D, j/M/Y' }}</td>
+                            <td class="tbl-td-centro">{{ telef.5|date:'H:i' }} h.</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+
             </table>
 
             <!-- Botones de acción -->
@@ -102,6 +128,7 @@
                     <a href="{% url 'procesar-citas' %}">
                         <button type="button" class="btn btn-info">Volver</button>
                     </a>
+                    <button type="button" class="btn btn-info">Crear PDF</button>
                 </div>
 
         </section>
