@@ -52,4 +52,5 @@ urlpatterns = [
     path('procesar/', views.procesar_citas_view.as_view(), name = "procesar-citas"),
     path('procesar/recordatorios/', views.recordatorios_citas_view.as_view(), name = "recordatorios-citas"),
     path('procesar/pasadas-canceladas/', views.pasadas_canceladas_citas_view.as_view(), name = "pasadas-canceladas-citas"),
+    path('procesar/pdf-citas/', views.PDF_citas_view.as_view(), name = "pdf-citas"),
 ]

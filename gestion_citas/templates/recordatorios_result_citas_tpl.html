@@ -21,7 +21,7 @@
 		<!-- Taba principal con imágenes -->
         <section class="sect-home-page-menu">
         
-            <table class="tbl-general tbl-forms tbl-60 table-striped">
+            <table class="tbl-forms table-striped tbl-general tbl-85">
                 <!-- Texto con el contenido -->
                 <caption class="tbl-capt">Resultados de las notificaciones por email</caption>
  
@@ -64,73 +64,87 @@
             <br/>
 
             <!-- Notifiaciones de telefono -->
-            <table class="tbl-general tbl-forms tbl-60 table-striped"> 
+            <form action="{% url 'procesar-citas' %}" method="POST">
+                
+                {% csrf_token %}
+            
+                    <table class="tbl-forms table-striped tbl-general tbl-85"> 
 
-                <!-- Texto con el contenido -->
-                <caption class="tbl-capt">Notificaciones a hacer por teléfono</caption>
+                    <!-- Texto con el contenido -->
+                    <caption class="tbl-capt">Notificaciones a hacer por teléfono</caption>
                
-                <tr>
-                    <th class="tbl-th" colspan="5">Citas para el día {{ notifydate }} {{ untilday}}</th>
-                </tr>
+                    <tr>
+                        <th class="tbl-th" colspan="6">Citas para el día {{ notifydate }} {{ untilday}}</th>
+                    </tr>
  
-                {% if not restelef %}
-	    	        <tr>
-                        <th colspan="5" class="field-errors">
-                            <span>Ninguna cita a notificar</span>
+                    {% if not restelef %}
+	        	        <tr>
+                            <th colspan="6" class="field-errors">
+                                <span>Ninguna cita a notificar</span>
+                            </th>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <th>Paciente</th>
+                            <th>Telef.1</th>
+                            <th>Telef.2</th>
+                            <th class="tbl-td-centro">Fecha cita</th>
+                            <th class="tbl-td-centro">Hora cita</th>
+                            <th class="tbl-td-centro">Notificada</th>                                        
+                        </tr>
+                        {% for telef in restelef %}
+                            <tr>
+                                <td>{{ telef.1 }}, {{ telef.2 }}</td>
+                                <td>{{ telef.3 }}</td>
+                                <td>{{ telef.4|default_if_none:'Indet.' }}</td>
+                                <td class="tbl-td-centro">{{ telef.5|date:'D, j/M/Y' }}</td>
+                                <td class="tbl-td-centro">{{ telef.6|date:'H:i' }} h.</td>
+                                <td class="tbl-td-centro"><input type="checkbox" name="idCita_{{ telef.0 }}"></td>                            
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if emails2phone %}
+                        <th colspan="6" class="tbl-th">
+                            <span>Notificar por teléfono por errores en el envío de email</span>
                         </th>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <th>Paciente</th>
-                        <th>Telef.1</th>
-                        <th>Telef.2</th>
-                        <th class="tbl-td-centro">Fecha cita</th>
-                        <th class="tbl-td-centro">Hora cita</th>                
-                    </tr>
-                    {% for telef in restelef %}
                         <tr>
-                            <td>{{ telef.0 }}, {{ telef.1 }}</td>
-                            <td>{{ telef.2 }}</td>
-                            <td>{{ telef.3|default_if_none:'Indet.' }}</td>
-                            <td class="tbl-td-centro">{{ telef.4|date:'D, j/M/Y' }}</td>
-                            <td class="tbl-td-centro">{{ telef.5|date:'H:i' }} h.</td>
+                            <th>Paciente</th>
+                            <th>Telef.1</th>
+                            <th>Telef.2</th>
+                            <th class="tbl-td-centro">Fecha cita</th>
+                            <th class="tbl-td-centro">Hora cita</th> 
+                            <th class="tbl-td-centro">Notificada</th>                                        
                         </tr>
-                    {% endfor %}
-                {% endif %}
+                        {% for telef in emails2phone %}
+                            <tr>
+                                <td>{{ telef.1 }}, {{ telef.2 }}</td>
+                                <td>{{ telef.3 }}</td>
+                                <td>{{ telef.4|default_if_none:'Indet.' }}</td>
+                                <td class="tbl-td-centro">{{ telef.5|date:'D, j/M/Y' }}</td>
+                                <td class="tbl-td-centro">{{ telef.6|date:'H:i' }} h.</td>
+                                <td class="tbl-td-centro"><input type="checkbox" name="idCita_{{ telef.0 }}"></td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
 
-                {% if emails2phone %}
-                    <th colspan="5" class="tbl-th">
-                        <span>Notificar por teléfono por errores en el envío de email</span>
-                    </th>
-                    <tr>
-                        <th>Paciente</th>
-                        <th>Telef.1</th>
-                        <th>Telef.2</th>
-                        <th class="tbl-td-centro">Fecha cita</th>
-                        <th class="tbl-td-centro">Hora cita</th>                
-                    </tr>
-                    {% for telef in emails2phone %}
-                        <tr>
-                            <td>{{ telef.0 }}, {{ telef.1 }}</td>
-                            <td>{{ telef.2 }}</td>
-                            <td>{{ telef.3|default_if_none:'Indet.' }}</td>
-                            <td class="tbl-td-centro">{{ telef.4|date:'D, j/M/Y' }}</td>
-                            <td class="tbl-td-centro">{{ telef.5|date:'H:i' }} h.</td>
-                        </tr>
-                    {% endfor %}
-                {% endif %}
-
-            </table>
+                </table>
 
             <!-- Botones de acción -->
-
-                <div class="div-botones">
-                    <a href="{% url 'procesar-citas' %}">
-                        <button type="button" class="btn btn-info">Volver</button>
-                    </a>
-                    <button type="button" class="btn btn-info">Crear PDF</button>
-                </div>
-
+            <div class="div-botones">
+                    <input type="submit" class="btn btn-info" value="Volver"/>                 
+            </form>
+                 
+                <form action="{% url 'pdf-citas' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-info" value="Crear PDF"/>
+                    <input type="hidden" name="restelef" value="{{ restelef }}"/>
+                    <input type="hidden" name="emails2phone" value="{{ emails2phone }}"/>
+                    <input type="hidden" name="notifydate" value="{{ notifydate }}"/>
+                    <input type="hidden" name="untilday" value="{{ untilday }}"/>
+                </form>
+            </div>
+            
         </section>
 
     {% endblock content %}
