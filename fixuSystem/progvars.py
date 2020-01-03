@@ -3,8 +3,6 @@ Variables to be used in different apps.
 
 """
 
-from .secrets import EMAIL_PASSWD
-
 ##### VERSION DEL PROGRAMA #####
 
 PROG_VERS = '0.60'
