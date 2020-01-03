@@ -21,21 +21,130 @@
 		<!-- Taba principal con imágenes -->
         <section class="sect-home-page-menu">
         
-            <table class="tbl-general tbl-forms tbl-35 table-striped">
-
+            <table class="tbl-forms table-striped tbl-general tbl-85">
                 <!-- Texto con el contenido -->
-                <caption class="tbl-capt">Resultados de las notificaciones</caption>
-                
+                <caption class="tbl-capt">Resultados de las notificaciones por email</caption>
+ 
+                <tr>
+                    <th class="tbl-th" colspan="2">Citas para el día {{ notifydate }} {{ untilday}}</th>
+                </tr>
+
+                {% if emailcount == 0 %}
+    	    	    <tr>
+                        <th colspan="2" class="field-errors">
+                            <span>Ninguna cita a notificar</span>
+                        </th>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td class="tbl-td-centro" colspan="2">Procesadas: {{ emailcount }} / Enviadas: {{ emailsent }} / Errores: {{ emailunsent }}</td>
+                    </tr>
+                    {% if emailunsent > 0 %}
+                        <tr>
+                            <th class="tbl-th field-errors" colspan="2">
+                                Errores en el envío de email. <br/>
+                                Estas citas aparecerán en la lista de notificaciones telefónicas.
+                            </th>
+                        </tr>
+                        <tr>
+                            <th class="tbl-th-izq">Email no entregado</th>
+                            <th class="tbl-th-izq">Mensaje de error</th>
+                        </tr>
+                        {% for error in emailerrors %}
+                            <tr>
+                                <td>{{ error.0 }}</td>
+                                <td>{{ error.1 }}</td>
+                            </tr>
+                        {% endfor %}
+                     {% endif %}
+                {% endif %}
+
             </table>
 
+            <br/>
+
+            <!-- Notifiaciones de telefono -->
+            <form action="{% url 'procesar-citas' %}" method="POST">
+                
+                {% csrf_token %}
+            
+                    <table class="tbl-forms table-striped tbl-general tbl-85"> 
+
+                    <!-- Texto con el contenido -->
+                    <caption class="tbl-capt">Notificaciones a hacer por teléfono</caption>
+               
+                    <tr>
+                        <th class="tbl-th" colspan="6">Citas para el día {{ notifydate }} {{ untilday}}</th>
+                    </tr>
+ 
+                    {% if not restelef %}
+	        	        <tr>
+                            <th colspan="6" class="field-errors">
+                                <span>Ninguna cita a notificar</span>
+                            </th>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <th>Paciente</th>
+                            <th>Telef.1</th>
+                            <th>Telef.2</th>
+                            <th class="tbl-td-centro">Fecha cita</th>
+                            <th class="tbl-td-centro">Hora cita</th>
+                            <th class="tbl-td-centro">Notificada</th>                                        
+                        </tr>
+                        {% for telef in restelef %}
+                            <tr>
+                                <td>{{ telef.1 }}, {{ telef.2 }}</td>
+                                <td>{{ telef.3 }}</td>
+                                <td>{{ telef.4|default_if_none:'Indet.' }}</td>
+                                <td class="tbl-td-centro">{{ telef.5|date:'D, j/M/Y' }}</td>
+                                <td class="tbl-td-centro">{{ telef.6|date:'H:i' }} h.</td>
+                                <td class="tbl-td-centro"><input type="checkbox" name="idCita_{{ telef.0 }}"></td>                            
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if emails2phone %}
+                        <th colspan="6" class="tbl-th">
+                            <span>Notificar por teléfono por errores en el envío de email</span>
+                        </th>
+                        <tr>
+                            <th>Paciente</th>
+                            <th>Telef.1</th>
+                            <th>Telef.2</th>
+                            <th class="tbl-td-centro">Fecha cita</th>
+                            <th class="tbl-td-centro">Hora cita</th> 
+                            <th class="tbl-td-centro">Notificada</th>                                        
+                        </tr>
+                        {% for telef in emails2phone %}
+                            <tr>
+                                <td>{{ telef.1 }}, {{ telef.2 }}</td>
+                                <td>{{ telef.3 }}</td>
+                                <td>{{ telef.4|default_if_none:'Indet.' }}</td>
+                                <td class="tbl-td-centro">{{ telef.5|date:'D, j/M/Y' }}</td>
+                                <td class="tbl-td-centro">{{ telef.6|date:'H:i' }} h.</td>
+                                <td class="tbl-td-centro"><input type="checkbox" name="idCita_{{ telef.0 }}"></td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+
+                </table>
+
             <!-- Botones de acción -->
-
-                <div class="div-botones">
-                    <a href="{% url 'procesar-citas' %}">
-                        <button type="button" class="btn btn-info">Volver</button>
-                    </a>
-                </div>
-
+            <div class="div-botones">
+                    <input type="submit" class="btn btn-info" value="Volver"/>                 
+            </form>
+                 
+                <form action="{% url 'pdf-citas' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-info" value="Crear PDF"/>
+                    <input type="hidden" name="restelef" value="{{ restelef }}"/>
+                    <input type="hidden" name="emails2phone" value="{{ emails2phone }}"/>
+                    <input type="hidden" name="notifydate" value="{{ notifydate }}"/>
+                    <input type="hidden" name="untilday" value="{{ untilday }}"/>
+                </form>
+            </div>
+            
         </section>
 
     {% endblock content %}

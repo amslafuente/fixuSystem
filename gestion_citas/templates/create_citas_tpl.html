@@ -22,12 +22,12 @@
         <section class="sect-home-page-menu">
 
             <!-- Formularion de nueva cita -->
-	        <form method="post">
+	        <form method="POST">
 
     	    	{% csrf_token %}
 
              	<!-- Campos de  citas -->
-                <table class="tbl-general tbl-forms tbl-35 table-striped">
+                 <table class="tbl-forms table-striped tbl-general tbl-30">
 
                     <!-- Texto con el contenido -->
                     <caption class="tbl-capt">Nueva cita</caption>
@@ -37,7 +37,7 @@
                     
                     <!-- Datos -->
 		   	        <tr>
-	    		        <th class="tbl-th" colspan="2">Datos preseleccionados</th>
+	    		        <th class="tbl-th-dark" colspan="2">Datos preseleccionados</th>
                     </tr>
                     <tr>
 		    		    <td class="tbl-td-30">Fecha cita:</td><td>{{ form.appdate.as_widget }}</td>
@@ -45,8 +45,12 @@
                     <tr>
 			    	    <td>Hora cita:</td><td>{{ form.apptime.as_widget }}
                     </tr>
+                    <!-- En el campo status, la entrada {{ form.status }} es el campo REAL, que esta HIDDEN pero pasa el valor -->
                     <tr>
-                        <td class="tbl-td-centro grid-smalltxt" colspan="2">Puede modificar los minutos dentro de la franja horaria seleccionada</td>
+        			    <td>Estado:</td><td>Pendiente {{ form.status.as_widget }}</td>
+                    </tr>
+                    <tr>
+                        <td class="tbl-td-centro grid-smalltxt" colspan="2">Puede modificar los minutos dentro de la franja horaria seleccionada.</td>
                     </tr>
                     <tr>
                         <th class="tbl-th" colspan="2">Datos de la cita</th>
@@ -59,9 +63,6 @@
     		        </tr>
                     <tr>
         			    <td>Consultorio:</td><td>{{ form.fk_Consultorio.as_widget }}</td>
-    		        </tr>
-                    <tr>
-        			    <td>Estado:</td><td>{{ form.status.as_widget }}</td>
     		        </tr>
 	    	   	    <tr>
 	        		    <th class="tbl-th" colspan="2">Notas</th>

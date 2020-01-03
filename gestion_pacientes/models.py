@@ -1,7 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.db.models.fields.related import ForeignKey
-from fixuSystem.progvars import modeVia, countries, sexDef
+from fixuSystem.progvars import modeVia, sexDef
 
 ########## TABLA DE GESTION DE PACIENTES ##########
 
@@ -9,7 +9,6 @@ class Paciente(models.Model):
 
     idPaciente = models.AutoField(primary_key = True, unique = True)
     dni = models.CharField("DNI", max_length = 9, db_index = True, unique = True)
-    # Campos normales
     name = models.CharField("Nombre", max_length = 50)
     familyname = models.CharField("Apellidos", max_length = 100)
     birthdate = models.DateField("Fecha de nacimiento", help_text="DD/MM/AAAA")
@@ -18,15 +17,13 @@ class Paciente(models.Model):
     postcode = models.PositiveIntegerField("C. Postal")
     city = models.CharField("Ciudad", max_length = 50)
     province = models.CharField("Provincia", max_length = 50,  null = True, blank = True)
-    country = models.CharField("País", max_length = 60, choices = countries, default = 'ESPAÑA')
+    country = models.CharField("País", max_length = 60,  null = True, blank = True, default = 'España')
     email = models.EmailField("Correo electrónico", max_length = 75, blank = True, null = True)
     phone1 = models.PositiveIntegerField("Teléfono principal")
     phone2 = models.PositiveIntegerField("Teléfono alternativo", null = True, blank = True)
     job = models.CharField("Ocupación", max_length = 20, blank = True)
     notes = models.TextField("Notas", blank = True)
-    # Foto
     picturefile = models.ImageField("Archivo foto", upload_to = 'pacientes/',  null = True, blank = True)
-    # Notificar la cita... via...
     notifyappoint = models.BooleanField("Notificar citas", default = False)
     notifyvia = models.CharField("Notificar por", max_length = 10, choices = modeVia, default = 'Email')
     # Campos de control

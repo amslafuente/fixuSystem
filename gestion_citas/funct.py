@@ -96,6 +96,12 @@ def app_timegrid(citas, dia):
             # Comprueba si ese dia y hora están en la franja horaria actual
             if (datetime_cita >= timegrid_ctrl) and (datetime_cita < (timegrid_ctrl + datetime.timedelta(minutes = DURACION_CONSULTA))):
                 # Si está, puebla el bloque de TD con esa cita y suma el contador de citas en cada TR
+                # cita_row.1/cita.2: Paciente
+                # cita_row.2/cita.3: Citado por
+                # cita_row.3/cita.4: Consultorio
+                # cita_row.5/cita.6: Hora cita 
+                # cita_row.7/cita.8: Notas
+                # cita_row.6/cita.7: Estado cita
                 cada_cita = (timegrid_ctrl, str(cita_row[0]), cita_row[1], str(cita_row[4]), cita_row[5], cita_row[2].strftime('%d/%m/%y'), cita_row[3].strftime('%H:%M'), cita_row[6], cita_row[7])
                 datos_citas.append(cada_cita)
 

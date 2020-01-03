@@ -1,22 +1,10 @@
-<!-- ******************* -->
-<!--   id_pacientes_tpl  -->
-<!-- ******************* -->
-
 {% extends 'base.html' %}
-
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
 
     {% block title %}
 
     	<title>fixuSystem - Fisioterapia - Gestión de pacientes</title>
 
     {% endblock %}
-
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
 
     {% block content %}
 
@@ -25,13 +13,11 @@
 		<!-- Menú principal con imágenes -->
         <section class="sect-home-page-menu">
 
-
        		<!-- Devuelve los datos del paciente en varias tablas -->
         	{% for paciente in paciente_list %}
 
-
            		<!-- Tabla del paciente -->
-                <table class="tbl-general tbl-forms tbl-60 table-striped">
+                <table class="tbl-forms table-striped tbl-general tbl-60">
 
                     <!-- Texto con el contenido -->
                     <caption class="tbl-capt">Paciente : {{ paciente.name }} {{ paciente.familyname }} </caption>
@@ -79,7 +65,7 @@
 	            </table>
 
           		<!-- Domicilio -->
-                <table class="tbl-general tbl-forms tbl-60 table-striped">
+                <table class="tbl-forms table-striped tbl-general tbl-60">
 
                     <caption class="tbl-capt">Domicilio</caption>
 
@@ -103,7 +89,7 @@
         	    </table>
 
                	<!-- Datos de contacto -->
-	            <table class="tbl-general tbl-forms tbl-60 table-striped">
+	            <table class="tbl-forms table-striped tbl-general tbl-60">
 
                     <caption class="tbl-capt">Datos de contacto</caption>
 
@@ -112,8 +98,8 @@
                         <td class="tbl-td">{{ paciente.email }}</td>
                     </tr>
                     <tr>
-    	    	    	<td class="tbl-td">Teléfono 1 / Teléfono 2:</td>
-                        <td class="tbl-td">{{ paciente.phone1 }} / {{ paciente.phone2 }}</td>
+    	    	    	<td class="tbl-td">Tel.1 / Tel.2:</td>
+                        <td class="tbl-td">{{ paciente.phone1 }} / {{ paciente.phone2|default_if_none:'Indet.' }}</td>
                     </tr>
                     <tr>
 	            		<td class="tbl-td">Notificar citas / Vía:</td>
@@ -122,7 +108,7 @@
 		        </table>
 
            		<!-- Otros datos -->
-	            <table class="tbl-general tbl-forms tbl-60 table-striped">
+	            <table class="tbl-forms table-striped tbl-general tbl-60">
 
                     <caption class="tbl-capt">Otros datos</caption>
 
@@ -134,33 +120,9 @@
     	    	    	<td class="tbl-td">Notas</td>
 	    	    	    <td class="tbl-td">{{ paciente.notes }}</td>
                     </tr>
-                    <tr>
-        		    	<td class="tbl-td">Archivo foto</td>
-                        <td class="tbl-td">{{ paciente.picturefile }}</td>
-   			        </tr>
         	    </table>
 
-                <!-- Datos de control -->
-                <table class="tbl-general tbl-60 table-striped table-dark">
-
-                    <caption class="tbl-capt">Datos de control</caption>
-
-        	        <tr>
-            		    <th class="tbl-td-centro">Id Paciente</th>
-	            	    <th class="tbl-td-centro">Fecha registro</th>
-    	        		<th class="tbl-td-centro">Ultima modificación</th>
-	    	        	<th class="tbl-td-centro">Modificado por</th>
-        	        </tr>
-                    <tr>
-	        	   	    <td class="tbl-td-centro">{{ paciente.idPaciente }}</td>
-    	    	       	<td class="tbl-td-centro">{{ paciente.firstupdated|date:'d/m/Y H:i' }}</td>
-        	    	   	<td class="tbl-td-centro">{{ paciente.lastupdated|date:'d/m/Y H:i' }}</td>
-	        	       	<td class="tbl-td-centro">{{ paciente.modifiedby }}</td>
-    		        </tr>
-	    	    </table>
-
-
-		        <!-- Botones de acción -->
+ 		        <!-- Botones de acción -->
                 <div class="div-botones">
                     <a href="{% url 'edit-id-pacientes' paciente.idPaciente %}"><input type="button" class="btn btn-info" value="Editar"></a>
                     <a href="{% url 'citas-paciente-desdefecha' paciente.idPaciente desde_fecha %}"><input type="button" class="btn btn-info" value="Citas"></a>

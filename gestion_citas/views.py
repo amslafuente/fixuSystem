@@ -1,5 +1,3 @@
-########## Views de gestion_citas ##########
-
 from django.shortcuts import render, reverse
 from django.urls import reverse_lazy
 from django.http import request, HttpResponseRedirect
@@ -7,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 import datetime
 from .models import Cita, NotificaCita, ProcesaCita
+from gestion_clinica.models import Clinica
 from gestion_pacientes.models import Paciente
 from django.views.generic.edit import UpdateView
 from django.views.generic.list import ListView
@@ -14,13 +13,16 @@ from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views import View
 from .funct import contexto_dias, app_timegrid
-from .forms import create_citas_form, create_citas_paciente_form, edit_citas_form
+from .forms import create_citas_form, create_citas_paciente_form, edit_citas_form, setnotified_citas_form
 from django.contrib import messages
 from django.db.models import Q
 from fixuSystem.progvars import NOTIFICAR_CON
 from django.forms import forms, fields, widgets
 from django.forms.widgets import NumberInput
-from django.core.mail import send_mass_mail
+from django.core.mail import send_mail
+import locale
+import smtplib
+import io
 
 #########################################################
 #                                                       #
@@ -118,7 +120,7 @@ class citas_dia_grid_view(ListView):
         for cita in qs:
             cita_row = (cita.idCita, cita.fk_Paciente, cita.appdate, cita.apptime, cita.fk_Profesional, cita.fk_Consultorio, cita.status, cita.notes)
             citas.append(cita_row)
-
+        print(citas)
         # Contexto que genera las fechas actuales, anteriores y siguentes
         ctx['ctx_dias'] = contexto_dias(kwarg_date)
 
@@ -531,6 +533,44 @@ class modif_citas_view(DetailView):
 @method_decorator(login_required, name='dispatch')
 class procesar_citas_view(View):
 
+    # Con el method POST se regresa de recordatorios_result_citas
+    # Usa este POST para poner como notificadas las citas telefonicas marcadas en  recordatorios_result_citas
+    def post(self, request):
+
+        # Primero comprueba que se ha hecho un POST con las citas a poner como notificadas
+        # Prepara las idCitas a cambiar
+        try:
+            lista_keys = list(request.POST.keys())[1:]
+            for i in range(0, len(lista_keys)):
+                lista_keys[i] = lista_keys[i][7:]
+                lista_keys[i] = int(lista_keys[i])
+                okcita = Cita.objects.get(idCita__exact = lista_keys[i])
+                okcita.appnotified = True
+                okcita.save()
+        except:
+            pass
+
+        # Despues de procesar los appnotified, pone la pagina como si lo hubiera llamada un GET        
+        ctx = dict()
+
+        notif = NotificaCita.objects.last()
+        proc = ProcesaCita.objects.last()
+        try:
+            ctx['last_notif'] = notif.notifLastrun
+            ctx['with_errors'] = notif.witherrors
+        except:
+            ctx['last_notif'] = 'Sin fecha'
+        try:
+            ctx['last_proc'] = proc.procLastrun
+        except:
+            ctx['last_proc'] = 'Sin fecha'
+
+        ctx['day'] = NOTIFICAR_CON
+        ctx['untilday'] = 0
+
+        return render(request, 'procesar_citas_tpl.html', ctx)   
+    
+    # Con el method GET muestra el menu de procesamiento de citas
     def get(self, request):
 
         ctx = dict()
@@ -539,12 +579,16 @@ class procesar_citas_view(View):
         proc = ProcesaCita.objects.last()
         try:
             ctx['last_notif'] = notif.notifLastrun
+            ctx['with_errors'] = notif.witherrors
         except:
             ctx['last_notif'] = 'Sin fecha'
         try:
             ctx['last_proc'] = proc.procLastrun
         except:
             ctx['last_proc'] = 'Sin fecha'
+
+        ctx['day'] = NOTIFICAR_CON
+        ctx['untilday'] = 0
 
         return render(request, 'procesar_citas_tpl.html', ctx)
 
@@ -562,7 +606,7 @@ class recordatorios_citas_view(View):
         ctx = dict()
 
         # Rellena el form con el POST y la añade  al contexto
-        form = customNotifDias(request.POST)
+        form = customNotifDias(request.POST)        
         ctx['form'] = form
 
         # SI los datos son válidos
@@ -575,39 +619,131 @@ class recordatorios_citas_view(View):
                 kwarg_untilday = False
             kwarg_date = datetime.date.today()
             kwarg_notifydate = kwarg_date + datetime.timedelta(days = kwarg_day)
+            
+            ctx['notifydate'] = kwarg_notifydate
+           
+            if kwarg_untilday:
+                
+                ctx['untilday'] = 'y anteriores'
 
             # Queries
             # Si no selecciona interdays
             if not kwarg_untilday:
-                emailcount = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').count()
-                qsemail = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email')
-                qstelef = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email')
+                emailcount = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True).count()
+                qsemail = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True)
+                qstelef = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True)
             # Si selecciona interdays
             else:
-                emailcount = Cita.objects.filter(appdate__gt = kwarg_notifydate, appdate__lte = kwarg_date).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').count() 
-                qsemail = Cita.objects.filter(appdate__gt = kwarg_notifydate, appdate__lte = kwarg_date).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email')
-                qstelef = Cita.objects.filter(appdate__gt = kwarg_notifydate, appdate__lte = kwarg_date).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email')
-
-            # Notifica por email
-            resemail = list()
-            qsemail = qsemail.values('fk_Paciente__familyname', 'fk_Paciente__name', 'fk_Paciente__phone1', 'fk_Paciente__phone2', 'appdate', 'apptime')
-            resemail.append(('Apellidos', 'Nombre', 'Email', 'Fecha cita', 'Hora cita'))
-            for email in qsemail:
-
-                message1 = ('Subject here', 'Here is the message', 'from@example.com', ['first@example.com', 'other@example.com'])
-                message2 = ('Another Subject', 'Here is another message', 'from@example.com', ['second@test.com'])
-                emailsuccess = send_mass_mail((message1, message2), fail_silently=False) 
+                emailcount = Cita.objects.filter(appdate__gt = kwarg_date, appdate__lte = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True).count() 
+                qsemail = Cita.objects.filter(appdate__gt = kwarg_date, appdate__lte = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True)
+                qstelef = Cita.objects.filter(appdate__gt = kwarg_date, appdate__lte = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True)
+           
             ctx['emailcount'] = emailcount
-            ctx['emailsuccess'] = emailsuccess
-            ctx['resemail'] = resemail
+            
+            ##### Notifica por email #####
+
+            # Recupera datos de la clinica (from)
+            clinica = Clinica.objects.first()
+            # Recupera campos de las citas
+            qsemail = qsemail.values('idCita', 'fk_Paciente__familyname', 'fk_Paciente__name', 'fk_Paciente__email', 'fk_Paciente__phone1', 'fk_Paciente__phone2', 'appdate', 'apptime')
+
+            # Construye tupla de cada mensaje
+            # asunto, mensaje, from, to
+            locale.setlocale(locale.LC_ALL,'es_ES')
+            
+            lista_emails = list()          
+            for email in qsemail:
+                numcita = email['idCita']
+                asunto = 'Recordatorio de cita'                
+                apellidos = email['fk_Paciente__familyname']
+                nombre = email['fk_Paciente__name']
+                fechacita = email['appdate']
+                horacita = email['apptime']
+                mensaje = 'Estimado/a Sr./Sra. ' + apellidos + ':\r\n\n'
+                mensaje = mensaje + 'Le recordamos que tiene una cita pendiente en ' + clinica.clinicname + ' '
+                mensaje = mensaje + 'el ' + datetime.date.strftime(fechacita, '%A, %d de %B de %Y') + ', a las ' + datetime.time.strftime(horacita, '%H:%M')  + ' horas.\r\n\n'
+                mensaje = mensaje + '---\r\n'
+                mensaje = mensaje + '  ' + clinica.clinicname + '\r\n'
+                mensaje = mensaje + '  ' + clinica.fulladdress + '\r\n'
+                mensaje = mensaje + '  Teléfono : ' + str(clinica.phone1) + '\r\n'
+                mensaje = mensaje + '  Email : ' + clinica.email + '\r\n'                
+                email_from = clinica.email
+                email_to = email['fk_Paciente__email']                
+                telef1 = email['fk_Paciente__phone1']
+                telef2 = email['fk_Paciente__phone2']                
+                lista_emails.append((numcita, asunto, mensaje, email_from, email_to, apellidos, nombre, telef1, telef2, fechacita, horacita))
+
+            locale.resetlocale(category=locale.LC_ALL)
+            
+            # Gestiona el envio de los email
+            emails_enviados = 0
+            emails_noenviados = 0
+            emails_errores = list()
+            emails_to_phone = list()
+
+            for i in range(0, len(lista_emails)):
+                try:
+                    numcita = int(lista_emails[i][0])
+                    asunto = lista_emails[i][1]
+                    mensaje = lista_emails[i][2]
+                    correo_de = lista_emails[i][3]
+                    correo_para = list()
+                    correo_para.append(lista_emails[i][4])
+                    # AQUI envia el email
+                    emails_enviados = emails_enviados + send_mail(asunto, mensaje, correo_de, correo_para, fail_silently = False)
+                    # Pone el notified a true
+                    okcita = Cita.objects.get(idCita__exact = numcita)
+                    okcita.appnotified = True
+                    okcita.save()
+                # Si falla en el envío guarda el mensaje para notificar por telefono
+                except Exception as e:
+                    emails_noenviados += 1
+                    emails_errores.append((correo_para, e))
+                    apellidos = lista_emails[i][5]
+                    nombre = lista_emails[i][6]
+                    telef1 = lista_emails[i][7]
+                    telef2 = lista_emails[i][8]
+                    fechacita = lista_emails[i][9]
+                    horacita = lista_emails[i][10]
+                    emails_to_phone.append((apellidos, nombre, telef1, telef2, fechacita, horacita))
+
+            ctx['emailsent'] = emails_enviados
+            ctx['emailunsent'] = emails_noenviados
+            ctx['emailerrors'] = emails_errores
+            ctx['emails2phone'] = emails_to_phone
+
+            ##### Notifica por telefono #####           
 
             # Lista de notificacion por telefono
             restelef = list()
-            qstelef = qstelef.values('fk_Paciente__familyname', 'fk_Paciente__name', 'fk_Paciente__phone1', 'fk_Paciente__phone2', 'appdate', 'apptime')
-            restelef.append(('Apellidos', 'Nombre', 'Telef. 1', 'Telef. 2', 'Fecha cita', 'Hora cita'))
+            qstelef = qstelef.values('idCita', 'fk_Paciente__familyname', 'fk_Paciente__name', 'fk_Paciente__phone1', 'fk_Paciente__phone2', 'appdate', 'apptime')
             for telef in qstelef:
-                restelef.append((telef['fk_Paciente__familyname'], telef['fk_Paciente__name'], telef['fk_Paciente__phone1'], telef['fk_Paciente__phone2'], telef['appdate'], telef['apptime']))
+                numcita = telef['idCita']
+                apellidos = telef['fk_Paciente__familyname']
+                nombre = telef['fk_Paciente__name']
+                telef1 = telef['fk_Paciente__phone1']
+                telef2 = telef['fk_Paciente__phone2']                
+                fechacita = telef['appdate']
+                horacita = telef['apptime']
+                restelef.append((numcita, apellidos, nombre, telef1, telef2, fechacita, horacita))
+
             ctx['restelef'] = restelef
+            form = setnotified_citas_form()
+            ctx['form'] = form
+
+            ##### Coloca el registro que indica la ultima fecha de actualización #####
+            qsnotif = NotificaCita()
+            # Si ha habido errores en el envio de email lo indica
+            if emails_noenviados > 0:
+                qsnotif.witherrors = True
+            else:
+                qsnotif.witherrors = False
+            # Se pone modifiedby
+            if str(request.user) != 'AmonymousUser':
+                qsnotif.modifiedby = str(request.user)
+            else:
+                qsnotif.modifiedby = 'unix:' + str(request.META['USERNAME'])
+            qsnotif.save()
 
             return render(request, 'recordatorios_result_citas_tpl.html', ctx)
 
@@ -615,39 +751,42 @@ class recordatorios_citas_view(View):
         else:
 
             messages.warning(request, 'Error en el formulario.')
+
             return render(request, 'recordatorios_citas_tpl.html', ctx)
 
     def get(self, request):
-        
-        # Comprueba si es superuser
-        if not request.user.is_superuser:
 
-            return HttpResponseRedirect(reverse('procesar-citas'))
-
-        # Si es superuser
         ctx = dict()
-        
-        # Dias de antelacion por defecto
-        ctx['dias'] = NOTIFICAR_CON
+
+        # Dias de antelacion pasados en el GET o por defecto
+        kwarg_day = int(request.GET.get('day', default = NOTIFICAR_CON))
+        kwarg_untilday = request.GET.get('untilday', default = False)
+        if kwarg_untilday == 'on':
+            kwarg_untilday = True
+        else:
+            kwarg_untilday = False
 
         # Pasa la form con dias a modificar
-        form = customNotifDias(initial={'day': NOTIFICAR_CON, 'untilday': False})
+        form = customNotifDias(initial={'day': kwarg_day, 'untilday': kwarg_untilday})
         ctx['form'] = form
 
         # Cuenta los registros que cumplen las condiciones de ser notificados por email o telefono
         kwarg_date = datetime.date.today()
-        kwarg_notifydate = kwarg_date + datetime.timedelta(days = NOTIFICAR_CON)
-
-        numregsemail = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').count()
-        numregstelef = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email').count()
-
-        if (numregsemail > 0 or numregstelef > 0):
-            ctx['mensaje'] = 'Se van a notificar las siguientes citas pendientes:'
-            ctx['numregsemail'] = numregsemail
-            ctx['numregstelef'] = numregstelef
+        kwarg_notifydate = kwarg_date + datetime.timedelta(days = kwarg_day)
+   
+        # Si se señala UNTILDAYS, se incluye en la busqueda el rango de fechas
+        # Si no se indica UNTILDAYS solo se usca una fecha concreta
+        if not kwarg_untilday:
+            numregsemail = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True).count()
+            numregstelef = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True).count()
         else:
-            ctx['mensaje'] = 'No hay citas para notificar.'            
-
+            numregsemail = Cita.objects.filter(appdate__gt = kwarg_date, appdate__lte = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True).count()
+            numregstelef = Cita.objects.filter(appdate__gt = kwarg_date, appdate__lte = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True).count()
+        
+        # Muestra lo que hay a notificar 
+        ctx['numregsemail'] = numregsemail
+        ctx['numregstelef'] = numregstelef
+        
         return render(request, 'recordatorios_citas_tpl.html', ctx)
 
 class customNotifDias(forms.Form):
@@ -655,7 +794,7 @@ class customNotifDias(forms.Form):
     day = fields.IntegerField(required = False)
     untilday = fields.BooleanField(required = False)
     day.widget = widgets.NumberInput(attrs={'style': 'width: 50px', 'min': 0, 'max': 99})   
-
+  
 @method_decorator(login_required, name='dispatch')
 class pasadas_canceladas_citas_view(View):
 
@@ -718,6 +857,104 @@ class pasadas_canceladas_citas_view(View):
             ctx['mensaje'] = 'No hay citas para procesar.'            
 
         return render(request, 'pasadas_canceladas_citas_tpl.html', ctx)
+
+#####################################################################################
+
+from weasyprint import HTML    
+from django.core.files.storage import FileSystemStorage
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+
+def html2pdf(request):
+
+    # Construye la tabla HTML con los datos pasados (restelef y emails2phone)
+    
+    
+    print(request.POST.get('restelef', False))
+    print(request.POST.get('emails2phone', False))
+
+
+
+
+
+    restelef = request.POST.get('restelef', False).replace("[", "").replace("(", "").replace(")","").replace("]", "").replace("\'", "").replace("datetime.date", "").replace("datetime.time", "").split(", ")
+    emails2phone = request.POST.get('emails2phone', False).replace("[", "").replace("(", "").replace(")","").replace("]", "").replace("\'", "").replace("datetime.date", "").replace("datetime.time", "").split(", ")
+    notifydate = request.POST.get('notifydate', None)
+    untilday = request.POST.get('untilday', None)
+ 
+    print(len(restelef))
+    print(restelef)
+    print(len(emails2phone))
+    print(emails2phone)
+   
+    html_table = ''
+
+    html_table = html_table + '<table class="tbl-general tbl-forms tbl-70 table-striped">' 
+    html_table = html_table + '<caption class="tbl-capt">Notificaciones a hacer por teléfono</caption>'
+    html_table = html_table + '<tr><th class="tbl-th" colspan="5">Citas para el día ' + notifydate + ' ' + untilday + '</th></tr>'
+    
+    if not restelef:
+        html_table = html_table + '<tr><th colspan="5" class="field-errors"><span>Ninguna cita a notificar</span></th></tr>'
+    else:
+        html_table = html_table + '<tr><th>Paciente</th><th>Telef.1</th><th>Telef.2</th><th class="tbl-td-centro">Fecha cita</th><th class="tbl-td-centro">Hora cita</th></tr>'
+    
+
+        for telef in range(1, len(restelef)-1):
+            print(telef)
+            html_table = html_table + '<tr><td>' + restelef[telef][0] + ', ' + restelef[telef][1] + '</td></tr>'
+    
+    
+        """
+             html_table = html_table + '<tr><td>' + restelef[telef][0] + ', ' + restelef[telef][1] + '</td><td>{{ telef.2 }}</td><td>{{ telef.3 }}</td><td class="tbl-td-centro">{{ telef.4 }}</td><td class="tbl-td-centro">{{ telef.5 }} h.</td></tr>'
+
+ 
+ 
+                {% if emails2phone %}
+                    <th colspan="5" class="tbl-th">
+                        <span>Notificar por teléfono por errores en el envío de email</span>
+                    </th>
+                    <tr>
+                        <th>Paciente</th>
+                        <th>Telef.1</th>
+                        <th>Telef.2</th>
+                        <th class="tbl-td-centro">Fecha cita</th>
+                        <th class="tbl-td-centro">Hora cita</th>                
+                    </tr>
+                    {% for telef in emails2phone %}
+                        <tr>
+                            <td>{{ telef.0 }}, {{ telef.1 }}</td>
+                            <td>{{ telef.2 }}</td>
+                            <td>{{ telef.3|default_if_none:'Indet.' }}</td>
+                            <td class="tbl-td-centro">{{ telef.4|date:'D, j/M/Y' }}</td>
+                            <td class="tbl-td-centro">{{ telef.5|date:'H:i' }} h.</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+        """
+        html_table = html_table + '</table>'
+
+    paragraphs = ['first paragraph', 'second paragraph', 'third paragraph']
+    html_string = render_to_string('recordatorios_result_citas_tpl.html', {'paragraphs': paragraphs})
+
+    #html = HTML(string=html_string)
+    html = HTML(string=html_table)
+    html.write_pdf(target='/tmp/mypdf.pdf');
+
+    fs = FileSystemStorage('/tmp')
+    with fs.open('mypdf.pdf') as pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = 'inline; filename="mypdf.pdf"'
+
+    return response
+
+@method_decorator(login_required, name='dispatch')
+class PDF_citas_view(View):
+
+    def post(self, request):
+        return html2pdf(request)
+
+    def get(self, request):
+        return html2pdf(request)
 
 #####################################################################################
 

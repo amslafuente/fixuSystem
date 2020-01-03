@@ -23,6 +23,8 @@ class Cita(models.Model):
     fk_Consultorio = models.ForeignKey(Consultorio, on_delete = models.PROTECT, related_name = 'consultorios', blank = True, null = True, limit_choices_to = {'officeIsavail': True})
     # Estados de la cita: Pendiente, Acudió, Pasa a consulta, Cancelada, Adelantada o Aplazada
     status = models.CharField('Estado cita', max_length = 20, choices = citasStatus, default = 'Pendiente')
+    # Indica si la cita ha sido notificada
+    appnotified = models.BooleanField('Notificada', default = False)
     # Notas
     notes = models.TextField('Notas', blank = True)
     # Datos de control
@@ -47,7 +49,7 @@ class NotificaCita(models.Model):
 
     idNotificaCita = models.AutoField(primary_key = True, unique = True)
     notifLastrun = models.DateTimeField('Ultima fecha de notificación', auto_now = True)
-    modifiedby = models.CharField("Modificado por", max_length = 50, blank = True, default = 'fixuUser')
+    witherrors = models.BooleanField('Con errores', blank = True, null = True, default = False)
     # Datos de control
     firstupdated = models.DateTimeField("Fecha registro", auto_now_add = True)
     lastupdated = models.DateTimeField("Fecha actualización", auto_now = True)

@@ -27,8 +27,8 @@
 
     	    	{% csrf_token %}
 
-                <!-- Tabla del paciente -->
-                <table class="tbl-forms table-striped tbl-general tbl-60">
+              	<!-- Tabla del paciente -->
+				 <table class="tbl-forms table-striped tbl-general tbl-60">
 
                     <!-- Texto con el contenido -->
                     <caption class="tbl-capt">Editar paciente - ID: {{ idPaciente }}</caption>
@@ -38,63 +38,53 @@
 
                     <!-- Datos personales -->
 		   	        <tr>
-	    		        <th class="tbl-th">Datos personales</th>
+	    		        <th class="tbl-th" colspan="6">Datos personales</th>
                     </tr>
                     <tr>
-        			    <td>
-							Nombre: {{ form.name.as_widget }}&nbsp;
-							Apellidos: {{ form.familyname.as_widget }}
-						</td>
+						<td class="tbl-td-10">DNI:</td><td>{{ form.dni }}</td>
+        			    <td class="tbl-td-10">Nombre:</td><td>{{ form.name.as_widget }}</td>
+            		    <td class="tbl-td-10">Apellidos:</td><td>{{ form.familyname.as_widget }}</td>
                     </tr>
 	            	<tr>
-			    	    <td>
-							Fecha nacim.: {{ form.birthdate.as_widget }}&nbsp;
-                        	Sexo: {{ form.sex.as_widget }}&nbsp;
-							Ocupación: {{ form.job.as_widget }}
-						</td>							
-                    </tr>
+			    	    <td class="tbl-td-10">F.nacim.:</td><td>{{ form.birthdate.as_widget }}</td>
+                        <td class="tbl-td-10">Sexo:</td><td>{{ form.sex.as_widget }}</td>
+						<td class="tbl-td-10">Ocupación:</td><td>{{ form.job.as_widget }}</td>
+      				</tr>
 	    		    <tr>
-	    		    	<td class="tbl-td-centro">Foto: {{ form.picturefile.as_widget }}</td>
+		    		    <td class="tbl-td-10">Foto:</td><td colspan="5">{{ form.picturefile.as_widget }}</td>
    			    	</tr>
                     <!-- Domicilio -->
 		       	    <tr>
-	    	    	    <th class="tbl-th">Domicilio</th>
+	    	    	    <th class="tbl-th" colspan="6">Domicilio</th>
                     </tr>
     	    		<tr>
-	    	    		<td>
-							Dirección: {{ form.address.as_widget }}&nbsp;
-							Localidad: {{ form.city.as_widget }}
-						</td>
+	    	    		<td class="tbl-td-10">Dirección:</td><td colspan="3">{{ form.address.as_widget }}</td>
+						<td class="tbl-td-10">Localidad:</td><td>{{ form.city.as_widget }}</td>
                     </tr>
                     <tr>
-                        <td>
-							Código postal: {{ form.postcode.as_widget }}&nbsp;
-							Provincia: {{ form.province.as_widget }}&nbsp;
-							País: {{ form.country.as_widget }}
-						</td>
+						<td class="tbl-td-10">C.P.:</td><td>{{ form.postcode.as_widget }}</td>
+		    	    	<td class="tbl-td-10">Provincia:</td><td>{{ form.province.as_widget }}</td>
+ 			    	    <td class="tbl-td-10">País:</td><td >{{ form.country.as_widget }}</td>
        				</tr>
                     <!-- Datos de contacto -->
 	    	   	    <tr>
-	        		    <th class="tbl-th">Datos de contacto</th>
+	        		    <th class="tbl-th" colspan="6">Datos de contacto</th>
                     </tr>
     	    		<tr>
-	    	    		<td>
-							E-mail: {{ form.email }}&nbsp;
-							Teléfono 1: {{ form.phone1 }}&nbsp;
-							Teléfono 2: {{ form.phone2 }}							
-						</td>
+		    	    	<td class="tbl-td-10">Teléf.1:</td class="tbl-td-10"><td>{{ form.phone1.as_widget }}</td>
+						<td class="tbl-td-10">Teléf.2:</td class="tbl-td-10"><td>{{ form.phone2.as_widget }}</td>
+                        <td class="tbl-td-10">E-mail:</td><td>{{ form.email.as_widget }}</td>
        				</tr>
         			<tr>
-	        			<td class="tbl-td-centro">
-							Notificar cita: {{ form.notifyappoint }}&nbsp;
-							Notificar vía: {{ form.notifyvia }}
-						</td>
-    			    </tr>
+	        			<td class="tbl-td-10" colspan="2">Notifica cita:&nbsp;&nbsp;&nbsp;{{ form.notifyappoint.as_widget }} ............</td>
+						<td class="tbl-td-10">por:</td><td colspan="2">{{ form.notifyvia.as_widget }}</td>
+   			    	</tr>
+                    <!-- Notas -->
 	    	   	    <tr>
-	        		    <th class="tbl-th">Notas</th>
+	        		    <th class="tbl-th" colspan="6">Notas</th>
                     </tr>
 	    		    <tr>
-    				    <td class="tbl-td-centro">{{ form.notes }}</td>
+    				    <td colspan="6">{{ form.notes.as_widget }}</td>
     			    </tr>
 
                 </table>

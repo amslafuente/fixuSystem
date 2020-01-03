@@ -1,22 +1,10 @@
-<!-- ********************** -->
-<!--   create_pacients_tpl  -->
-<!-- ********************** -->
-
 {% extends 'base.html' %}
-
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
 
     {% block title %}
 
     	<title>fixuSystem - Fisioterapia - Gestión de pacientes</title>
 
     {% endblock %}
-
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
 
     {% block content %}
 
@@ -27,12 +15,12 @@
 
             <!-- Formularion de nuevo paciente -->
             <!-- enctype="multipart/form-data se usa para poder subir imagenes binarias -->
-	        <form method="post" enctype="multipart/form-data">
+	        <form method="POST" enctype="multipart/form-data">
 
     	    	{% csrf_token %}
 
              	<!-- Tabla del paciente -->
-                <table class="tbl-general tbl-forms tbl-70 table-striped">
+                <table class="tbl-forms table-striped tbl-general tbl-60">
 
                     <!-- Texto con el contenido -->
                     <caption class="tbl-capt">Nuevo paciente</caption>
@@ -45,58 +33,50 @@
 	    		        <th class="tbl-th" colspan="6">Datos personales</th>
                     </tr>
                     <tr>
-        			    <td>Nombre:</td><td colspan="2">{{ form.name.as_widget }}</td>
-            		    <td>Apellidos:</td><td colspan="2">{{ form.familyname.as_widget }}</td>
+						<td class="tbl-td-10">DNI:</td><td>{{ form.dni.as_widget }}</td>
+        			    <td class="tbl-td-10">Nombre:</td><td>{{ form.name.as_widget }}</td>
+            		    <td class="tbl-td-10">Apellidos:</td><td>{{ form.familyname.as_widget }}</td>
                     </tr>
 	            	<tr>
-		    		    <td>DNI:</td><td colspan="2">{{ form.dni.as_widget }}</td>
-			    	    <td>Fecha de nacimiento:</td><td colspan="2">{{ form.birthdate.as_widget }}
-                    </tr>
+			    	    <td class="tbl-td-10">F.nacim.:</td><td>{{ form.birthdate.as_widget }}</td>
+                        <td class="tbl-td-10">Sexo:</td><td>{{ form.sex.as_widget }}</td>
+						<td class="tbl-td-10">Ocupación:</td><td>{{ form.job.as_widget }}</td>
+      				</tr>
 	    		    <tr>
-                        <td>Sexo:</td><td colspan="2">{{ form.sex.as_widget }}
-                        <td>Ocupación:</td><td colspan="2">{{ form.job.as_widget }}</td>
-
-       				</tr>
-	    		    <tr>
-		    		    <td>Archivo de foto:</td><td colspan="5">{{ form.picturefile.as_widget }}</td>
+		    		    <td class="tbl-td-10">Foto:</td><td colspan="5">{{ form.picturefile.as_widget }}</td>
    			    	</tr>
-
                     <!-- Domicilio -->
 		       	    <tr>
 	    	    	    <th class="tbl-th" colspan="6">Domicilio</th>
                     </tr>
     	    		<tr>
-	    	    		<td>Dirección:</td><td colspan="2">{{ form.address.as_widget }}</td>
-		        		<td>Localidad:</td><td colspan="2">{{ form.city.as_widget }}</td>
+	    	    		<td class="tbl-td-10">Dirección:</td><td colspan="3">{{ form.address.as_widget }}</td>
+						<td class="tbl-td-10">Localidad:</td><td>{{ form.city.as_widget }}</td>
                     </tr>
                     <tr>
-                        <td>Código postal:</td><td colspan="2">{{ form.postcode.as_widget }}</td>
-		    	    	<td>Provincia:</td><td colspan="2">{{ form.province.as_widget }}</td>
-        			</tr>
-                    <tr>
-			    	    <td>País:</td><td colspan="6">{{ form.country.as_widget }}</td>
+						<td class="tbl-td-10">C.P.:</td><td>{{ form.postcode.as_widget }}</td>
+		    	    	<td class="tbl-td-10">Provincia:</td><td>{{ form.province.as_widget }}</td>
+ 			    	    <td class="tbl-td-10">País:</td><td >{{ form.country.as_widget }}</td>
        				</tr>
-
                     <!-- Datos de contacto -->
 	    	   	    <tr>
 	        		    <th class="tbl-th" colspan="6">Datos de contacto</th>
                     </tr>
     	    		<tr>
-	    	    		<td>E-mail:</td><td>{{ form.email.as_widget }}</td>
-		    	    	<td>Teléfono principal:</td><td>{{ form.phone1.as_widget }}</td>
-			    	    <td>Teléfono alternativo:</td><td>{{ form.phone2.as_widget }}</td>
+		    	    	<td class="tbl-td-10">Teléf.1:</td class="tbl-td-10"><td>{{ form.phone1.as_widget }}</td>
+						<td class="tbl-td-10">Teléf.2:</td class="tbl-td-10"><td>{{ form.phone2.as_widget }}</td>
+                        <td class="tbl-td-10">E-mail:</td><td>{{ form.email.as_widget }}</td>
        				</tr>
         			<tr>
-	        			<td>Notificar cita:</td><td>{{ form.notifyappoint.as_widget }}</td>
-		        		<td>Notificar vía:</td><td>{{ form.notifyvia.as_widget }}</td>
-    			    </tr>
-
+	        			<td class="tbl-td-10" colspan="2">Notifica cita:&nbsp;&nbsp;&nbsp;{{ form.notifyappoint.as_widget }} ............</td>
+						<td class="tbl-td-10">por:</td><td colspan="2">{{ form.notifyvia.as_widget }}</td>
+   			    	</tr>
                     <!-- Notas -->
 	    	   	    <tr>
 	        		    <th class="tbl-th" colspan="6">Notas</th>
                     </tr>
 	    		    <tr>
-    				    <td class="tbl-td-centro" colspan="6">{{ form.notes.as_widget }}</td>
+    				    <td colspan="6">{{ form.notes.as_widget }}</td>
     			    </tr>
 
                 </table>
