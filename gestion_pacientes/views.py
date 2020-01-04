@@ -17,11 +17,6 @@ from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
-########## MENU PACIENTES VIEW ##########
-
-class menu_pacientes_view(TemplateView):
-    template_name = 'menu_pacientes_tpl.html'
-
 ########## CREATE PACIENTES VIEW ##########
 
 @method_decorator(login_required, name='dispatch')
@@ -82,8 +77,8 @@ class create_pacientes_view(View):
             
             except:
                 messages.warning(request, 'Error procesando archivo de imagen')
-
-            return HttpResponseRedirect(reverse('create-pacientes-confirm'))
+            
+            return HttpResponseRedirect(reverse('id-pacientes', kwargs={'idPaciente': paciente.idPaciente}))
 
         # El form NO es validado
         else:
@@ -95,12 +90,6 @@ class create_pacientes_view(View):
         form = create_pacientes_form()
         ctx['form'] = form
         return render(request, 'create_pacientes_tpl.html', ctx)
-
-########## CONFIRMA LA CREACION DEL PACIENTE ##########
-
-@method_decorator(login_required, name='dispatch')
-class create_pacientes_confirm_view(TemplateView):
-    template_name = 'create_pacientes_success_tpl.html'
 
 ########## SELECT PACIENTES VIEW ##########
 

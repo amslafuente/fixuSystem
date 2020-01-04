@@ -358,6 +358,10 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
 .tbl-th-dark { /* --- TH header general --- */
     vertical-align: middle;
     text-align: center;
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
     padding: 8px;
     color: white;
     background-color:rgb(82, 82, 82);
@@ -371,6 +375,10 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
 .tbl-th-izq { /* --- TH header izquierda --- */
     vertical-align: middle;
     text-align: left;
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
     padding: 8px;
     background-color:rgb(230, 219, 209);
 }
