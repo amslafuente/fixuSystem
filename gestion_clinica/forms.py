@@ -80,7 +80,7 @@ class customEquipamientoWidget(widgets.Select):
         list_choices.extend(selTipoEquip)
         self.choices = list_choices
 
-# Form de euipamiento para filtros
+# Form de equipamiento para filtros
 class customEquipamientoForm(forms.Form):
 
     filter_ = fields.CharField(label = 'Filtro', widget = customEquipamientoWidget())
@@ -122,3 +122,13 @@ class customProveedorForm(forms.Form):
     filtername.widget = widgets.TextInput(attrs={'style': 'width: 100px'})
     filterarea = fields.CharField(label = 'Area', required = False, max_length = 10)
     filterarea.widget = widgets.TextInput(attrs={'style': 'width: 100px'})
+
+###############################################################################
+
+# Form para seleccionar profesionales para mostrar
+class select_profesionales_form(forms.Form):
+
+    # Campos del formulario
+    fullname = fields.CharField(label = 'Nombre:', max_length = 10, required = False)
+    position = fields.CharField(label = 'Cargo:', max_length = 10, required = False)
+    department = fields.CharField(label = 'Departamento:',  max_length = 10, required = False)

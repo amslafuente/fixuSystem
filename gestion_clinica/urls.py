@@ -22,7 +22,7 @@ urlpatterns = [
 
     ##### Instalaciones y servicios #####
 
-    # Instalaciones y servicios
+    # Menu Instalaciones y servicios
     path('instalaciones-servicios/', views.instalac_servic_clinica_view.as_view(), name = 'instalac-servic'),
     
     # Consultorios
@@ -46,16 +46,18 @@ urlpatterns = [
     path('proveedores/modificar/<int:idProveedor>/', views.edit_proveedores_view.as_view(), name = 'edit-proveedores'),
     path('proveedores/borrar/<int:idProveedor>/', views.delete_proveedores_view.as_view(), name = 'delete-proveedores'),
  
-
-
-
-
     ##### Profesionales #####
 
+    # Menu profesionales
+    path('profesionales/', views.profesionales_clinica_view.as_view(), name = 'profesionales-clinica'),
+    
     # Profesionales
-    path('profesionales/', views.profesionales_clinica_view.as_view(), name = 'profesionales'),
-
-
-
-
+    # Seleccion de pacientes a listar
+    path('profesionales/consultar/', views.select_profesionales_view.as_view(), name = 'select-profesionales'),
+    # Muestra, lista, crea, edita y borra
+    path('profesionales/<int:idProfesional>/', views.id_profesionales_view.as_view(), name = 'id-profesionales'),
+    path('profesionales/listado/<str:fullname>/<str:position>/<str:department>/', views.listado_profesionales_view.as_view(), name = 'listado-profesionales'),
+    path('profesionales/nuevo/', views.create_profesionales_view.as_view(), name = 'create-profesionales'),
+    path('profesionales/modificar/<int:idProfesional>/', views.edit_profesionales_view.as_view(), name = 'edit-profesionales'),
+    path('profesionales/borrar/<int:idProfesional>/', views.delete_profesionales_view.as_view(), name = 'delete-profesionales')
 ]

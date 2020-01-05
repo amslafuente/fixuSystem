@@ -83,26 +83,6 @@
                     </tr>
         	    </table>
 
-                <!-- Datos de control -->
-                <table class="tbl-general tbl-70 table-striped table-dark">
-
-                    <caption class="tbl-capt">Datos de control</caption>
-
-        	        <tr>
-	            	    <th class="tbl-td-centro">idClínica</th>
-	            	    <th class="tbl-td-centro">Fecha registro</th>
-    	        		<th class="tbl-td-centro">Ultima modificación</th>
-	    	        	<th class="tbl-td-centro">Modificado por</th>
-        	        </tr>
-                    <tr>
-    	    	       	<td class="tbl-td-centro">{{ clinica.idClinica }}</td>
-                        <td class="tbl-td-centro">{{ clinica.firstupdated|date:'d/m/Y H:i' }}</td>
-        	    	   	<td class="tbl-td-centro">{{ clinica.lastupdated|date:'d/m/Y H:i' }}</td>
-	        	       	<td class="tbl-td-centro">{{ clinica.modifiedby }}</td>
-    		        </tr>
-	    	    </table>
-
-
 		        <!-- Botones de acción -->
                 <div class="div-botones">
                     <a href="{% url 'edit-info-clinica' clinica.idClinica %}"><input type="button" class="btn btn-info" value="Editar datos"></a>

@@ -1,0 +1,47 @@
+<!-- ************************ -->
+<!--   init_info_clinica_tpl  -->
+<!-- ************************ -->
+
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+    	<title>fixuSystem - Fisioterapia - Gestión de cĺínica</title>
+
+    {% endblock %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+		<!-- Menú principal con imágenes -->
+        <section class="sect-home-page-menu">
+
+            <div class="div-cabecera-menu">Gestión de Profesionales</div>
+
+            <br/>
+
+            <div class="div-clinica">
+                <div>
+                    <a href="{% url 'select-profesionales' %}">
+                        <button style="width: 320px;" type="button" class="btn btn-info btn-shadow">Relación de profesionales</button>
+                    </a>
+                </div>
+                <div>
+                    <a href="{% url 'create-profesionales' %}">
+                        <button style="width: 320px;" type="button" class="btn btn-info btn-shadow">Nuevo profesional</button>
+                    </a>
+                </div>
+            </div>
+
+        </section>
+
+    {% endblock %}

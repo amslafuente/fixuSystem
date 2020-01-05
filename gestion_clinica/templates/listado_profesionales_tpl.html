@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+		<title>fixuSystem - Fisioterapia  - Gestión de clínica</title>
+
+    {% endblock title %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+        <section class="sect-home-page-menu">
+
+        <!-- Tabla mostrando profesionals -->
+        <table class="tbl-forms table-striped tbl-general tbl-60">
+
+            <!-- Texto con el contenido -->
+	    	<caption class="tbl-capt">Listado de profesionales
+                {% if is_paginated %}
+                    <span> - Página {{ page_obj.number }} de {{ paginator.num_pages }}</span>
+                {% endif %}
+            </caption>
+
+            <!-- Cabecera de la tabla -->
+	    	<tr>
+                <th class="tbl-th-izq">Usuario</th>
+		        <th class="tbl-th-izq tbl-td-30">Nombre</th>
+           		<th class="tbl-th-izq">Cargo</th>
+                <th class="tbl-th-izq">Departamento</th>
+                <th class="tbl-th tbl-td-10" colspan="3">Acciones</th>    
+            </tr>
+
+            <!-- NO devuelve ningun profesional avisa y cierra la tabla -->
+            {% if not profesionales %}
+	    	    <tr>
+                    <th colspan="7" class="field-errors">
+                        <span>Ningún profesional con esos datos</span>
+                    </th>
+                </tr>
+
+            <!-- SI devuelve algun profesional muestra y cierra la tabla -->
+            {% else %}
+
+                <!-- Devuelve los profesionals en un querySet llamada profesionals -->
+                {% for profesional in profesionales %}
+               		<tr class="grid-smalltxt">
+                        <td>{{ profesional.oto_Profesional__username }}</td>
+			       	    <td>{{ profesional.fullname }}</td>
+		    	        <td>{{ profesional.position }}</td>
+    			   		<td>{{ profesional.department }}</td>
+                        <!-- Enlaces a abrir, edit y crear cita -->
+                        <td>
+                            <div class="div-fechas">
+                                <a href="{% url 'id-profesionales' profesional.oto_Profesional %}"><input type="button" class="btn btn-info btn-sm" value="Abrir"></a>&nbsp;
+                                <a href="{% url 'edit-profesionales' profesional.oto_Profesional %}"><input type="button" class="btn btn-info btn-sm" value="Editar"></a>&nbsp;
+                                <a href="{% url 'delete-profesionales' profesional.oto_Profesional %}"><input type="button" class="btn btn-danger btn-sm" value="Borrar"></a>&nbsp;
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+
+      		{% endif %}
+
+        </table>
+
+        <!-- Incluye PAGINADOR-->
+        {% include 'paginador.html' %}
+
+    	<!-- Botones de acción -->
+        <div class="div-botones">
+            <a href="{% url 'create-profesionales' %}"><input type="button" class="btn btn-info" value="Nuevo profesional"></a>
+		    <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
+        </div>
+
+        </section>
+
+    {% endblock content %}

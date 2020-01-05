@@ -117,7 +117,7 @@ class select_pacientes_view(View):
                 show_str['familyname'] = form.cleaned_data['familyname']
             show_str['orderby'] = form.cleaned_data['orderby']
 
-            return HttpResponseRedirect(reverse('show-pacientes', kwargs = show_str))
+            return HttpResponseRedirect(reverse('listado-pacientes', kwargs = show_str))
 
         # El form NO es validado
         else:
@@ -141,11 +141,11 @@ class select_pacientes_view(View):
 ########## SHOW PACIENTES VIEW ##########
 
 @method_decorator(login_required, name='dispatch')
-class show_pacientes_view(ListView):
+class listado_pacientes_view(ListView):
 
     model = Paciente
     context_object_name = 'pacientes'
-    template_name = 'show_pacientes_tpl.html'
+    template_name = 'listado_pacientes_tpl.html'
     paginate_by = 20
 
     # Modifica el query ALL para seleccionar los pacientes elegidos

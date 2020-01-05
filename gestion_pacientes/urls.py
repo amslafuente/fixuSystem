@@ -10,7 +10,7 @@ urlpatterns = [
     # Seleccion de pacientes a listar
     path('consultar/', views.select_pacientes_view.as_view(), name = 'select-pacientes'),
     # Listado de pacientes
-    path('mostrar/<str:dni>/<str:name>/<str:familyname>/<str:orderby>/', views.show_pacientes_view.as_view(), name = 'show-pacientes'),
+    path('mostrar/<str:dni>/<str:name>/<str:familyname>/<str:orderby>/', views.listado_pacientes_view.as_view(), name = 'listado-pacientes'),
     # Mostrar Paciente concreto
     path('mostrar/<int:idPaciente>/', views.id_pacientes_view.as_view(), name = 'id-pacientes'),
     # Seleccion de pacientes a editar

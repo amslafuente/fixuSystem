@@ -21,7 +21,7 @@
         {% load static %}
 
 	    <!-- Formulario de entrada de criterios -->
-        <form action="{% url 'select-desdepaciente-consultas' %}" method="GET">
+        <form method="GET">
 
             <table class="tbl-general tbl-forms tbl-35 table-striped">
 
@@ -53,7 +53,7 @@
 
             <!-- Botones -->
             <div class="div-botones">
-			    <input type="submit" class="btn btn-info" value="Enviar">
+			    <input type="submit" class="btn btn-info" formaction={% url 'select-desdepaciente-consultas' %}" value="Enviar">
 			    <a href="{% url 'menu-consultas' %}"><input type="button" class="btn btn-info" value="Menu de consultas"></a>
             </div>
 

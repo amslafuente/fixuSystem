@@ -14,7 +14,7 @@ from django.views import View
 from django.contrib import messages
 from .models import Clinica, Profesional, Consultorio, Equipamiento, Proveedor
 from .forms import init_edit_info_clinica_form, create_edit_consultorios_form, create_edit_equipamiento_form
-from .forms import customConsultorioForm, customEquipamientoForm, customProveedorForm
+from .forms import customConsultorioForm, customEquipamientoForm, customProveedorForm, select_profesionales_form
 from .forms import create_edit_proveedores_form
 import os
 from pathlib import Path
@@ -774,8 +774,111 @@ class delete_proveedores_view(DeleteView):
 
         return super().get(request)
 
-#############################################################
+##################################################
+#                   PROFESIONALES                #
+##################################################
+
+##### ID DE PROFESIONALES #####
+
 
 @method_decorator(login_required, name='dispatch')
-class profesionales_clinica_view(View):
+class profesionales_clinica_view(TemplateView):
+    
+    template_name = 'profesionales_clinica_tpl.html'
+
+
+@method_decorator(login_required, name='dispatch')
+class select_profesionales_view(View):
+
+    # POST
+    def post(self, request):
+
+        ctx = dict()
+        # Rellena el form con el POST y añade al contexto
+        form = select_profesionales_form(request.POST)
+        ctx['form'] = form
+
+        # El form SI es validado
+        if form.is_valid():
+
+            # Devuelve las partes que interesan en una string para mostrar solo esos pacientes
+            show_str = {'fullname':'fullname', 'position':'position', 'department':'department'}
+            if str(form.cleaned_data['fullname']) != '':
+                show_str['fullname'] = form.cleaned_data['fullname']
+            if str(form.cleaned_data['position']) != '':
+                show_str['position'] = form.cleaned_data['position']
+            if str(form.cleaned_data['department']) != '':
+                show_str['department'] = form.cleaned_data['department']
+
+            return HttpResponseRedirect(reverse('listado-profesionales', kwargs = show_str))
+
+        # El form NO es validado
+        else:
+            # Limpia el form y añade al contexto
+            form = select_profesionales_form()
+            ctx['form'] = form
+
+            # Mensaje de error en contexto
+            messages.warning(request, 'El formulario contiene errores')
+
+            return render(request, 'select_profesionales_tpl.html', ctx)
+
+    # GET
+    def get(self, request):
+        ctx = dict()
+        # Limpia el form y lo añade al contexto
+        form = select_profesionales_form()
+        ctx['form'] = form
+        return render(request, 'select_profesionales_tpl.html', ctx)
+
+
+@method_decorator(login_required, name='dispatch')
+class listado_profesionales_view(ListView):
+
+    model = Profesional
+    context_object_name = 'profesionales'
+    template_name = 'listado_profesionales_tpl.html'
+    paginate_by = 20
+
+    # Modifica el query ALL para seleccionar los pacientes elegidos
+    def get_queryset(self):
+
+        # Filtrado del query por defecto
+        qs = super().get_queryset()
+
+        # Seleccion
+        if self.kwargs['fullname'] != 'fullname':
+            qs = qs.filter(fullname__icontains = self.kwargs['fullname'])
+        if self.kwargs['position'] != 'position':
+             qs = qs.filter(position__icontains = self.kwargs['position'])
+        if self.kwargs['department'] != 'department':
+             qs = qs.filter(department__icontains = self.kwargs['department'])
+        # ORDERBY de los campos y registros
+        qs = qs.order_by('fullname').select_related('oto_Profesional').values('oto_Profesional', 'oto_Profesional__username', 'fullname', 'position', 'department')
+
+        return qs
+
+    # Añade las cabeceras de la tabla al contexto y la ordenacion para poner el orden de las cabeceras
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+        
+        return context
+
+@method_decorator(login_required, name='dispatch')
+class id_profesionales_view(DetailView):
     pass
+
+@method_decorator(login_required, name='dispatch')
+class create_profesionales_view(View):
+    pass
+
+@method_decorator(login_required, name='dispatch')
+class edit_profesionales_view(View):
+    pass
+
+@method_decorator(login_required, name='dispatch')
+class delete_profesionales_view(View):
+    pass
+
+#############################################################
