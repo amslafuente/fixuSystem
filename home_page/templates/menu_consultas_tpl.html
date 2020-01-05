@@ -29,18 +29,18 @@
 
             <div class="div-cuerpo-menu">
                 <div>
-                    <a href={% url 'citas-hoy' %}>
-                        <img width="200" src="{% static "img/menu_citas_hoy.png" %}" alt="Citas para hoy">
+                    <a href={% url 'select-paciente-consultas' %}>
+                        <img width="200" src="{% static "img/menu_cconsultas_crear.png" %}" alt="Crear ficha de consulta">
                     </a>
                 </div>
                 <div>
-                    <a href={% url 'citas-mes' 1 1 %}>
-                        <img width="200" src="{% static "img/menu_citas_mes.png" %}" alt="Calendario mensual">
+                    <a href={% url 'id-consultas' 1 %}>
+                        <img width="200" src="{% static "img/menu_consultas_abrir.png" %}" alt="Abrir ficha de consulta">
                     </a>
                 </div>
                 <div>
-                    <a href={% url 'menu-citas' %}>
-                        <img width="200" src="{% static "img/menu_citas_actualiz.png" %}" alt="Procesar/Actualizar">
+                    <a href={% url 'edit-consultas' 1 %}>
+                        <img width="200" src="{% static "img/menu_consultas_editar.png" %}" alt="Editar ficha de consulta">
                     </a>
                 </div>
             </div>

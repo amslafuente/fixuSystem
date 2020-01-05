@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+    	<title>fixuSystem - Fisioterapia - Gestión de consultas</title>
+
+    {% endblock %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+        {{ form.as_table }}
+
+    {% endblock %}

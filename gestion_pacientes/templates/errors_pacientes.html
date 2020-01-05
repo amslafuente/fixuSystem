@@ -4,7 +4,7 @@
 <!-- Error en dni -->
 {% if form.dni.errors %}
 <tr>
-    <th colspan="4" class ="field-errors">
+    <th colspan="6" class ="field-errors">
         {% for error in form.dni.errors %}
             {{ form.dni.label }} : {{ error }}
         {% endfor %}
@@ -15,7 +15,7 @@
 <!-- Error en birthdate -->
 {% if form.birthdate.errors %}
 <tr>
-    <th colspan="4" class ="field-errors">
+    <th colspan="6" class ="field-errors">
         {% for error in form.birthdate.errors %}
             {{ form.birthdate.label }} : {{ error }}
         {% endfor %}
@@ -26,7 +26,7 @@
 <!-- Error en modifiedby -->
 {% if form.modifiedby.errors %}
 <tr>
-    <th colspan="4" class ="field-errors">
+    <th colspan="6" class ="field-errors">
         {% for error in form.modifiedby.errors %}
             {{ form.modifiedby.label }} : {{ error }}
         {% endfor %}
@@ -36,7 +36,7 @@
 
 <!-- Si hay mensajes pendientes -->
 {% for message in messages %}
-    <th colspan="4" style="text-align: center; font-family: serif; font-variant: small-caps; padding: 5px; color: white; background-color: rgb(224, 89, 36);">
+    <th colspan="6" style="text-align: center; font-family: serif; font-variant: small-caps; padding: 5px; color: white; background-color: rgb(224, 89, 36);">
         {{ message }}
     </th>
 {% endfor %}

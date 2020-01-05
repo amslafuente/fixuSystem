@@ -7,7 +7,6 @@ urlpatterns = [
 
     # Nuevo paciente y confirmacion de nuevo paciente
     path('nuevo/', views.create_pacientes_view.as_view(), name = 'create-pacientes'),
-    path('nuevo_confirma/', views.create_pacientes_confirm_view.as_view(), name = 'create-pacientes-confirm'),
     # Seleccion de pacientes a listar
     path('consultar/', views.select_pacientes_view.as_view(), name = 'select-pacientes'),
     # Listado de pacientes
