@@ -64,11 +64,11 @@
             <br/>
 
             <!-- Notifiaciones de telefono -->
-            <form action="{% url 'procesar-citas' %}" method="POST">
+            <form method="POST">
                 
                 {% csrf_token %}
             
-                    <table class="tbl-forms table-striped tbl-general tbl-85"> 
+                <table class="tbl-forms table-striped tbl-general tbl-85"> 
 
                     <!-- Texto con el contenido -->
                     <caption class="tbl-capt">Notificaciones a hacer por teléfono</caption>
@@ -130,20 +130,17 @@
 
                 </table>
 
-            <!-- Botones de acción -->
-            <div class="div-botones">
-                    <input type="submit" class="btn btn-info" value="Volver"/>                 
-            </form>
-                 
-                <form action="{% url 'pdf-citas' %}" method="POST">
-                    {% csrf_token %}
-                    <input type="submit" class="btn btn-info" value="Crear PDF"/>
+                <!-- Botones de acción -->
+                <div class="div-botones">
+                    <input type="submit" formaction="{% url 'procesar-citas' %}" class="btn btn-info" value="Volver"/>
+                    <input type="submit" formaction="{% url 'pdf-citas' %}" class="btn btn-info" value="Crear PDF"/>
                     <input type="hidden" name="restelef" value="{{ restelef }}"/>
                     <input type="hidden" name="emails2phone" value="{{ emails2phone }}"/>
                     <input type="hidden" name="notifydate" value="{{ notifydate }}"/>
                     <input type="hidden" name="untilday" value="{{ untilday }}"/>
-                </form>
-            </div>
+                </div>
+
+            </form>
             
         </section>
 
