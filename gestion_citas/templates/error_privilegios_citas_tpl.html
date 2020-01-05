@@ -1,7 +1,3 @@
-<!-- ************************* -->
-<!--   init_error_usuario_tpl  -->
-<!-- ************************* -->
-
 {% extends 'base.html' %}
 
     <!-- **************** -->
@@ -10,7 +6,7 @@
 
     {% block title %}
 
-    	<title>fixuSystem - Fisioterapia - Gestión de clínica</title>
+    	<title>fixuSystem - Fisioterapia - Gestión de citas</title>
 
     {% endblock %}
 
@@ -30,13 +26,13 @@
                 <!-- Texto con el contenido -->
                 <caption class="tbl-capt">ERROR DE PRIVILEGIOS</caption>
                 <tr>
-    	        	<td class="tbl-td-centro">Este usuario no puede modificar datos de la clinica.</td>
+    	        	<td class="tbl-td-centro">Este usuario no puede modificar datos de las citas.</td>
     		    </tr>
             </table>
 
 		    <!-- Botones de acción -->
             <div class="div-botones">
-                <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Volver"></a>
+                <a href="{% url 'menu-citas' %}"><input type="button" class="btn btn-info" value="Volver"></a>
             </div>
 
         </section>

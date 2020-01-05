@@ -18,7 +18,7 @@ urlpatterns = [
     # Error si trata de crear mas de una clinica
     path('error-iniciar/', views.error_init_clinica_view.as_view(), name = 'error-init-clinica'),
     # Error si trata de un usuario NO SUPERUSER
-    path('error-privilegios/', views.error_privilegios_view.as_view(), name = 'error-privilegios'),
+    path('error-privilegios/', views.error_privilegios_clinica_view.as_view(), name = 'error-privilegios-clinica'),
 
     ##### Instalaciones y servicios #####
 

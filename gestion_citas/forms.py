@@ -30,7 +30,8 @@ class create_citas_paciente_form(forms.ModelForm):
             'fk_Profesional': Select(attrs={'style': 'width: 244px;'}),
             'fk_Consultorio': Select(attrs={'style': 'width: 244px;'}),
             'status': Select(attrs={'style': 'width: 1px; visibility: hidden;'}),
-            'notes': Textarea(attrs={'cols': 32, 'rows': 3})            }
+            'notes': Textarea(attrs={'cols': 32, 'rows': 3})
+        }
 
 class edit_citas_form(forms.Form):
     

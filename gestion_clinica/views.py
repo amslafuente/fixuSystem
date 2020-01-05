@@ -129,7 +129,7 @@ class init_clinica_view(View):
 
         # Si el usuario no es superuser no permite acceder a los datos de la clinica
         if not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('error-privilegios'))
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
 
         # Si ya existe un registro avisa de que solo se puede editar, no crear
         elif qs_count > 0:
@@ -150,9 +150,9 @@ class init_clinica_view(View):
 
 # Error si el usuario NO ES SUPERUSUARIO
 @method_decorator(login_required, name='dispatch')
-class error_privilegios_view(TemplateView):
+class error_privilegios_clinica_view(TemplateView):
 
-    template_name = 'error_privilegios_tpl.html'
+    template_name = 'error_privilegios_clinica_tpl.html'
 
 # Error si ya existe un registro y se pretende crear otro
 @method_decorator(login_required, name='dispatch')
@@ -178,7 +178,7 @@ class edit_info_clinica_view(UpdateView):
 
         # Si no es superusuario no permite acceder a los datos de clinica
         if not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('error-privilegios'))
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
         else:
             return super().get(request, *args, **kwargs)
 
@@ -348,7 +348,7 @@ class create_consultorios_view(CreateView):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) and (not request.user.is_staff):
-            return HttpResponseRedirect(reverse('error-privilegios'))
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
 
         return super().get(request)
 
@@ -366,7 +366,7 @@ class edit_consultorios_view(UpdateView):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) or (not request.user.is_staff):
-            return HttpResponseRedirect(reverse('error-privilegios'))
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
 
         return super().get(request)
 
@@ -392,7 +392,7 @@ class delete_consultorios_view(DeleteView):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) or (not request.user.is_staff):
-            return HttpResponseRedirect(reverse('error-privilegios'))
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
 
         return super().get(request)
 
@@ -524,7 +524,7 @@ class create_equipamiento_view(CreateView):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) and (not request.user.is_staff):
-            return HttpResponseRedirect(reverse('error-privilegios'))
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
 
         return super().get(request)
 
@@ -569,7 +569,7 @@ class edit_equipamiento_view(UpdateView):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) or (not request.user.is_staff):
-            return HttpResponseRedirect(reverse('error-privilegios'))
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
 
         return super().get(request)
 
@@ -594,7 +594,7 @@ class delete_equipamiento_view(DeleteView):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) or (not request.user.is_staff):
-            return HttpResponseRedirect(reverse('error-privilegios'))
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
 
         return super().get(request)
 
@@ -707,7 +707,7 @@ class create_proveedores_view(CreateView):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) and (not request.user.is_staff):
-            return HttpResponseRedirect(reverse('error-privilegios'))
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
 
         return super().get(request)
 
@@ -744,7 +744,7 @@ class edit_proveedores_view(UpdateView):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) or (not request.user.is_staff):
-            return HttpResponseRedirect(reverse('error-privilegios'))
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
 
         return super().get(request)
 
@@ -770,7 +770,7 @@ class delete_proveedores_view(DeleteView):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) or (not request.user.is_staff):
-            return HttpResponseRedirect(reverse('error-privilegios'))
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
 
         return super().get(request)
 

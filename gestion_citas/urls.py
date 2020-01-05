@@ -53,4 +53,7 @@ urlpatterns = [
     path('procesar/recordatorios/', views.recordatorios_citas_view.as_view(), name = "recordatorios-citas"),
     path('procesar/pasadas-canceladas/', views.pasadas_canceladas_citas_view.as_view(), name = "pasadas-canceladas-citas"),
     path('procesar/pdf-citas/', views.PDF_citas_view.as_view(), name = "pdf-citas"),
+    # Error si trata de un usuario NO SUPERUSER
+    path('error-privilegios/', views.error_privilegios_citas_view.as_view(), name = 'error-privilegios-citas'),
+
 ]

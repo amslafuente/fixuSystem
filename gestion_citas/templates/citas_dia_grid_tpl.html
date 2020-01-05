@@ -21,7 +21,7 @@
         {% load static %}
 
         <!-- Tabla mostrando pacientes -->
-        <table class="tbl-general tbl-forms tbl-85 table-striped">
+        <table class="tbl-general tbl-forms tbl-100 table-striped">
 
             <!-- Titulo de la tabla -->
 	    	<caption class="tbl-capt">
@@ -43,13 +43,13 @@
 
             <!-- Cabecera de la tabla -->
 	    	<tr>
-                <th class="tbl-th tbl-td-10">Franja horaria</th>
-                <th class="tbl-th-izq">Paciente</th>
-                <th class="tbl-th-izq">Citado/a por</th>
-                <th class="tbl-th">Consultorio</th>
-                <th class="tbl-th">Hora real</th>
-                <th class="tbl-th-izq tbl-td-20">Notas</th>
-                <th class="tbl-th">Estado</th>
+                <th class="tbl-th tbl-td-10">Franja</th>
+                <th class="tbl-th-izq tbl-td-20">Paciente</th>
+                <th class="tbl-th-izq tbl-td-15">Citado/a por</th>
+                <th class="tbl-th">Consult.</th>
+                <th class="tbl-th">Hora</th>
+                <th class="tbl-th-izq">Notas</th>
+                <th class="tbl-th tbl-td-15">Estado</th>
                 <th class="tbl-th">Acciones</th>
             </tr>
             <!-- Si se pasa un paciente lo coloca en la cabecera -->
@@ -159,9 +159,9 @@
                             {% if cita.7 == "Cancelada" %}
                                 <span class = "grid-rojo">
                             {% elif cita.7 == "Acude"%}
-                                <span class = "grid-naranja">
-                            {% elif cita.7 == "Pendiente"%}
                                 <span class = "grid-azul">
+                            {% elif cita.7 == "Pendiente"%}
+                                <span class = "grid-naranja">
                             {% else %}
                                 <span class = "grid-verde">
                             {% endif %}

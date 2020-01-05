@@ -29,7 +29,7 @@
                 {% if numregs > 0 %}
                     <tr>
                         <th class="field-errors">
-                            {{ mensaje }}
+                            Se va a proceder a BORRAR de la base de datos las citas ya pasadas, o canceladas, que no han generado ninguna ficha de consulta.
                         </th>
                     </tr>
                     <tr>
@@ -44,7 +44,7 @@
             </table>
 
             <!-- Botones de acción -->
-            <form method="POST">
+            <form action ="{% url 'pasadas-canceladas-citas' %}" method="POST">
                 {% csrf_token %}
                 <div class="div-botones">
                     {% if numregs > 0 %}                    

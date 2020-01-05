@@ -104,7 +104,7 @@ class citas_dia_grid_view(ListView):
         # Paciente pasado en los kwargs
         kwarg_idpaciente = self.kwargs['idPaciente']
 
-        # SI SE PASA UN idPaciente (idPaciente >0), extrae el paciente concreto y lo pasa al contexto
+        # SI SE PASA UN idPaciente (idPaciente > 0), extrae el paciente concreto y lo pasa al contexto
         if (kwarg_idpaciente > 0):
             qs_paciente = Paciente.objects.get(idPaciente__iexact = kwarg_idpaciente)
             ctx['paciente'] = qs_paciente
@@ -120,11 +120,11 @@ class citas_dia_grid_view(ListView):
         for cita in qs:
             cita_row = (cita.idCita, cita.fk_Paciente, cita.appdate, cita.apptime, cita.fk_Profesional, cita.fk_Consultorio, cita.status, cita.notes)
             citas.append(cita_row)
-        print(citas)
+
         # Contexto que genera las fechas actuales, anteriores y siguentes
         ctx['ctx_dias'] = contexto_dias(kwarg_date)
 
-        # Contexto con las citas
+        # Contexto con las citas. app_timegrid construye la matriz de horas y citas para la rejilla.
         ctx['rejilla'] = app_timegrid(citas, kwarg_date)        
 
         return ctx
@@ -249,14 +249,13 @@ class id_citas_view(DetailView):
 @method_decorator(login_required, name='dispatch')
 class create_citas_view(View):
 
+    # POST de creacion de cita
     def post(self, request, date, hour):
 
-        # Inicializa contexto
         ctx = dict()
 
         # Rellena el form con el POST y la añade  al contexto
         form = create_citas_form(request.POST)
-        ctx['form'] = form
 
         # El form SI es validado
         if form.is_valid():
@@ -276,20 +275,22 @@ class create_citas_view(View):
             cita.save()
 
             # Devuelve a las pagina de citas del dia elegido
-            ctx = dict()
             ctx['idPaciente'] = 0
             ctx['date'] = date
             
             return HttpResponseRedirect(reverse('citas-dia', kwargs = ctx))
-
+            
         # Si no es válido muestra los errores
         else:
 
             # Mensaje de error en contexto y recarga la pagina
             messages.warning(request, 'El formulario contiene errores')
             
-            return render(request, 'create_citas_tpl.html', ctx)
+            ctx['form'] = form
 
+            return render(request, 'create_citas_tpl.html', ctx)
+    
+    # GET
     def get(self, request, **kwargs):
 
         # Reinicia contexto y datos iniciales
@@ -301,7 +302,6 @@ class create_citas_view(View):
         form = create_citas_form(initial = initial_data)
         ctx['form'] = form
 
-        # Va a la pagina de creacion de citas
         return render(request, 'create_citas_tpl.html', ctx)
 
 ######  CREA CITA DESDE EL GRID, CON PACIENTE CONCRETO, FECHA Y HORA PRESELECIONADAS #######
@@ -309,14 +309,13 @@ class create_citas_view(View):
 @method_decorator(login_required, name='dispatch')
 class create_citas_paciente_view(View):
 
+    # POST de creacion de cita con paciente asociado
     def post(self, request, idPaciente, date, hour):
 
-        # Inicializa el contexto
         ctx = dict()
 
         # Rellena el form con el POST y la añade  al contexto
         form = create_citas_paciente_form(request.POST)
-        ctx['form'] = form
 
         # El form SI es validado
         if form.is_valid():
@@ -336,7 +335,6 @@ class create_citas_paciente_view(View):
             cita.save()
             
             # Devuelve a las pagina de citas del dia elegido
-            ctx = dict()
             ctx['idPaciente'] = idPaciente
             ctx['date'] = date
             
@@ -348,21 +346,21 @@ class create_citas_paciente_view(View):
             # Recupera el paciente pasado en URL
             qs = Paciente.objects.get(idPaciente__iexact = idPaciente)
             # Rellena los datos del contexto necesarios
+            ctx['form'] = form
             ctx['fk_Paciente'] = idPaciente
             ctx['paciente'] = qs
             ctx['date'] = date
             ctx['hour'] = hour
             ctx['ctx_dias'] = contexto_dias(datetime.datetime.strptime(self.kwargs['date'], '%d_%m_%Y').date())
 
-            # Mensaje de error en contexto
             messages.warning(request, 'El formulario contiene errores')
 
-            # Devuelve para corregir
             return render(request, 'create_citas_paciente_tpl.html', ctx)
 
+    # GET
     def get(self, request, **kwargs):
 
-        # Inicializa el contexto
+        # Inicializa el contexto y datos iniciales
         ctx = initial_data = dict()
 
         # Obtiene la info del paciente, la fecha y la hora pasadas en la URL
@@ -378,12 +376,12 @@ class create_citas_paciente_view(View):
         initial_data['paciente'] = qs
         initial_data['appdate'] = kwarg_date
         initial_data['apptime'] = kwarg_time
-
-        # Pasa el form con los datos iniciales
+        
+        # Crea el form con los datos iniciales
         form = create_citas_paciente_form(initial = initial_data)
         ctx['form'] = form
 
-        # Pasa infirmacion de fechas al template
+        # Pasa informacion de fechas al template
         ctx['ctx_dias'] = contexto_dias(kwarg_date)
 
         return render(request, 'create_citas_paciente_tpl.html', ctx)
@@ -395,9 +393,9 @@ class create_citas_paciente_view(View):
 @method_decorator(login_required, name='dispatch')
 class edit_citas_view(View):
     
+    # POST que cambia las notas de la cita
     def post(self, request, **kwargs):
 
-        # Inicializa el contexto
         ctx = dict()
 
         # Rellena el form con el POST y la añade  al contexto
@@ -426,10 +424,11 @@ class edit_citas_view(View):
 
             # Regresa al META Referer
             return render(request, 'edit_citas_tpl.html', ctx)
-
+    
+    # GET
     def get(self, request, **kwargs):
 
-        # Inicializa el contexto
+        # Inicializa el contexto y datos iniciales
         ctx = initial_data = dict()
 
         # Obtiene la info de la cita concreta
@@ -439,8 +438,6 @@ class edit_citas_view(View):
     
         # Rellena los datos iniciales del form con los datos pasados en la URL (cita)
         initial_data['notes'] = qs.notes
-
-        # Pasa el form con los datos iniciales
         form = edit_citas_form(initial = initial_data)
         ctx['form'] = form
         ctx['citas'] = qs
@@ -536,7 +533,7 @@ class procesar_citas_view(View):
     # Con el method POST se regresa de recordatorios_result_citas
     # Usa este POST para poner como notificadas las citas telefonicas marcadas en  recordatorios_result_citas
     def post(self, request):
-
+   
         # Primero comprueba que se ha hecho un POST con las citas a poner como notificadas
         # Prepara las idCitas a cambiar
         try:
@@ -553,18 +550,22 @@ class procesar_citas_view(View):
         # Despues de procesar los appnotified, pone la pagina como si lo hubiera llamada un GET        
         ctx = dict()
 
+        # Muestra la fecha del ultimo run
         notif = NotificaCita.objects.last()
         proc = ProcesaCita.objects.last()
+
         try:
             ctx['last_notif'] = notif.notifLastrun
             ctx['with_errors'] = notif.witherrors
         except:
             ctx['last_notif'] = 'Sin fecha'
+
         try:
             ctx['last_proc'] = proc.procLastrun
         except:
             ctx['last_proc'] = 'Sin fecha'
 
+        # Valores por defecto
         ctx['day'] = NOTIFICAR_CON
         ctx['untilday'] = 0
 
@@ -575,18 +576,22 @@ class procesar_citas_view(View):
 
         ctx = dict()
 
+        # Muestra la fecha del ultimo run
         notif = NotificaCita.objects.last()
         proc = ProcesaCita.objects.last()
+
         try:
             ctx['last_notif'] = notif.notifLastrun
             ctx['with_errors'] = notif.witherrors
         except:
             ctx['last_notif'] = 'Sin fecha'
+
         try:
             ctx['last_proc'] = proc.procLastrun
         except:
             ctx['last_proc'] = 'Sin fecha'
 
+        # Valores por defecto
         ctx['day'] = NOTIFICAR_CON
         ctx['untilday'] = 0
 
@@ -596,13 +601,7 @@ class procesar_citas_view(View):
 class recordatorios_citas_view(View):
 
     def post(self, request):
-        
-        # Comprueba si es superuser
-        if not request.user.is_superuser:
 
-            return HttpResponseRedirect(reverse('procesar-citas'))
-
-        # Inicializa contexto
         ctx = dict()
 
         # Rellena el form con el POST y la añade  al contexto
@@ -753,12 +752,13 @@ class recordatorios_citas_view(View):
             messages.warning(request, 'Error en el formulario.')
 
             return render(request, 'recordatorios_citas_tpl.html', ctx)
-
+    
+    # GET
     def get(self, request):
 
         ctx = dict()
 
-        # Dias de antelacion pasados en el GET o por defecto
+        # Dias de antelacion pasados en el request.GET o por defecto
         kwarg_day = int(request.GET.get('day', default = NOTIFICAR_CON))
         kwarg_untilday = request.GET.get('untilday', default = False)
         if kwarg_untilday == 'on':
@@ -766,7 +766,7 @@ class recordatorios_citas_view(View):
         else:
             kwarg_untilday = False
 
-        # Pasa la form con dias a modificar
+        # Pasa la form con los dias para modificar
         form = customNotifDias(initial={'day': kwarg_day, 'untilday': kwarg_untilday})
         ctx['form'] = form
 
@@ -783,7 +783,7 @@ class recordatorios_citas_view(View):
             numregsemail = Cita.objects.filter(appdate__gt = kwarg_date, appdate__lte = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True).count()
             numregstelef = Cita.objects.filter(appdate__gt = kwarg_date, appdate__lte = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True).count()
         
-        # Muestra lo que hay a notificar 
+        # Pasa lo que hay a notificar 
         ctx['numregsemail'] = numregsemail
         ctx['numregstelef'] = numregstelef
         
@@ -793,27 +793,32 @@ class customNotifDias(forms.Form):
     
     day = fields.IntegerField(required = False)
     untilday = fields.BooleanField(required = False)
-    day.widget = widgets.NumberInput(attrs={'style': 'width: 50px', 'min': 0, 'max': 99})   
+    day.widget = widgets.NumberInput(attrs={'style': 'width: 50px', 'min': 1, 'max': 99})   
   
 @method_decorator(login_required, name='dispatch')
 class pasadas_canceladas_citas_view(View):
 
+    # POST para borrar citas pasadas y canceladas
     def post(self, request):
         
-         # Comprueba si es superuser
+        # Si no es superusuario no permite borrar citas
         if not request.user.is_superuser:
+            return HttpResponseRedirect(reverse('error-privilegios-citas'))
 
-            return HttpResponseRedirect(reverse('procesar-citas'))
-
-        # Si es superuser continua
         ctx = dict()
 
-        # Query
-        queryexclude = Q(status__iexact = 'Pasa a consulta')
+        # Query para selecionar las que se van a borrar
+        # Pasadas y canceladas...
         querydelete = (Q(appdate__lt = datetime.date.today()) | Q(status__iexact = 'Cancelada'))
+        # ... y excluye las que pasan a consulta
+        queryexclude = Q(status__iexact = 'Pasa a consulta')
+        
         try:
-            qscita = Cita.objects.exclude(queryexclude).filter(querydelete).count()
+            # Trata de borrar las citas
             numregs = 0
+            qscita = Cita.objects.filter(querydelete).exclude(queryexclude).delete()
+            
+            # Se pone la fecha del ultimo run (automatica) y ultimo borrado
             qsproc = ProcesaCita()
             # Se pone modifiedby
             if str(request.user) != 'AmonymousUser':
@@ -821,42 +826,56 @@ class pasadas_canceladas_citas_view(View):
             else:
                 qsproc.modifiedby = 'unix:' + str(request.META['USERNAME'])
             qsproc.save()
-        except:
-            numregs = Cita.objects.exclude(queryexclude).filter(querydelete).count()
 
+        except:
+            # Si falla el borrado cuenta los registros que DEBERIAN cumplir las condiciones
+            numregs = Cita.objects.filter(querydelete).exclude(queryexclude).count()
+
+        # Si hay registros ha habido algun error
         if numregs > 0:
             ctx['mensaje'] = 'Error al procesar la base de datos.'
             ctx['numregs'] = numregs
-        else:
-            ctx['mensaje'] = 'No hay citas más para procesar.'            
 
-        return render(request, 'pasadas_canceladas_citas_tpl.html', ctx)
-
-    def get(self, request):
+            return render(request, 'pasadas_canceladas_citas_tpl.html', ctx)
         
+        # Si no hya registros todo correcto
+        else:
+            ctx['mensaje'] = 'No hay más citas para borrar.'   
+
+            return render(request, 'pasadas_canceladas_citas_tpl.html', ctx)
+    
+    # GET
+    def get(self, request):
+                
+        # Si no es superusuario no permite borrar citas
+        if not request.user.is_superuser:
+            return HttpResponseRedirect(reverse('error-privilegios-citas'))
+        
+        # Si es superusuario sigue
         ctx = dict()
         
-        # Comprueba si es superuser
-        if not request.user.is_superuser:
-
-            return HttpResponseRedirect(reverse('procesar-citas'))
-     
         # Cuenta los registros que cumplen las condiciones de ser pasada, canceladas y sin consulta
-        queryexclude = Q(status__iexact = 'Pasa a consulta')
         querydelete = (Q(appdate__lt = datetime.date.today()) | Q(status__iexact = 'Cancelada'))
-        
+        queryexclude = Q(status__iexact = 'Pasa a consulta')        
         try:
-            numregs = Cita.objects.exclude(queryexclude).filter(querydelete).count()
+            numregs = Cita.objects.filter(querydelete).exclude(queryexclude).count()
         except:
             numregs = 0
         
+        # Pasa al contexto
         if numregs > 0:
-            ctx['mensaje'] = 'Se va a proceder a BORRAR de la base de datos las citas ya pasadas, o canceladas, que no han generado ninguna ficha de consulta.'
             ctx['numregs'] = numregs
         else:
-            ctx['mensaje'] = 'No hay citas para procesar.'            
+            ctx['mensaje'] = 'No hay citas para borrar.' 
+            ctx['numregs'] = 0        
 
         return render(request, 'pasadas_canceladas_citas_tpl.html', ctx)
+
+# Error si el usuario NO ES SUPERUSUARIO
+@method_decorator(login_required, name='dispatch')
+class error_privilegios_citas_view(TemplateView):
+
+    template_name = 'error_privilegios_citas_tpl.html'
 
 #####################################################################################
 
