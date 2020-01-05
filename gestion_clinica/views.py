@@ -780,12 +780,12 @@ class delete_proveedores_view(DeleteView):
 
 ##### ID DE PROFESIONALES #####
 
-
 @method_decorator(login_required, name='dispatch')
 class profesionales_clinica_view(TemplateView):
     
     template_name = 'profesionales_clinica_tpl.html'
 
+##### SELECCIONA Y MUESTRA PROFESIONALES #####
 
 @method_decorator(login_required, name='dispatch')
 class select_profesionales_view(View):
@@ -853,21 +853,27 @@ class listado_profesionales_view(ListView):
              qs = qs.filter(position__icontains = self.kwargs['position'])
         if self.kwargs['department'] != 'department':
              qs = qs.filter(department__icontains = self.kwargs['department'])
-        # ORDERBY de los campos y registros
-        qs = qs.order_by('fullname').select_related('oto_Profesional').values('oto_Profesional', 'oto_Profesional__username', 'fullname', 'position', 'department')
+        # SELECT RELATED y ORDERBY de los campos y registros
+        qs = qs.select_related('oto_Profesional').values('oto_Profesional', 'oto_Profesional__username', 'fullname', 'position', 'department')
+        qs = qs.order_by('fullname')
 
         return qs
 
-    # Añade las cabeceras de la tabla al contexto y la ordenacion para poner el orden de las cabeceras
-    def get_context_data(self, **kwargs):
-
-        context = super().get_context_data(**kwargs)
-        
-        return context
-
 @method_decorator(login_required, name='dispatch')
 class id_profesionales_view(DetailView):
-    pass
+
+    model = Profesional
+    context_object_name = 'profesionales'
+    pk_url_kwarg = 'oto_Profesional'
+    template_name = 'id_profesionales_tpl.html'
+
+    def get_queryset(self):
+
+        print(self.kwargs)
+
+        # Extrae el consultorio en cuestion
+        qs = Profesional.objects.select_related('oto_Profesional').filter(oto_Profesional__exact = self.kwargs['oto_Profesional'])
+        return qs
 
 @method_decorator(login_required, name='dispatch')
 class create_profesionales_view(View):

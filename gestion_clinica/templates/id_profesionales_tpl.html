@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!--     Script JS    -->
+    <!-- **************** -->
+
+    {% block JS %}
+
+    {% endblock %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+    	<title>fixuSystem - Fisioterapia - Gestión de clínica</title>
+
+    {% endblock %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+		<!-- Menú principal con imágenes -->
+        <section class="sect-home-page-menu">
+
+            <!-- Tabla del consultorio -->
+            <table class="tbl-forms table-striped tbl-general tbl-70">
+
+                <!-- Texto con el contenido -->
+                <caption class="tbl-capt">Usuario del sistema: {{ profesionales.oto_Profesional}}</caption>
+
+                <!-- Descripción -->
+		        <tr>
+	                <th class="tbl-th" colspan="6">Datos personales</th>
+                </tr>
+                <tr>
+                    <td class="tbl-td-10">Nombre:</td><td colspan="5">{{ profesionales.fullname }}</td>
+                </tr>
+                <tr>
+                    <td class="tbl-td-10">DNI:</td><td class="tbl-td-20">{{ profesionales.dni|upper }}</tdclass="tbl-td-10">
+                    <td class="tbl-td-10">Num. Coleg.:</td><td class="tbl-td-20">{{ profesionales.numcolegiado|upper }}</td>
+                    <td class="tbl-td-10">NIF:</td><td class="tbl-td-20">{{ profesionales.nif|upper }}</td>
+                </tr>
+		        <tr>
+	                <th class="tbl-th" colspan="6">Datos profesionales</th>
+                </tr>
+                 <tr>
+                    <td class="tbl-td-10">Cargo:</td><td class="tbl-td-20">{{ profesionales.position }}</td>
+                    <td class="tbl-td-10">Departamento:</td><td class="tbl-td-20">{{ profesionales.department }}</td>
+                    <td colspan="6">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            De alta:
+                            {% if profesionales.currentavail %}
+                                <span class="tbl-td-centro avail">
+                                    &nbsp;{{ profesionales.currentavail|yesno:'Si,No' }}&nbsp;
+                                </span>
+                            {% else %}
+                                <span class="tbl-td-centro not-avail">
+                                    {{ profesionales.currentavail|yesno:'Si,No' }}
+                                </span>
+                            {% endif %}
+                            
+                            En plantilla:
+                            {% if profesionales.currentstaff %}
+                                <span class="tbl-td-centro avail">
+                                    &nbsp;{{ profesionales.currentstaff|yesno:'Si,No' }}&nbsp;
+                                </span>
+                            {% else %}
+                                <span class="tbl-td-centro not-avail">
+                                    {{ profesionales.currentstaff|yesno:'Si,No' }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+		        <tr>
+	                <th class="tbl-th" colspan="6">Datos de contacto</th>
+                </tr>
+                <tr>
+			        <td class="tbl-td-10">Dirección:</td><td colspan="5">{{ profesionales.fulladdress }}</td>
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>CP-Localidad: {{ profesionales.postcode }}-{{ profesionales.city }}</span>
+                            <span>Provincia: {{ profesionales.province }}</span>
+                            <span>Pais: {{ profesionales.country }}</span>                   
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tbl-td-10">Email:</td><td class="tbl-td-20">{{ profesionales.email }}</td>
+                    <td class="tbl-td-10">Tel.1:</td><td class="tbl-td-20">{{ profesionales.phone1 }}</td>
+                    <td class="tbl-td-10">Tel.2:</td><td class="tbl-td-20">{{ profesionales.phone2 }}</td>
+                </tr>
+                <tr>
+ 	    		    <th class="tbl-th" colspan="6">Notas</th>
+                </tr>
+ 	    		<tr>
+                    <td class="tbl-td-10">Notas:</td><td colspan="5">{{ profesionales.notes }}
+   			    </tr>
+
+        	</table>
+
+    	    <!-- Botones -->
+            <div class="div-botones">
+                <a href="{% url 'select-profesionales' %}"><input type="button" class="btn btn-info" value="Listado de profesionales"></a>
+                <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
+            </div>
+
+        </section>
+
+    {% endblock %}
