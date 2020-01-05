@@ -59,5 +59,4 @@ urlpatterns = [
     path('profesionales/listado/<str:fullname>/<str:position>/<str:department>/', views.listado_profesionales_view.as_view(), name = 'listado-profesionales'),
     path('profesionales/nuevo/', views.create_profesionales_view.as_view(), name = 'create-profesionales'),
     path('profesionales/modificar/<int:oto_Profesional>/', views.edit_profesionales_view.as_view(), name = 'edit-profesionales'),
-    path('profesionales/borrar/<int:oto_Profesional>/', views.delete_profesionales_view.as_view(), name = 'delete-profesionales')
 ]

@@ -31,15 +31,20 @@ class user_login_view(View):
             if user is not None:
                 # Loge al usuario
                 login(request, user)
+                
                 # Redirige al punto del que vino
                 return HttpResponseRedirect(ctx['next'])
+            
             else:
                 # SI no existe ese usuario
                 messages.warning(request, 'Ningún/a usuario/a con esos datos')
+            
                 return render(request, 'user_login_tpl.html', ctx)
+        
         else:
-        # La Form NO es validada manda mensaje de error
+            # La Form NO es validada manda mensaje de error
             messages.warning(request, 'Errores en el formulario')
+        
             return render(request, 'user_login_tpl.html', ctx)
 
     def get(self, request):
@@ -50,7 +55,7 @@ class user_login_view(View):
         ctx['form'] = form
         # Pasa URL next al contexto del  template para recuperarlo en post
         ctx['next'] = request.GET['next']
-        # Renderiza el form
+        
         return render(request, 'user_login_tpl.html', ctx)
 
 ########## LOGOUT USUARIO VIEW ##########
@@ -65,10 +70,11 @@ class user_logout_view(View):
         # Desconecta el usuario y reenvia al principio
         if request.user.is_authenticated:
             logout(request)
+        
         return HttpResponseRedirect(reverse('home-page'))
 
     def get(self, request):
 
         ctx = dict()
-        # Renderiza el form
+        
         return render(request, 'user_logout_tpl.html', ctx)
