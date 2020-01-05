@@ -130,12 +130,6 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
 
 }
 
-.img-paciente { /*--- Imagen del paciente ---*/
-    float: right;
-    overflow: auto;
-
-}
-
 .div-filtro-equip {/* --- Filtrado de tipos --- */
     display: flex;
     justify-content: space-between;
@@ -156,6 +150,12 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
     padding-top: 4px;
     padding-bottom: 4px;
     padding-left: 50%
+}
+
+.img-paciente { /*--- Imagen del paciente ---*/
+    float: right;
+    overflow: auto;
+
 }
 
 /*---------- DIVS DE MENUS ----------*/
@@ -303,7 +303,6 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
     font-variant: small-caps;
     padding: 8px;
     border-style: solid;
-    border-width: 3px;
     border-color: grey;
 }
 
@@ -340,6 +339,10 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
 .tbl-th { /* --- TH header general --- */
     vertical-align: middle;
     text-align: center;
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
     padding: 8px;
     background-color:rgb(230, 219, 209);
 }
