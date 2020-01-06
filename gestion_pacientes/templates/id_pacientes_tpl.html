@@ -13,16 +13,14 @@
 		<!-- Menú principal con imágenes -->
         <section class="sect-home-page-menu">
 
-       		<!-- Devuelve los datos del paciente en varias tablas -->
-        	{% for paciente in paciente_list %}
-
            		<!-- Tabla del paciente -->
                 <table class="tbl-forms table-striped tbl-general tbl-60">
 
                     <!-- Texto con el contenido -->
-                    <caption class="tbl-capt">Paciente : {{ paciente.name }} {{ paciente.familyname }} </caption>
+                    <caption class="tbl-capt">Paciente : {{ pacientes.name }} {{ pacientes.familyname }} </caption>
 
                     <tr>
+
                         <td class="tbl-td-80">
                             <table class="tbl-in-tbl">
 
@@ -32,8 +30,8 @@
 			                        <th class="tbl-td-60 tbl-th-izq">Apellidos</th>
             		            </tr>
 	            	            <tr>
-			                        <td>{{ paciente.name }}</td>
-   				                    <td>{{ paciente.familyname }}</td>
+			                        <td>{{ pacientes.name }}</td>
+   				                    <td>{{ pacientes.familyname }}</td>
         	    	            </tr>
             		            <tr>
                                     <th class="tbl-th-izq">Edad</th>
@@ -42,21 +40,21 @@
 	            	            <tr>
                                     <!-- Calculado en la view y leida del contexto -->
                                     <td class="tbl-td">{{ age }}</td>
-    			                    <td class="tbl-td">{{ paciente.birthdate|date:'d/F/Y' }}</td>
+    			                    <td class="tbl-td">{{ pacientes.birthdate|date:'d/F/Y' }}</td>
         	    	            </tr>
             		            <tr>
 	            		            <th class="tbl-th-izq">DNI</th>
                                     <th class="tbl-th-izq">Sexo</th>
             		            </tr>
 	            	            <tr>
-		            	            <td class="tbl-td">{{ paciente.dni }}</td>
-                                    <td class="tbl-td">{{ paciente.sex }}</td>
+		            	            <td class="tbl-td">{{ pacientes.dni }}</td>
+                                    <td class="tbl-td">{{ pacientes.sex }}</td>
         	    	            </tr>
 
                             </table>
                         </td>
-                        {% if paciente.picturefile.url != '' %}
-                            <td><img class="img-paciente" height="240px" width="180px" src="{{ paciente.picturefile.url }}" /></td>
+                        {% if pacientes.picturefile.url != '' %}
+                            <td><img class="img-paciente" height="240px" width="180px" src="{{ pacientes.picturefile.url }}" /></td>
                         {% else %}
                             <td class="td-marco-foto">Sin foto</td>
                         {% endif %}
@@ -71,20 +69,20 @@
 
     		        <tr>
     		    	    <td class="tbl-td tbl-td-25">Dirección:</td>
-                        <td class="tbl-td">{{ paciente.address }}</td>
+                        <td class="tbl-td">{{ pacientes.address }}</td>
                         <!-- Si hay un archivo de foto lo muestra -->
                     </tr>
                     <tr>
                     	<td class="tbl-td">CP-Localidad:</td>
-                        <td class="tbl-td">{{paciente.postcode}}-{{ paciente.city }}</td>
+                        <td class="tbl-td">{{pacientes.postcode}}-{{ pacientes.city }}</td>
                     </tr>
                     <tr>
 		    	        <td class="tbl-td">Provincia:</td>
-                        <td class="tbl-td">{{ paciente.province }}</td>
+                        <td class="tbl-td">{{ pacientes.province }}</td>
                     </tr>
                     <tr>
         		    	<td class="tbl-td">País:</td>
-                        <td class="tbl-td">{{ paciente.country }}</td>
+                        <td class="tbl-td">{{ pacientes.country }}</td>
             		</tr>
         	    </table>
 
@@ -95,15 +93,15 @@
 
                     <tr>
         		    	<td class="tbl-td tbl-td-25">E-mail:</td>
-                        <td class="tbl-td">{{ paciente.email }}</td>
+                        <td class="tbl-td">{{ pacientes.email }}</td>
                     </tr>
                     <tr>
     	    	    	<td class="tbl-td">Tel.1 / Tel.2:</td>
-                        <td class="tbl-td">{{ paciente.phone1 }} / {{ paciente.phone2|default_if_none:'Indet.' }}</td>
+                        <td class="tbl-td">{{ pacientes.phone1 }} / {{ pacientes.phone2|default_if_none:'Indet.' }}</td>
                     </tr>
                     <tr>
 	            		<td class="tbl-td">Notificar citas / Vía:</td>
-                        <td class="tbl-td">{{ paciente.notifyappoint|yesno:'Si,No,Indet.' }} / {{ paciente.notifyvia }}</td>
+                        <td class="tbl-td">{{ pacientes.notifyappoint|yesno:'Si,No,Indet.' }} / {{ pacientes.notifyvia }}</td>
     			    </tr>
 		        </table>
 
@@ -114,23 +112,21 @@
 
                 	<tr>
 	    	        	<td class="tbl-td tbl-td-25">Ocupación</td>
-	        		    <td class="tbl-td">{{ paciente.job }}</td>
+	        		    <td class="tbl-td">{{ pacientes.job }}</td>
                     </tr>
                     <tr>
     	    	    	<td class="tbl-td">Notas</td>
-	    	    	    <td class="tbl-td">{{ paciente.notes }}</td>
+	    	    	    <td class="tbl-td">{{ pacientes.notes }}</td>
                     </tr>
         	    </table>
 
  		        <!-- Botones de acción -->
                 <div class="div-botones">
-                    <a href="{% url 'edit-id-pacientes' paciente.idPaciente %}"><input type="button" class="btn btn-info" value="Editar"></a>
-                    <a href="{% url 'citas-paciente-desdefecha' paciente.idPaciente desde_fecha %}"><input type="button" class="btn btn-info" value="Citas"></a>
+                    <a href="{% url 'edit-id-pacientes' pacientes.idPaciente %}"><input type="button" class="btn btn-info" value="Editar"></a>
+                    <a href="{% url 'citas-paciente-desdefecha' pacientes.idPaciente desde_fecha %}"><input type="button" class="btn btn-info" value="Citas"></a>
                     <a href="{% url 'menu-pacientes' %}"><input type="button" class="btn btn-info" value="Consultas"></a>
                     <a href="{% url 'menu-pacientes' %}"><input type="button" class="btn btn-info" value="Menu de pacientes"></a>
                 </div>
-
-    		{% endfor %}
 
         </section>
 

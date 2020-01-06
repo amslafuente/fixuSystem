@@ -1,21 +1,31 @@
 <!-- Errores en el form -->
 {{ form.non_field_errors }}
 
-{% if form.fullname.errors %}
+{% if form.oto_Profesional.errors %}
 <tr>
-    <th colspan="9" class ="field-errors">
-        {% for error in form.fullname.errors %}
-            {{ form.fullname.label }} : {{ error }}
+    <th colspan="4" class ="field-errors">
+        {% for error in form.oto_Profesional.errors %}
+            {{ form.oto_Profesional.label }} : {{ error }}
         {% endfor %}
     </th>
 </tr>
 {% endif %}
 
-{% if form.position.errors %}
+{% if form.djangouser.errors %}
 <tr>
-    <th colspan="9" class ="field-errors">
-        {% for error in form.position.errors %}
-            {{ form.position.label }} : {{ error }}
+    <th colspan="4" class ="field-errors">
+        {% for error in form.djangouser.errors %}
+            {{ form.djangouser.label }} : {{ error }}
+        {% endfor %}
+    </th>
+</tr>
+{% endif %}
+
+{% if form.djangopassword.errors %}
+<tr>
+    <th colspan="4" class ="field-errors">
+        {% for error in form.djangopassword.errors %}
+            {{ form.djangopassword.label }} : {{ error }}
         {% endfor %}
     </th>
 </tr>
@@ -24,7 +34,7 @@
 <!-- Si hay mensajes pendientes -->
 {% for message in messages %}
 <tr>
-    <th colspan="9" class ="field-errors">
+    <th colspan="4" class ="field-errors">
         {{ message }}
     </th>
 </tr>

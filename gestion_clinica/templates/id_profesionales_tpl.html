@@ -29,85 +29,115 @@
 		<!-- Menú principal con imágenes -->
         <section class="sect-home-page-menu">
 
-            <!-- Tabla del consultorio -->
-            <table class="tbl-forms table-striped tbl-general tbl-70">
+            <!-- Tabla del profesional -->
+            <table class="tbl-forms table-striped tbl-general tbl-60">
 
                 <!-- Texto con el contenido -->
-                <caption class="tbl-capt">Usuario del sistema: {{ profesionales.oto_Profesional}}</caption>
-
-                <!-- Descripción -->
-		        <tr>
-	                <th class="tbl-th" colspan="6">Datos personales</th>
+                <caption class="tbl-capt">Usuario/a del sistema: {{ profesionales.oto_Profesional }}</caption>
+            
+                <!-- Datos personales -->
+                <tr>
+                    <th class="tbl-th" colspan="4">Datos personales y profesionales</th>
                 </tr>
                 <tr>
-                    <td class="tbl-td-10">Nombre:</td><td colspan="5">{{ profesionales.fullname }}</td>
-                </tr>
-                <tr>
-                    <td class="tbl-td-10">DNI:</td><td class="tbl-td-20">{{ profesionales.dni|upper }}</tdclass="tbl-td-10">
-                    <td class="tbl-td-10">Num. Coleg.:</td><td class="tbl-td-20">{{ profesionales.numcolegiado|upper }}</td>
-                    <td class="tbl-td-10">NIF:</td><td class="tbl-td-20">{{ profesionales.nif|upper }}</td>
-                </tr>
-		        <tr>
-	                <th class="tbl-th" colspan="6">Datos profesionales</th>
-                </tr>
-                 <tr>
-                    <td class="tbl-td-10">Cargo:</td><td class="tbl-td-20">{{ profesionales.position }}</td>
-                    <td class="tbl-td-10">Departamento:</td><td class="tbl-td-20">{{ profesionales.department }}</td>
-                    <td colspan="6">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            De alta:
-                            {% if profesionales.currentavail %}
-                                <span class="tbl-td-centro avail">
-                                    &nbsp;{{ profesionales.currentavail|yesno:'Si,No' }}&nbsp;
-                                </span>
-                            {% else %}
-                                <span class="tbl-td-centro not-avail">
-                                    {{ profesionales.currentavail|yesno:'Si,No' }}
-                                </span>
-                            {% endif %}
-                            
-                            En plantilla:
-                            {% if profesionales.currentstaff %}
-                                <span class="tbl-td-centro avail">
-                                    &nbsp;{{ profesionales.currentstaff|yesno:'Si,No' }}&nbsp;
-                                </span>
-                            {% else %}
-                                <span class="tbl-td-centro not-avail">
-                                    {{ profesionales.currentstaff|yesno:'Si,No' }}
-                                </span>
-                            {% endif %}
-                        </div>
+                    <td class="tbl-td-80" colspan="3">
+                        <table class="tbl-in-tbl">
+            		        <tr>
+		            	        <th class="tbl-th-izq tbl-td-50">Nombre</th>
+			                    <th class="tbl-td-60 tbl-th-izq">DNI</th>
+            		        </tr>
+	            	        <tr>
+			                    <td>{{ profesionales.fullname }}</td>
+   				                <td>{{ profesionales.dni }}</td>
+        	    	        </tr>
+            		        <tr>
+                                <th class="tbl-th-izq">Colegiado/a</th>
+       				            <th class="tbl-th-izq">NIF</th>
+            		        </tr>
+	            	        <tr>
+                                <td>{{ profesionales.numcolegiado|upper }}</td>
+    			                <td>{{ profesionales.nif|upper }}</td>
+                            </tr>
+                            <tr>
+                                <th class="tbl-th-izq">Cargo</th>
+       				            <th class="tbl-th-izq">Depto.</th>
+            		        </tr>
+                            <tr>
+                                <td>{{ profesionales.position }}</td>
+                                <td>{{ profesionales.department }}</td> 
+                            </tr>
+                        </table>
                     </td>
-                </tr>
-		        <tr>
-	                <th class="tbl-th" colspan="6">Datos de contacto</th>
-                </tr>
-                <tr>
-			        <td class="tbl-td-10">Dirección:</td><td colspan="5">{{ profesionales.fulladdress }}</td>
-                </tr>
-                <tr>
-                    <td colspan="6">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span>CP-Localidad: {{ profesionales.postcode }}-{{ profesionales.city }}</span>
-                            <span>Provincia: {{ profesionales.province }}</span>
-                            <span>Pais: {{ profesionales.country }}</span>                   
-                        </div>
-                    </td>
+                        {% if profesionales.picturefile.url != '' %}
+                            <td><img class="img-paciente" height="240px" width="180px" src="{{ profesionales.picturefile.url }}" /></td>
+                        {% else %}
+                            <td class="td-marco-foto">Sin foto</td>
+                        {% endif %}
                 </tr>
                 <tr>
-                    <td class="tbl-td-10">Email:</td><td class="tbl-td-20">{{ profesionales.email }}</td>
-                    <td class="tbl-td-10">Tel.1:</td><td class="tbl-td-20">{{ profesionales.phone1 }}</td>
-                    <td class="tbl-td-10">Tel.2:</td><td class="tbl-td-20">{{ profesionales.phone2 }}</td>
+                    <th class="tbl-th" colspan="2">En activo/De alta</th>
+                    <th class="tbl-th" colspan="2">Empleado/a en la clínica</th>
                 </tr>
                 <tr>
- 	    		    <th class="tbl-th" colspan="6">Notas</th>
+                    {% if profesionales.currentavail %}
+                        <td class="tbl-td-centro avail" colspan="2">{{ profesionales.currentavail|yesno:'Si,No' }}</td>
+                    {% else %}
+                        <td class="tbl-td-centro not-avail" colspan="2">{{ profesionales.currentavail|yesno:'Si,No' }}</td>
+                    {% endif %}
+                    {% if profesionales.currentstaff %}
+                        <td class="tbl-td-centro avail" colspan="2">{{ profesionales.currentstaff|yesno:'Si,No' }}</td>
+                    {% else %}
+                        <td class="tbl-td-centro not-avail" colspan="2">{{ profesionales.currentstaff|yesno:'Si,No' }}</td>
+                    {% endif %}
                 </tr>
- 	    		<tr>
-                    <td class="tbl-td-10">Notas:</td><td colspan="5">{{ profesionales.notes }}
-   			    </tr>
-
-        	</table>
-
+                <tr>
+                    <th class="tbl-th" colspan="4">Acceso al sistema</th>
+                </tr>
+                <tr>
+                    <th class="tbl-th" colspan="2">Es superusuario/a</th>
+                    <th class="tbl-th" colspan="2">Es administrador/a</th>
+                </tr>
+                <tr>
+                    {% if profesionales.oto_Profesional.is_superuser %}
+                        <td class="tbl-td-centro avail" colspan="2">{{ profesionales.oto_Profesional.is_superuser|yesno:'Si,No' }}</td>
+                    {% else %}
+                        <td class="tbl-td-centro not-avail" colspan="2">{{ profesionales.oto_Profesional.is_superuser|yesno:'Si,No' }}</td>
+                    {% endif %}
+                    {% if profesionales.oto_Profesional.is_staff %}
+                        <td class="tbl-td-centro avail" colspan="2">{{ profesionales.oto_Profesional.is_staff|yesno:'Si,No' }}</td>
+                    {% else %}
+                        <td class="tbl-td-centro not-avail" colspan="2">{{ profesionales.oto_Profesional.is_staff|yesno:'Si,No' }}</td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <th class="tbl-th" colspan="4">Datos de contacto</th>
+                </tr>
+                <tr>
+                    <td>Dirección:</td><td colspan="3">{{ profesionales.fulladdress }}</td>
+                </tr>
+                <tr>
+                    <td>C.Postal:</td><td>{{ profesionales.postcode }}</td>
+                    <td>Localidad:</td><td>{{ profesionales.city }}</td> 
+                </tr>
+                <tr>
+                    <td>Provincia:</td><td>{{ profesionales.position }}</td>
+                    <td>País:</td><td>{{ profesionales.department }}</td> 
+                </tr>
+                <tr>
+                    <td>Tel.1:</td><td>{{ profesionales.phone1 }}</td>
+                    <td>Email:</td><td>{{ profesionales.email }}</td>
+                </tr>
+                <tr>
+                    <td>Tel.2:</td><td colspan="3">{{ profesionales.phone2 }}</td>
+                </tr>
+                <tr>
+                    <th class="tbl-th" colspan="4">Notas</th>
+                </tr>
+                <tr>
+                    <td colspan="4">{{ profesionales.notes }}
+                </tr>
+            </table>
+            
     	    <!-- Botones -->
             <div class="div-botones">
                 <a href="{% url 'select-profesionales' %}"><input type="button" class="btn btn-info" value="Listado de profesionales"></a>

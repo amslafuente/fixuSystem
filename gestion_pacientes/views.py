@@ -6,6 +6,7 @@ from .models import Paciente
 from django.views import View
 from datetime import datetime
 from django.views.generic import TemplateView
+from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView, DeleteView
 import datetime
@@ -176,32 +177,32 @@ class listado_pacientes_view(ListView):
 ########## ID PACIENTES VIEW ##########
 
 @method_decorator(login_required, name='dispatch')
-class id_pacientes_view(ListView):
+class id_pacientes_view(DetailView):
 
     model = Paciente
+    context_object_name = 'pacientes'
+    pk_url_kwarg = 'idPaciente'
     template_name = 'id_pacientes_tpl.html'
 
     def get_queryset(self):
 
-        # Se filtra el query para mostrar el idPaciente unico
-        qs = super().get_queryset()
-        qs = qs.filter(idPaciente = self.kwargs['idPaciente'])
-        
+        # Extrae el paciente
+        qs = Paciente.objects.filter(idPaciente__exact = self.kwargs['idPaciente'])
+
         return qs
 
     def get_context_data(self, **kwargs):
 
-        context = super().get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
         # Obtiene la edad a partir de la fecha de nacimiento
-        for paciente in (context['paciente_list']):
-            bd = paciente.birthdate
+        bd = getattr(ctx['pacientes'], 'birthdate')
         # Calcula la diferencia entre bd y el dia de hoy
         age = self.calculate_age(bd)
-        context['age'] = age
-        # Prepara en el contexto la fecha actual para pasarla como DESDE_FECHA
-        context['desde_fecha'] = datetime.date.today().strftime('%d_%m_%Y')
+        ctx['age'] = age
+        # Prepara en el contexto la fecha actual para pasarla como DESDE_FECHA para las citas de este paciente
+        ctx['desde_fecha'] = datetime.date.today().strftime('%d_%m_%Y')
 
-        return context
+        return ctx
 
     # Funcion que calcula la edad a partir de la fecha de nacimiento
     def calculate_age(self, bd):

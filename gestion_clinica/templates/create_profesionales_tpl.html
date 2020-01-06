@@ -1,15 +1,6 @@
 {% extends 'base.html' %}
 
     <!-- **************** -->
-    <!--     Script JS    -->
-    <!-- **************** -->
-
-    {% block JS %}
-
-
-    {% endblock JS %}
-
-    <!-- **************** -->
     <!-- Título de página -->
     <!-- **************** -->
 
@@ -17,7 +8,28 @@
 
     	<title>fixuSystem - Fisioterapia - Gestión de clínica</title>
 
-    {% endblock %}
+    {% endblock title %}
+
+    <!-- **************** -->
+    <!--        JS        -->
+    <!-- **************** -->
+
+    {% block JS %}
+
+        <script type="text/javascript">
+
+            // Pone el valor del campo oto_Profesional al pulsar para POST
+            function set_Super_Staff(){
+                
+                var valor = document.getElementById('id_djangouser').value;
+                document.getElementById('id_oto_Profesional').value = valor;
+            }
+
+
+
+        </script>
+
+    {% endblock JS %}
 
     <!-- **************** -->
     <!-- Centro de página -->
@@ -31,78 +43,88 @@
         <section class="sect-home-page-menu">
 
             <!-- Formularion de nuevo equipamiento -->
-	        <form method="POST">
+	        <form method="POST" enctype="multipart/form-data">
 
     	    	{% csrf_token %}
 
-             	<!-- Tabla del equipamiento -->
-                <table class="tbl-general tbl-forms tbl-50 table-striped">
+             	<!-- Tabla del profesional -->
+                <table class="tbl-forms table-striped tbl-general tbl-50">
 
                     <!-- Texto con el contenido -->
-                    <caption class="tbl-capt">Nuevo equipamiento/material</caption>
+                    <caption class="tbl-capt">Nuevo/a profesional</caption>
 
                     <!-- Errores en el form -->
-                    {% include 'errors_equipamiento.html' %}
+                    {% include 'errors_profesionales.html' %}
 
-                    <!-- Datos personales -->
+                    <!-- Datos de acceso a django -->
 		   	        <tr>
-	    		        <th class="tbl-th" colspan="4">Descripción</th>
+	    		        <th class="tbl-th" colspan="4">Usuario/a y clave de acceso al sistema</th>
                     </tr>
                     <tr>
-        			    <td class="tbl-td-40">Refer./Ident./Num. Serie:</td><td colspan="3">{{ form.equipID.as_widget }}</td>
+        			    <td>Usuario/a:</td><td>{{ form.djangouser.as_widget }}</td>
+            		    <td>Clave:</td><td>{{ form.djangopassword.as_widget }}</td>
                     </tr>
                     <tr>
-            		    <td class="tbl-td-40">Descripción:</td><td colspan="3">{{ form.equipDesc.as_widget }}</td>
-                    </tr>
-                    <tr>
-            		    <td class="tbl-td-40">Tipo/Clase:</td><td colspan="3">{{ form.equipType.as_widget }}</td>
-                    </tr>
-		   	        <tr>
-	    		        <th class="tbl-th" colspan="4">Situación</th>
-                    </tr>
-	            	<tr>
-		    		    <td class="tbl-td-40">Situación (edif./planta):</td><td colspan="3">{{ form.fk_Location.as_widget }}</td>
-                    </tr>
-                    <tr>
-			    	    <td class="tbl-td-40">Departamento:</td><td colspan="3">{{ form.equipDepartment.as_widget }}
-                    </tr>
-                    <tr>
-	    		        <th class="tbl-th" colspan="4">Control de Operatividad/Stock</th>
+        			    <td colspan="2">Superusuario/a:&nbsp;&nbsp;&nbsp;{{ form.django_issuper.as_widget }}</td>
+            		    <td colspan="2">Administrador/a:&nbsp;&nbsp;&nbsp;{{ form.django_isstaff.as_widget }}</td>
                     </tr>
                     <tr>
                         <td  class="tbl-td-centro grid-smalltxt grid-info2-color" colspan="4">
-                            Ambos controles son mutuamente excluyentes, pero el control de stock es PREFERENTE.<br/>
-                            Desactive el control de stock para usar el de operatividad, o ambos para no usar controles.<br 7>
-                            
+                            Ser Superusuario/a implica ser también Administrador/a.<br/>
+                            Desactive "Superusuario/a" para dar solo privilegios de Administrador/a.                            
                         </td>
                     </tr>
+                    <!-- Datos personales -->
                     <tr>
-                        <td>Control Operatividad:</td><td>{{ form.equipIsavail.as_widget }}</td>
-                        <td>Control Stock:</td><td>{{ form.stockwarning.as_widget }}</td>
+	    		        <th class="tbl-th" colspan="4">Datos personales</th>
                     </tr>
                     <tr>
-                        <td colspan="4">
-                            <div class="div-control-stock">
-                                Límite de aviso (unids.):&nbsp;{{ form.stocklimit.as_widget }}
-                            </div>
-                            <div class="div-control-stock">
-                                Stock actual (unids.):&nbsp;&nbsp;&nbsp;&nbsp;{{ form.stockavail.as_widget }}
-                            </div>                                    
-                        </td>
-                     </tr>
-                    <tr>
-	    		        <th class="tbl-th" colspan="4">Fabricante y Proveedor</th>
+                        <td>Nombre:</td><td>{{ form.fullname.as_widget }}</td>
+                        <td>DNI:</td><td>{{ form.dni.as_widget }}</td>
                     </tr>
                     <tr>
-                        <td class="tbl-td-40">Fabricante:</td><td colspan="3">{{ form.fk_Manufact.as_widget }}
+	    		        <th class="tbl-th" colspan="4">Datos profesionales</th>
+                    </tr>
+		   	        <tr>
+                        <td>Num. Colegiado/a:</td><td>{{ form.numcolegiado.as_widget }}</td>
+                        <td>NIF:</td><td>{{ form.nif.as_widget }}</td> 
                     </tr>
                     <tr>
-                        <td class="tbl-td-40">Proveedor:</td><td colspan="3">{{ form.fk_Proveedor.as_widget }}</td>
+                        <td>Cargo:</td><td>{{ form.position.as_widget }}</td>
+                        <td>Departamento:</td><td>{{ form.department.as_widget }}</td> 
                     </tr>
                     <tr>
-                        <td class="tbl-td-40">S.A.T.:</td><td colspan="3">{{ form.fk_SAT.as_widget }}</td>
+                        <td colspan="2">En activo/De alta:&nbsp;&nbsp;&nbsp;{{ form.currentavail.as_widget }}</td>
+                        <td colspan="2">Empleado de la clínica:&nbsp;&nbsp;&nbsp;{{ form.currentstaff.as_widget }}</td> 
                     </tr>
-  		   	        <tr>
+                    <tr>
+	    		        <th class="tbl-th" colspan="4">Datos de contacto</th>
+                    </tr>
+                    <tr>
+                        <td>Dirección:</td><td colspan="3">{{ form.fulladdress.as_widget }}</td>
+                    </tr>
+                    <tr>
+                        <td>C.Postal:</td><td>{{ form.postcode.as_widget }}</td>
+                        <td>Localidad:</td><td>{{ form.city.as_widget }}</td> 
+                    </tr>
+                    <tr>
+                        <td>Provincia:</td><td>{{ form.province.as_widget }}</td>
+                        <td>País:</td><td>{{ form.country.as_widget }}</td> 
+                    </tr>
+                    <tr>
+                        <td>Tel.1:</td><td>{{ form.phone1.as_widget }}</td>
+                        <td>Email:</td><td>{{ form.email.as_widget }}</td>
+                    </tr>
+                    <tr>
+                        <td>Tel.2:</td><td colspan="3">{{ form.phone2.as_widget }}</td>
+                    </tr>
+                    <tr>
+	    		        <th class="tbl-th" colspan="4">Fotografía</th>
+                    </tr>
+                    <tr>
+        			    <td colspan="4">{{ form.picturefile.as_widget }}</td>
+                    </tr>
+                    <tr>
 	    		        <th class="tbl-th" colspan="4">Notas</th>
                     </tr>
  	    		    <tr>
@@ -114,12 +136,11 @@
     	    	<!-- Botones -->
                 <div class="div-botones">
                     <input type="submit" class="btn btn-info" value="Aceptar">
-                    <a href="{% url 'listado-equipamiento' %}"><input type="button" class="btn btn-info" value="Listado de equipamiento"></a>
-	    	    	<a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
+          	    	<a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
                 </div>
 
 	        </form>
 
         </section>
 
-    {% endblock %}
+    {% endblock content %}

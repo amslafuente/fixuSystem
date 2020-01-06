@@ -13,8 +13,10 @@ from django.views.generic import CreateView, TemplateView, DeleteView
 from django.views import View
 from django.contrib import messages
 from .models import Clinica, Profesional, Consultorio, Equipamiento, Proveedor
+from django.contrib.auth.models import User
 from .forms import init_edit_info_clinica_form, create_edit_consultorios_form, create_edit_equipamiento_form
-from .forms import customConsultorioForm, customEquipamientoForm, customProveedorForm, select_profesionales_form
+from .forms import customConsultorioForm, customEquipamientoForm, customProveedorForm
+from .forms import select_profesionales_form, create_edit_profesionales_form
 from .forms import create_edit_proveedores_form
 import os
 from pathlib import Path
@@ -800,14 +802,105 @@ class id_profesionales_view(DetailView):
 
 @method_decorator(login_required, name='dispatch')
 class create_profesionales_view(View):
-    
-    def get(self, request):
+
+    # POST
+    def post(self, request):
 
         # Si el usuario no es superuser no permite acceder a los datos
         if not request.user.is_superuser:
             return HttpResponseRedirect(reverse('error-privilegios-clinica'))
+  
+        ctx = dict()
+        
+        # Pasa el fom al contexto
+        form = create_edit_profesionales_form(request.POST, request.FILES)
+        ctx['form'] = form
 
-        return HttpResponseRedirect(reverse('error-privilegios-clinica'))
+        # Primero crea el User de django, para luego pasarlo a oto_Profesional y validar el form
+        djangouser = request.POST.get('djangouser', '')
+        djangopassword = request.POST.get('djangopassword', '')
+        django_issuper = request.POST.get('django_issuper', False)
+        django_isstaff = request.POST.get('django_isstaff', False)
+        
+        if (djangouser != '' and djangopassword != ''):
+            # Comprueba si existe ya ese usuario
+            if User.objects.filter(username__exact = djangouser).exists():
+                messages.warning(request, 'El usuario ya existe.')
+                return render(request, 'create_profesionales_tpl.html', ctx)
+            # Si no existe lo crea
+            else:
+                user = User.objects.create_user(djangouser, 'django@user.new', djangopassword)
+                user.save()
+
+        # Ahora valida el form
+        if form.is_valid():
+
+            # Pasa el form a un profesional
+            profesional = form.save(commit = False)
+            # Recupera el usuario creado
+            user = User.objects.get(username__exact = djangouser)
+
+            # Pone el oto_Profesional
+            profesional.oto_Profesional = user
+            # Pone los campos que faltan de user: email, is active, is staff, is superuser
+            user.email = profesional.email
+            user.is_active = True
+            user.is_superuser = bool(django_issuper)
+            if user.is_superuser:
+                user.is_staff = True                
+            else:    
+                user.is_staff = bool(django_isstaff)
+
+            # Guarda ambos registros
+            profesional.save()
+            user.save()
+
+            # Si se ha subido una foto, al ultimo profesional añadido le pone
+            # el DNI para identificarlo mejor, respetando la ruta "profesionales/<nombre>.<ext>"
+            # Quedaría "profesionales/<dni>.<ext>"
+            try:
+                # Recupera el paciente grabado
+                inter_profesional = Profesional.objects.get(pk = profesional.oto_Profesional)
+                # Si se introduce un nombre de archivo
+                split_name = str(inter_profesional.picturefile)
+                if split_name != '':
+                    # Trocea el nombre de la ruta por "/" y "."
+                    # La parte del DNI es todo mayusculas
+                    new_name = split_name.split('/')[0] + '/DNI_' + str(inter_profesional.dni).upper() + '.' + split_name.split('/')[1].split('.')[1].upper()
+                    # Si ya existe un archivo con ese nombre lo borra antes de subir el nuevo
+                    if Path(new_name).is_file():
+                        os.remove(new_name)
+                    # Sustituye al picture file original por el nuevo
+                    inter_profesional.picturefile = new_name
+                    # Limpia y guarda el registro
+                    inter_profesional.save()
+                    # Cambia el nombre del archivo en el disco
+                    os.rename(str(settings.MEDIA_ROOT + '/' + split_name), str(settings.MEDIA_ROOT +'/' + new_name))   
+            except:
+                messages.warning(request, 'Error procesando archivo de imagen')
+
+            return HttpResponseRedirect(reverse('id-profesionales', kwargs={'oto_Profesional': user.id}))
+       
+        else:
+            messages.warning(request, 'El formularion contiene errores.')
+            return render(request, 'create_profesionales_tpl.html', ctx)
+
+        return render(request, 'create_profesionales_tpl.html', ctx)
+
+    # GET
+    def get(self, request, *args, **kwargs):
+        
+        # Si el usuario no es superuser no permite acceder a los datos
+        if not request.user.is_superuser:
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
+            
+        # Si esta autorizado asigna el form y sigue
+        ctx = dict()
+        form = create_edit_profesionales_form()
+        ctx['form'] = form
+
+        return render(request, 'create_profesionales_tpl.html', ctx)
+
 
 @method_decorator(login_required, name='dispatch')
 class edit_profesionales_view(View):
