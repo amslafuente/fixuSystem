@@ -24,7 +24,7 @@
         <table class="tbl-forms table-striped tbl-general tbl-70">
 
             <!-- Texto con el contenido -->
-	    	<caption class="tbl-capt">Listado de profesionales
+	    	<caption class="tbl-capt">Listado de usuarios/as y profesionales
                 {% if is_paginated %}
                     <span> - Página {{ page_obj.number }} de {{ paginator.num_pages }}</span>
                 {% endif %}
@@ -36,15 +36,15 @@
 		        <th class="tbl-th-izq tbl-td-30">Nombre</th>
            		<th class="tbl-th-izq">Cargo</th>
                 <th class="tbl-th-izq">Departamento</th>
-                <th class="tbl-th">De alta</th>
-                <th class="tbl-th">En plantilla</th>
-                <th class="tbl-th tbl-td-10" colspan="3">Acciones</th>    
+                <th class="tbl-th">Alta</th>
+                <th class="tbl-th">Plantilla</th>
+                <th class="tbl-th tbl-td-10" colspan="2">Acciones</th>    
             </tr>
 
             <!-- NO devuelve ningun profesional avisa y cierra la tabla -->
             {% if not profesionales %}
 	    	    <tr>
-                    <th colspan="9" class="field-errors">
+                    <th colspan="8" class="field-errors">
                         <span>Ningún profesional con esos datos</span>
                     </th>
                 </tr>
@@ -55,17 +55,25 @@
                 <!-- Devuelve los profesionals en un querySet llamada profesionals -->
                 {% for profesional in profesionales %}
                		<tr class="grid-smalltxt">
-                        <td>{{ profesional.oto_Profesional__username }}</td>
-			       	    <td>{{ profesional.fullname }}</td>
-		    	        <td>{{ profesional.position }}</td>
-                        <td>{{ profesional.department }}</td>
-                        <td class="tbl-td-centro">{{ profesional.currentavail|yesno:'Si,No' }}</td>
-                        <td class="tbl-td-centro">{{ profesional.currentstaff|yesno:'Si,No' }}</td>  
-                        <!-- Enlaces a abrir, edit y crear cita -->
+                        <td>{{ profesional.username }}</td>
+                        {% if not profesional.profesionales.fullname %}
+                            <td colspan="5" class="tbl-td-centro grid-info3-color">No existe ningun/a profesional asociado/a a este/a usuario/a</td>
+                        {% else %}
+			       	        <td>{{ profesional.profesionales.fullname }}</td>
+		    	            <td>{{ profesional.profesionales.position }}</td>
+                            <td>{{ profesional.profesionales.department }}</td>
+                            <td class="tbl-td-centro">{{ profesional.profesionales.currentavail|yesno:'Si,No,Indet.' }}</td>
+                            <td class="tbl-td-centro">{{ profesional.profesionales.currentstaff|yesno:'Si,No,Indet.' }}</td>  
+                        {% endif %}
+                            <!-- Enlaces a abrir, edit y crear cita -->
                         <td>
                             <div class="div-fechas">
-                                <a href="{% url 'id-profesionales' profesional.oto_Profesional %}"><input type="button" class="btn btn-info btn-sm" value="Abrir"></a>&nbsp;
-                                <a href="{% url 'edit-profesionales' profesional.oto_Profesional %}"><input type="button" class="btn btn-info btn-sm" value="Editar"></a>&nbsp;
+                                {% if not profesional.profesionales.fullname %}
+                                    <a href="{% url 'complete-profesionales' profesional.id %}"><input type="button" class="btn btn-danger btn-sm" value="Completar datos"></a>&nbsp;
+                                {% else %}
+                                    <a href="{% url 'id-profesionales' profesional.id %}"><input type="button" class="btn btn-info btn-sm" value="Abrir"></a>&nbsp;
+                                    <a href="{% url 'edit-profesionales' profesional.id %}"><input type="button" class="btn btn-info btn-sm" value="Editar"></a>&nbsp;
+                                {% endif %}
                             </div>
                         </td>
                     </tr>

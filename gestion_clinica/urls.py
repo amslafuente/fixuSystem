@@ -58,5 +58,6 @@ urlpatterns = [
     path('profesionales/<int:oto_Profesional>/', views.id_profesionales_view.as_view(), name = 'id-profesionales'),
     path('profesionales/listado/<str:fullname>/<str:position>/<str:department>/', views.listado_profesionales_view.as_view(), name = 'listado-profesionales'),
     path('profesionales/nuevo/', views.create_profesionales_view.as_view(), name = 'create-profesionales'),
+    path('profesionales/completar/<int:id>/', views.complete_profesionales_view.as_view(), name = 'complete-profesionales'),
     path('profesionales/modificar/<int:oto_Profesional>/', views.edit_profesionales_view.as_view(), name = 'edit-profesionales'),
 ]

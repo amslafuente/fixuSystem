@@ -41,7 +41,7 @@ class Clinica(models.Model):
 
 class Profesional(models.Model):
 
-    oto_Profesional = models.OneToOneField(User, on_delete = models.PROTECT, primary_key = True)
+    oto_Profesional = models.OneToOneField(User, related_name = 'profesionales', on_delete = models.PROTECT, primary_key = True)
     dni = models.CharField("DNI", max_length = 9, unique = True)                                    # DNI
     nif = models.CharField("NIF", max_length = 25, blank = True)                                    # NIF
     fullname = models.CharField("Nombre", max_length = 100)                                         # Nombre y apellidos

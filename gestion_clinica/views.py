@@ -16,13 +16,14 @@ from .models import Clinica, Profesional, Consultorio, Equipamiento, Proveedor
 from django.contrib.auth.models import User
 from .forms import init_edit_info_clinica_form, create_edit_consultorios_form, create_edit_equipamiento_form
 from .forms import customConsultorioForm, customEquipamientoForm, customProveedorForm
-from .forms import select_profesionales_form, create_edit_profesionales_form
+from .forms import select_profesionales_form, create_profesionales_form, edit_profesionales_form
 from .forms import create_edit_proveedores_form
 import os
 from pathlib import Path
 from django.conf import settings
 from django.forms import forms, fields, widgets
 from fixuSystem.progvars import selTipoEquip
+from django.db.models import Q
 
 ########## MUESTRA MENU DE GESTION DE SERVICIOS ##########
 
@@ -758,32 +759,28 @@ class select_profesionales_view(View):
         
         return render(request, 'select_profesionales_tpl.html', ctx)
 
-
 @method_decorator(login_required, name='dispatch')
 class listado_profesionales_view(ListView):
 
-    model = Profesional
-    context_object_name = 'profesionales'
-    template_name = 'listado_profesionales_tpl.html'
-    paginate_by = 20
+    def get(self, request, **kwargs):
 
-    # Modifica el query ALL para seleccionar los pacientes elegidos
-    def get_queryset(self):
+        ctx = dict()
 
-        # Filtrado del query por defecto
-        qs = super().get_queryset()
-        # Seleccion
-        if self.kwargs['fullname'] != 'fullname':
-            qs = qs.filter(fullname__icontains = self.kwargs['fullname'])
-        if self.kwargs['position'] != 'position':
-             qs = qs.filter(position__icontains = self.kwargs['position'])
-        if self.kwargs['department'] != 'department':
-             qs = qs.filter(department__icontains = self.kwargs['department'])
-        # SELECT RELATED y ORDERBY de los campos y registros
-        qs = qs.select_related('oto_Profesional').values('oto_Profesional', 'oto_Profesional__username', 'fullname', 'position', 'department', 'currentavail', 'currentstaff')
-        qs = qs.order_by('fullname')
-        
-        return qs
+        # Actua sobre la table de los usuarios User de django, y desde ahí accede a la tabla Profesional
+        # Filtra el queryset de User y de Profesional
+        qs = User.objects.all().select_related('profesionales').order_by('username')
+         # Seleccion
+        if kwargs['fullname'] != 'fullname':
+            qs_user = Q(username__icontains = kwargs['fullname'])
+            qs_profesional = Q(profesional__fullname__icontains = kwargs['fullname'])
+            qs = qs.filter(qs_user | qs_profesional)
+        if kwargs['position'] != 'position':
+             qs = qs.filter(profesional__position__icontains = kwargs['position'])
+        if kwargs['department'] != 'department':
+             qs = qs.filter(profesional__department__icontains = kwargs['department'])
+        ctx['profesionales'] = qs
+
+        return render(request, 'listado_profesionales_tpl.html', ctx)
 
 @method_decorator(login_required, name='dispatch')
 class id_profesionales_view(DetailView):
@@ -795,7 +792,7 @@ class id_profesionales_view(DetailView):
 
     def get_queryset(self):
 
-        # Extrae el consultorio en cuestion
+        # Extrae el profesional en cuestion
         qs = Profesional.objects.select_related('oto_Profesional').filter(oto_Profesional__exact = self.kwargs['oto_Profesional'])
 
         return qs
@@ -813,7 +810,7 @@ class create_profesionales_view(View):
         ctx = dict()
         
         # Pasa el fom al contexto
-        form = create_edit_profesionales_form(request.POST, request.FILES)
+        form = create_profesionales_form(request.POST, request.FILES)
         ctx['form'] = form
 
         # Primero crea el User de django, para luego pasarlo a oto_Profesional y validar el form
@@ -896,21 +893,134 @@ class create_profesionales_view(View):
             
         # Si esta autorizado asigna el form y sigue
         ctx = dict()
-        form = create_edit_profesionales_form()
+        form = create_profesionales_form()
         ctx['form'] = form
 
         return render(request, 'create_profesionales_tpl.html', ctx)
 
+@method_decorator(login_required, name='dispatch')
+class complete_profesionales_view(View):
+    pass
 
 @method_decorator(login_required, name='dispatch')
-class edit_profesionales_view(View):
+class edit_profesionales_view(UpdateView):
 
-    def get(self, request):
-    
+    model = Profesional
+    context_object_name = 'profesionales'
+    pk_url_kwarg = 'oto_Profesional'
+    form_class = edit_profesionales_form
+    template_name = 'edit_profesionales_tpl.html'
+
+    def post(self, request, *args, **kwargs):
+        
         # Si el usuario no es superuser no permite acceder a los datos
         if not request.user.is_superuser:
             return HttpResponseRedirect(reverse('error-privilegios-clinica'))
 
-        return HttpResponseRedirect(reverse('error-privilegios-clinica'))
+        # Recupera del POST las keys que no se pasan en el form, referentes al User
+        # Pone los datos de USER que son editables
+        # is_active, is_superuser, is_staff y email
+        djangouser = request.POST.get('djangouser', '')
+        django_isactive = request.POST.get('django_isactive', False)
+        django_issuper = request.POST.get('django_issuper', False)
+        django_isstaff = request.POST.get('django_isstaff', False)
+        django_email = request.POST.get('email', 'django@email.usr')
+        
+        user = User.objects.get(username__exact = djangouser)
+        try:
+            if bool(django_isactive):
+                user.is_active = True
+            else:
+                user.is_active = False
+            
+            if bool(django_issuper):
+                user.is_superuser = True
+                user.is_staff = True
+            else:
+                user.is_superuser = False
+                user.is_staff = bool(django_isstaff)
+            
+            user.email = django_email
+            user.save()
+        except:
+            messages.warning(request, 'Error actualizando los datos de usuario/a.')
+            
+            return HttpResponseRedirect(reverse('edit-profesionales', kwargs = {'oto_Profesional': user.id}))
 
-#############################################################
+        return super().post(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+
+        # Si el usuario no es superuser no permite acceder a los datos
+        if not request.user.is_superuser:
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
+        else:
+            return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        
+        # Recupera el Profesional y User asociado
+        qs = Profesional.objects.select_related('oto_Profesional').filter(oto_Profesional__exact = self.kwargs['oto_Profesional'])
+
+        return qs
+
+    def get_context_data(self, **kwargs):
+
+        ctx = super().get_context_data(**kwargs)
+
+        # Recupera los datos de USER que son editables
+        # is_active, is_superuser y is_staff
+        user_prof = getattr(ctx['profesionales'], 'oto_Profesional')
+        user = User.objects.get(username__exact = user_prof)
+        ctx['djangouser'] = user.username
+        ctx['django_isactive'] = user.is_active
+        ctx['django_issuper'] = user.is_superuser
+        ctx['django_isstaff'] = user.is_staff
+        
+        return ctx
+
+    def form_valid(self, form):
+
+        # Pone los registros de control que faltan en una instancia "manejable": paciente
+        # Commit = False: evita que se guarde ya en la base de datos
+        profesional = form.save(commit = False)
+        #Campos de control
+        if str(self.request.user) != 'AmonymousUser':
+            profesional.modifiedby = str(self.request.user)
+        else:
+            profesional.modifiedby = 'unix:' + str(self.request.META['USERNAME'])
+        # Limpia y guarda el registro
+        profesional.save()
+    
+        # Si ha cambiado la foto
+        # Si se actualiza la foto se renombra an DNI y se borra la antigua
+        if 'picturefile' in form.changed_data:
+            picture_changed = True
+        else:
+            picture_changed = False
+        if picture_changed:
+            try:
+                # Recupera el paciente grabado
+                inter_profesional = Profesional.objects.get(pk = profesional.oto_Profesional.id)
+                # Si se introduce un nombre de archivo
+                split_name = str(inter_profesional.picturefile)
+                if split_name != '':
+                    # Trocea el nombre de la ruta por "/" y "."
+                    # La parte del DNI es todo mayusculas
+                    new_name = split_name.split('/')[0] + '/DNI_' + str(inter_profesional.dni).upper() + '.' + split_name.split('/')[1].split('.')[1].upper()
+                    # Si ya existe un archivo con ese nombre lo borra antes de subir el nuevo
+                    if Path(new_name).is_file():
+                        os.remove(new_name)
+                    # Sustituye al picture file original por el nuevo
+                    inter_profesional.picturefile = new_name
+                    # Limpia y guarda el registro
+                    inter_profesional.save()
+                    # Cambia el nombre del archivo en el disco
+                    os.rename(str(settings.MEDIA_ROOT + '/' + split_name), str(settings.MEDIA_ROOT +'/' + new_name))
+            except:
+
+                messages.warning(request, 'Error procesando archivo de imagen')
+                
+                return HttpResponseRedirect(reverse('edit-profesionales', kwargs = {'oto_Profesional': profesional.oto_Profesional.id}))
+
+        return HttpResponseRedirect(reverse('id-profesionales', kwargs = {'oto_Profesional': profesional.oto_Profesional.id}))

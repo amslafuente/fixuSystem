@@ -205,6 +205,12 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
     color: rgb(240, 64, 20);
 }
 
+.grid-info3-color { /*--- Grid de horas ---*/
+    border-color:grey;
+    font-weight: bold;
+    color: rgb(240, 64, 20);
+}
+
 .grid-tachado { /*--- Texto tachado ---*/
     text-decoration: line-through;
     color: rgb(240, 64, 20);

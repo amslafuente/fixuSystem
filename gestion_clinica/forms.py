@@ -2,7 +2,7 @@
 
 from django import forms
 from django.forms import ModelForm, Textarea, TextInput, NumberInput, Select, EmailInput
-from django.forms import forms, fields, widgets
+#from django.forms import forms, fields, widgets
 from fixuSystem.progvars import selTipoEquip
 from .models import Clinica, Consultorio, Equipamiento, Proveedor, Profesional
 from django.conf import settings
@@ -36,10 +36,10 @@ class create_edit_consultorios_form(ModelForm):
 # Form de filtro para consultorio
 class customConsultorioForm(forms.Form):
 
-    filterdesc = fields.CharField(label = 'Descrip.', required = False, max_length = 10)
-    filterdesc.widget = widgets.TextInput(attrs={'style': 'width: 100px'})
-    filterlocat = fields.CharField(label = 'Situac.', required = False, max_length = 10)
-    filterlocat.widget = widgets.TextInput(attrs={'style': 'width: 100px'})
+    filterdesc = forms.CharField(label = 'Descrip.', required = False, max_length = 10)
+    filterdesc.widget = forms.widgets.TextInput(attrs={'style': 'width: 100px'})
+    filterlocat = forms.CharField(label = 'Situac.', required = False, max_length = 10)
+    filterlocat.widget = forms.widgets.TextInput(attrs={'style': 'width: 100px'})
 
 # Form para crear equipamiento
 class create_edit_equipamiento_form(ModelForm):
@@ -62,7 +62,7 @@ class create_edit_equipamiento_form(ModelForm):
             }
 
 # Widget de filtrado de tipo de equipamiento
-class customEquipamientoWidget(widgets.Select):
+class customEquipamientoWidget(forms.widgets.Select):
 
     def __init__(self, *args, **kwargs) :
         super().__init__(*args, **kwargs)
@@ -74,11 +74,11 @@ class customEquipamientoWidget(widgets.Select):
 # Form de filtro para equipamiento
 class customEquipamientoForm(forms.Form):
 
-    filter_ = fields.CharField(label = 'Filtro', widget = customEquipamientoWidget())
-    condition = fields.CharField(label = 'Condición', required = False, max_length = 10)
-    condition.widget = widgets.TextInput(attrs={'style': 'width: 80px'})
-    ctrl = fields.CharField(label = 'Ctrl', required = False, max_length = 10)
-    ctrl.widget = widgets.Select(attrs={'style': 'width: 80px'}, choices=[('', ''), ('oper', 'Oper'), ('stock', 'Stock')])
+    filter_ = forms.CharField(label = 'Filtro', widget = customEquipamientoWidget())
+    condition = forms.CharField(label = 'Condición', required = False, max_length = 10)
+    condition.widget = forms.widgets.TextInput(attrs={'style': 'width: 80px'})
+    ctrl = forms.CharField(label = 'Ctrl', required = False, max_length = 10)
+    ctrl.widget = forms.widgets.Select(attrs={'style': 'width: 80px'}, choices=[('', ''), ('oper', 'Oper'), ('stock', 'Stock')])
 
 # Form para crear proveedores
 class create_edit_proveedores_form(ModelForm):
@@ -107,31 +107,29 @@ class create_edit_proveedores_form(ModelForm):
 # Form de filtro para proveedor
 class customProveedorForm(forms.Form):
 
-    filtername = fields.CharField(label = 'Empresa', required = False, max_length = 10)
-    filtername.widget = widgets.TextInput(attrs={'style': 'width: 100px'})
-    filterarea = fields.CharField(label = 'Area', required = False, max_length = 10)
-    filterarea.widget = widgets.TextInput(attrs={'style': 'width: 100px'})
+    filtername = forms.CharField(label = 'Empresa', required = False, max_length = 10)
+    filtername.widget = forms.widgets.TextInput(attrs={'style': 'width: 100px'})
+    filterarea = forms.CharField(label = 'Area', required = False, max_length = 10)
+    filterarea.widget = forms.widgets.TextInput(attrs={'style': 'width: 100px'})
 
 # Form para seleccionar profesionales para mostrar
 class select_profesionales_form(forms.Form):
 
     # Campos del formulario
-    fullname = fields.CharField(label = 'Nombre:', max_length = 10, required = False)
-    position = fields.CharField(label = 'Cargo:', max_length = 10, required = False)
-    department = fields.CharField(label = 'Departamento:',  max_length = 10, required = False)
+    fullname = forms.CharField(label = 'Nombre:', max_length = 10, required = False)
+    position = forms.CharField(label = 'Cargo:', max_length = 10, required = False)
+    department = forms.CharField(label = 'Departamento:',  max_length = 10, required = False)
 
 # Form para crear profesionales (mezcla User y Profesional)
-class create_edit_profesionales_form(ModelForm):
+class create_profesionales_form(ModelForm):
 
    # Campos del formulario
-    djangouser = fields.CharField(label = 'Usuario:', max_length = 150, required = True)
-    djangouser.widget = widgets.TextInput(attrs={'style':'width: 200px'})
-    djangopassword = fields.CharField(label = 'Password:', max_length = 150, required = True)
-    djangopassword.widget = widgets.PasswordInput(attrs={'style':'width: 200px'})
-    django_isstaff = fields.BooleanField(label='Es staff:', required = False)
-    #django_isstaff.widgets = widgets.CheckboxInput(attrs={'onclick':'set_Staff()'})
-    django_issuper = fields.BooleanField(label='Es superusuario:', required = False)
-    #django_issuper.widgets = widgets.CheckboxInput(attrs={'onclick':'set_SuperStaff()'})
+    djangouser = forms.CharField(label = 'Usuario:', max_length = 150, required = True)
+    djangouser.widget = forms.widgets.TextInput(attrs={'style':'width: 200px'})
+    djangopassword = forms.CharField(label = 'Password:', max_length = 150, required = True)
+    djangopassword.widget = forms.widgets.PasswordInput(attrs={'style':'width: 200px'})
+    django_isstaff = forms.BooleanField(label='Es staff:', required = False)
+    django_issuper = forms.BooleanField(label='Es superusuario:', required = False)
 
     class Meta:
         model = Profesional
@@ -153,3 +151,28 @@ class create_edit_profesionales_form(ModelForm):
             'email': EmailInput(attrs={'style': 'width: 200px'}),
             'notes': Textarea(attrs={'cols': 60, 'rows': 3})
         }
+
+# Form para crear profesionales (mezcla User y Profesional)
+class edit_profesionales_form(ModelForm):
+    
+    class Meta:
+        model = Profesional
+        exclude = ['oto_Profesional', 'firstupdated', 'lastupdated', 'modifiedby']
+        widgets = {
+            'fullname': TextInput(attrs={'style':'width: 175px'}),
+            'dni': TextInput(attrs={'style': 'width: 175px'}),
+            'numcolegiado': TextInput(attrs={'style': 'width: 175px'}),
+            'nif': TextInput(attrs={'style': 'width: 175px'}),
+            'position': TextInput(attrs={'style': 'width: 175px'}),
+            'department': TextInput(attrs={'style': 'width: 175px'}),
+            'fulladdress': TextInput(attrs={'style': 'width: 514px'}),
+            'postcode': NumberInput(attrs={'style': 'width: 175px', 'min': 0, 'max': 99999}),
+            'city': TextInput(attrs={'style': 'width: 175px'}),
+            'province': TextInput(attrs={'style': 'width: 175px'}),
+            'country': TextInput(attrs={'style': 'width: 175px'}),
+            'phone1': NumberInput(attrs={'style': 'width: 120px', 'min': 0, 'max': 999999999}),
+            'phone2': NumberInput(attrs={'style': 'width: 120px', 'min': 0, 'max': 999999999}),
+            'email': EmailInput(attrs={'style': 'width: 175px'}),
+            'notes': Textarea(attrs={'cols': 60, 'rows': 3})
+        }
+

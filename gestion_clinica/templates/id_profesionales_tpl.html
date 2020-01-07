@@ -33,7 +33,7 @@
             <table class="tbl-forms table-striped tbl-general tbl-60">
 
                 <!-- Texto con el contenido -->
-                <caption class="tbl-capt">Usuario/a del sistema: {{ profesionales.oto_Profesional }}</caption>
+                <caption class="tbl-capt">Usuario/a del sistema: {{ profesionales.oto_Profesional }} (Activo/a: {{ profesionales.oto_Profesional.is_active|yesno:'Si,No' }})</caption>
             
                 <!-- Datos personales -->
                 <tr>
@@ -75,8 +75,8 @@
                         {% endif %}
                 </tr>
                 <tr>
-                    <th class="tbl-th" colspan="2">En activo/De alta</th>
-                    <th class="tbl-th" colspan="2">Empleado/a en la clínica</th>
+                    <th class="tbl-th" colspan="2">De alta</th>
+                    <th class="tbl-th" colspan="2">Empleado/a</th>
                 </tr>
                 <tr>
                     {% if profesionales.currentavail %}
@@ -91,11 +91,11 @@
                     {% endif %}
                 </tr>
                 <tr>
-                    <th class="tbl-th" colspan="4">Acceso al sistema</th>
+                    <th class="tbl-th" colspan="4">Roles de acceso al sistema</th>
                 </tr>
                 <tr>
-                    <th class="tbl-th" colspan="2">Es superusuario/a</th>
-                    <th class="tbl-th" colspan="2">Es administrador/a</th>
+                    <th class="tbl-th" colspan="2">Superusuario/a</th>
+                    <th class="tbl-th" colspan="2">Administrador/a</th>
                 </tr>
                 <tr>
                     {% if profesionales.oto_Profesional.is_superuser %}
@@ -141,6 +141,7 @@
     	    <!-- Botones -->
             <div class="div-botones">
                 <a href="{% url 'select-profesionales' %}"><input type="button" class="btn btn-info" value="Listado de profesionales"></a>
+                <a href="{% url 'edit-profesionales' profesionales.oto_Profesional.id %}"><input type="button" class="btn btn-info" value="Editar"></a>
                 <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
             </div>
 
