@@ -30,7 +30,7 @@
                 <table class="tbl-forms table-striped tbl-general tbl-35">
 
                     <!-- Texto con el contenido -->
-                    <caption class="tbl-capt">Completar datos (Usuario/a: {{ djangouser }} - id: {{ djangouserid }})</caption>
+                    <caption class="tbl-capt">Completar datos (Usuario/a: {{ form.user_login.value }} - id: {{ user_id }})</caption>
 
                     <!-- Errores en el form -->
                     {% include 'errors_profesionales.html' %}
@@ -40,27 +40,9 @@
 	    		        <th class="tbl-th" colspan="6">Roles de acceso al sistema</th>
                     </tr>
                     <tr>
-        			    <td class="tbl-td-10" colspan="2">Superusuario/a:
-                            {% if django_issuper %}
-                                <input type="checkbox" name="django_issuper" id="id_django_issuper" checked>
-                            {% else %}
-                                <input type="checkbox" name="django_issuper" id="id_django_issuper">
-                            {% endif %}
-                        </td>
-        			    <td class="tbl-td-10" colspan="2">Administrador/a:
-                            {% if django_isstaff %}
-                                <input type="checkbox" name="django_isstaff" id="id_django_isstaff" checked>
-                            {% else %}
-                                <input type="checkbox" name="django_isstaff" id="id_django_isstaff">
-                            {% endif %}
-                        </td>
-                        <td class="tbl-td-10" colspan="2">Está activo:
-                            {% if django_isactive %}
-                                <input type="checkbox" name="django_isactive" id="id_django_isactive" checked>
-                            {% else %}
-                                <input type="checkbox" name="django_isactive" id="id_django_isactive">
-                            {% endif %}
-                        </td>
+        			    <td class="tbl-td-10" colspan="2">Superusuario/a: {{ form.user_issuperuser.as_widget }}</td>
+        			    <td class="tbl-td-10" colspan="2">Administrador/a: {{ form.user_isstaff.as_widget }}</td>
+                        <td class="tbl-td-10" colspan="2">Está activo: {{ form.user_isactive.as_widget }}</td>
                     </tr>
                     <tr>
                         <td  class="tbl-td-centro grid-smalltxt grid-info2-color" colspan="6">
@@ -131,8 +113,10 @@
     	    	<!-- Botones -->
                 <div class="div-botones">
                     <input type="submit" class="btn btn-info" value="Aceptar">
-                    <input type="hidden" name="djangouser" value="{{ djangouser }}">
-                    <input type="hidden" name="oto_Profesional" value="{{ djangouserid }}">
+                    <input type="hidden" name="user_login" value="{{ form.user_login.value }}">
+                    <input type="hidden" name="user_id" value="{{ user_id }}">
+                    {{ form.oto_Profesional }}
+                    {{ form.user_password }}
           	    	<a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
                 </div>
 

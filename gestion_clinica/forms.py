@@ -155,11 +155,18 @@ class create_profesionales_form(ModelForm):
 # Form para editar profesionales (mezcla User y Profesional)
 class edit_profesionales_form(ModelForm):
 
+    user_login = forms.CharField(label = 'Usuario:', max_length = 150, required = True)
+    user_login.widget = forms.widgets.TextInput(attrs={'style':'width: 200px'})
+    user_password = forms.CharField(label = 'Password:', max_length = 150, required = True)
+    user_password.widget = forms.widgets.HiddenInput()
+    user_isactive = forms.BooleanField(label='Activo:', required = False)    
+    user_issuperuser = forms.BooleanField(label='Es superusuario:', required = False)    
+    user_isstaff = forms.BooleanField(label='Es staff:', required = False)
+
     class Meta:
         model = Profesional
         exclude = ['oto_Profesional', 'firstupdated', 'lastupdated', 'modifiedby']
         widgets = {
-            #'oto_Profesional': HiddenInput(),
             'fullname': TextInput(attrs={'style':'width: 175px'}),
             'dni': TextInput(attrs={'style': 'width: 175px'}),
             'numcolegiado': TextInput(attrs={'style': 'width: 175px'}),
@@ -177,3 +184,27 @@ class edit_profesionales_form(ModelForm):
             'notes': Textarea(attrs={'cols': 60, 'rows': 3})
         }
 
+# Form para completar profesionales (mezcla User y Profesional)
+class complete_profesionales_form(ModelForm):
+
+    class Meta:
+        model = Profesional
+        exclude = ['firstupdated', 'lastupdated', 'modifiedby']
+        widgets = {
+            'oto_Profesional': HiddenInput(),
+            'fullname': TextInput(attrs={'style':'width: 175px'}),
+            'dni': TextInput(attrs={'style': 'width: 175px'}),
+            'numcolegiado': TextInput(attrs={'style': 'width: 175px'}),
+            'nif': TextInput(attrs={'style': 'width: 175px'}),
+            'position': TextInput(attrs={'style': 'width: 175px'}),
+            'department': TextInput(attrs={'style': 'width: 175px'}),
+            'fulladdress': TextInput(attrs={'style': 'width: 514px'}),
+            'postcode': NumberInput(attrs={'style': 'width: 175px', 'min': 0, 'max': 99999}),
+            'city': TextInput(attrs={'style': 'width: 175px'}),
+            'province': TextInput(attrs={'style': 'width: 175px'}),
+            'country': TextInput(attrs={'style': 'width: 175px'}),
+            'phone1': NumberInput(attrs={'style': 'width: 120px', 'min': 0, 'max': 999999999}),
+            'phone2': NumberInput(attrs={'style': 'width: 120px', 'min': 0, 'max': 999999999}),
+            'email': EmailInput(attrs={'style': 'width: 175px'}),
+            'notes': Textarea(attrs={'cols': 60, 'rows': 3})
+        }

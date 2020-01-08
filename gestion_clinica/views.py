@@ -16,7 +16,7 @@ from .models import Clinica, Profesional, Consultorio, Equipamiento, Proveedor
 from django.contrib.auth.models import User
 from .forms import init_edit_info_clinica_form, create_edit_consultorios_form, create_edit_equipamiento_form
 from .forms import customConsultorioForm, customEquipamientoForm, customProveedorForm
-from .forms import select_profesionales_form, create_profesionales_form, edit_profesionales_form
+from .forms import select_profesionales_form, create_profesionales_form, edit_profesionales_form, complete_profesionales_form
 from .forms import create_edit_proveedores_form
 import os
 from pathlib import Path
@@ -879,14 +879,12 @@ class create_profesionales_view(View):
             messages.warning(request, 'El formularion contiene errores')
 
             return render(request, 'create_profesionales_tpl.html', ctx)
+        
+        return HttpResponseRedirect(reverse('id-profesionales', kwargs={'oto_Profesional': user.id}))
 
-        return render(request, 'create_profesionales_tpl.html', ctx)
 
 @method_decorator(login_required, name='dispatch')
 class complete_profesionales_view(View):
-    
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
     
     def get(self, request, **kwargs):
 
@@ -897,20 +895,21 @@ class complete_profesionales_view(View):
         # Si es superuser
         ctx = dict()
 
-        # Recupera los datos de USER que son editables
-        # is_active, is_superuser y is_staff
-        # Recupera los datos del User
-        user_prof = self.kwargs['id']
-        user = User.objects.get(id__exact = int(user_prof))
-        ctx['djangouser'] = user.username
-        ctx['djangouserid'] = user.id
-        ctx['djangopassword'] = user.password
-        ctx['django_isactive'] = user.is_active
-        ctx['django_issuper'] = user.is_superuser
-        ctx['django_isstaff'] = user.is_staff
+        # Recupera los datos de USER
+        user_prof = int(self.kwargs['id'])
+        user = User.objects.get(id__exact = user_prof)
+        ctx['user_id'] = user.id
 
         # Inicia la form
-        form = edit_profesionales_form(initial={'oto_Profesional': user_prof})
+        initial_data = {
+            'user_login': user.username,
+            'user_password': user.password,
+            'user_isactive': user.is_active,
+            'user_issuperuser': user.is_superuser,
+            'user_isstaff': user.is_staff,
+            'oto_Profesional': user.id
+        }
+        form = edit_profesionales_form(initial = initial_data)
         ctx['form'] = form
 
         return render(request, 'complete_profesionales_tpl.html', ctx)
@@ -923,52 +922,76 @@ class complete_profesionales_view(View):
 
         ctx = dict()
         
-        # Pasa el fom al contexto
+        # Pasa el form POST y FILES
         form = create_profesionales_form(request.POST, request.FILES)
-        ctx['form'] = form
 
-        # Primero crea el User de django, para luego pasarlo a oto_Profesional y validar el form
-        djangouser = request.POST.get('djangouser')
-        djangouserid = int(request.POST.get('oto_Profesional')) 
-        django_isactive = request.POST.get('django_isactive', False)
-        django_issuper = request.POST.get('django_issuper', False)
-        django_isstaff = request.POST.get('django_isstaff', False)
-        django_email = request.POST.get('email', 'fixuSystem@email.usr')
+        # Primero actualiza el User de django, para luego pasarlo a oto_Profesional
+        # Recupera campos del POST
+        user_id = request.POST.get('user_id')
+        user_isactive = request.POST.get('user_isactive', False)
+        user_issuperuser = request.POST.get('user_issuperuser', False)
+        user_isstaff = request.POST.get('user_isstaff', False)
+        user_email = request.POST.get('email', 'fixuSystem@email.usr')
 
-        user = User.objects.get(id__exact = djangouserid)
+        # Extrae el User
+        user = User.objects.get(id__exact = user_id)
+
+        # Ajusta los Is... y el email del User
         try:
-            if bool(django_isactive):
+            if bool(user_isactive):
                 user.is_active = True
             else:
                 user.is_active = False
             
-            if bool(django_issuper):
+            if bool(user_issuperuser):
                 user.is_superuser = True
                 user.is_staff = True
             else:
                 user.is_superuser = False
-                user.is_staff = bool(django_isstaff)
+                user.is_staff = bool(user_isstaff)
+            user.email = user_email
             
-            user.email = django_email
+            # Guarda User
             user.save()
         except:
-                messages.warning(request, 'Error actualizando los datos de usuario/a')
-
-        # Ahora valida el form
-        if form.is_valid():
+            messages.warning(request, 'Error actualizando los datos de usuario/a')
             
-            # Crea el registro "vacio"
-            profesional = Profesional()
-            # Pone los registros de control que faltan
-            # Commit = False: evita que se guarde ya en la base de datos
-            profesional = form.save(commit = False)
+            return HttpResponseRedirect(reverse('complete-profesionales', kwargs = {'id': user.id}))
+
+        # Si va bien valida el form
+        if form.is_valid():
+
+            # Construye los 19 datos del modelo Profesional e INSERT el registro
+            profesional = Profesional(
+                oto_Profesional = user,
+                dni = form.cleaned_data['dni'],
+                nif = form.cleaned_data['nif'],
+                fullname = form.cleaned_data['fullname'],
+                numcolegiado = form.cleaned_data['numcolegiado'],
+                position = form.cleaned_data['position'],
+                department = form.cleaned_data['department'],
+                fulladdress = form.cleaned_data['fulladdress'],
+                postcode = form.cleaned_data['postcode'],
+                city = form.cleaned_data['city'],
+                province = form.cleaned_data['province'],
+                country = form.cleaned_data['country'],
+                email = form.cleaned_data['email'],
+                phone1 = form.cleaned_data['phone1'],
+                phone2 = form.cleaned_data['phone2'],
+                currentavail = form.cleaned_data['currentavail'],
+                currentstaff = form.cleaned_data['currentstaff'],
+                picturefile = form.cleaned_data['picturefile'],
+                notes = form.cleaned_data['notes'],
+                modifiedby = 'fixuUser'
+            )
+            profesional.save()
+
             # Campos de control
+            profesional = Profesional.objects.get(oto_Profesional__exact = user.id)
             if str(self.request.user) != 'AmonymousUser':
                 profesional.modifiedby = str(self.request.user)
             else:
                 profesional.modifiedby = 'unix:' + str(self.request.META['USERNAME'])
-            # Limpia y guarda el registro
-            profesional.save()
     
             # Si se ha subido una foto, al ultimo profesional añadido le pone
             # el DNI para identificarlo mejor, respetando la ruta "profesionales/<nombre>.<ext>"
@@ -990,14 +1013,15 @@ class complete_profesionales_view(View):
                     # Limpia y guarda el registro
                     inter_profesional.save()
                     # Cambia el nombre del archivo en el disco
-                    os.rename(str(settings.MEDIA_ROOT + '/' + split_name), str(settings.MEDIA_ROOT +'/' + new_name))   
+                    os.rename(str(settings.MEDIA_ROOT + '/' + split_name), str(settings.MEDIA_ROOT +'/' + new_name))
             except:
                 messages.warning(request, 'Error procesando archivo de imagen')
 
             return HttpResponseRedirect(reverse('id-profesionales', kwargs={'oto_Profesional': user.id}))
+
         else:
             messages.warning(request, 'Error actualizando los datos del/de la profesional')
-              
+
             return HttpResponseRedirect(reverse('complete-profesionales', kwargs = {'id': user.id}))
 
 @method_decorator(login_required, name='dispatch')
@@ -1090,13 +1114,9 @@ class edit_profesionales_view(UpdateView):
         # Si ha cambiado la foto
         # Si se actualiza la foto se renombra an DNI y se borra la antigua
         if 'picturefile' in form.changed_data:
-            picture_changed = True
-        else:
-            picture_changed = False
-        if picture_changed:
             try:
                 # Recupera el paciente grabado
-                inter_profesional = Profesional.objects.get(pk = profesional.oto_Profesional.id)
+                inter_profesional = Profesional.objects.get(oto_Profesional__exact = profesional.oto_Profesional.id)
                 # Si se introduce un nombre de archivo
                 split_name = str(inter_profesional.picturefile)
                 if split_name != '':
@@ -1112,10 +1132,12 @@ class edit_profesionales_view(UpdateView):
                     inter_profesional.save()
                     # Cambia el nombre del archivo en el disco
                     os.rename(str(settings.MEDIA_ROOT + '/' + split_name), str(settings.MEDIA_ROOT +'/' + new_name))
+                    
+                return HttpResponseRedirect(reverse('id-profesionales', kwargs = {'oto_Profesional': profesional.oto_Profesional.id}))
             except:
-
                 messages.warning(request, 'Error procesando archivo de imagen')
                 
                 return HttpResponseRedirect(reverse('edit-profesionales', kwargs = {'oto_Profesional': profesional.oto_Profesional.id}))
+        else:
 
-        return HttpResponseRedirect(reverse('id-profesionales', kwargs = {'oto_Profesional': profesional.oto_Profesional.id}))
+            return HttpResponseRedirect(reverse('id-profesionales', kwargs = {'oto_Profesional': profesional.oto_Profesional.id}))
