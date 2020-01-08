@@ -77,9 +77,7 @@ class select_desdepaciente_consultas_view(View):
                 citaspaciente = (paciente.idPaciente, paciente.familyname, paciente.name, cita.idCita, cita.appdate)
                 listacitas.append(citaspaciente)                
         ctx['listacitas'] = listacitas
-
-        print(listacitas)
-              
+            
         return render(request, 'select_desdepaciente_consultas_tpl.html', ctx)
 
 # Crea la ficha de consulta a partir de la cita selecionada

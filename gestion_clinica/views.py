@@ -53,6 +53,28 @@ class info_clinica_view(View):
 @method_decorator(login_required, name='dispatch')
 class init_clinica_view(View):
 
+    # GET al llamar a la view
+    def get(self, request):
+
+        # Si el usuario no es superuser no permite acceder a los datos de la clinica
+        if not request.user.is_superuser:
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
+        
+        # Cuenta los registros de la base de datos Clinica
+        qs_count = Clinica.objects.count()
+
+        # Si ya existe un registro avisa de que solo se puede editar, no crear
+        if qs_count > 0:
+            return HttpResponseRedirect(reverse('error-init-clinica'))
+        # Si no existe pasa a crearlo
+        else:
+            ctx = dict()
+            # Asocia la form y la pasa al contexto
+            form = init_edit_info_clinica_form()
+            ctx['form'] = form
+
+            return render(request, 'init_info_clinica_tpl.html', ctx)
+
     # POST al volver del formulario
     def post(self, request):
 
@@ -107,28 +129,6 @@ class init_clinica_view(View):
             # Regresa al formulario
             ctx['form'] = form
             
-            return render(request, 'init_info_clinica_tpl.html', ctx)
-
-    # GET al llamar a la view
-    def get(self, request):
-
-        # Si el usuario no es superuser no permite acceder a los datos de la clinica
-        if not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
-        
-        # Cuenta los registros de la base de datos Clinica
-        qs_count = Clinica.objects.count()
-
-        # Si ya existe un registro avisa de que solo se puede editar, no crear
-        if qs_count > 0:
-            return HttpResponseRedirect(reverse('error-init-clinica'))
-        # Si no existe pasa a crearlo
-        else:
-            ctx = dict()
-            # Asocia la form y la pasa al contexto
-            form = init_edit_info_clinica_form()
-            ctx['form'] = form
-
             return render(request, 'init_info_clinica_tpl.html', ctx)
 
 # Error si el usuario NO ES SUPERUSUARIO
@@ -284,6 +284,15 @@ class create_consultorios_view(CreateView):
     form_class = create_edit_consultorios_form
     template_name = 'create_consultorios_tpl.html'
 
+    # GET al llamar a la view
+    def get(self, request):
+
+        # Si el usuario no es o staff no permite acceder a los datos de la clinica
+        if (not request.user.is_superuser) and (not request.user.is_staff):
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
+
+        return super().get(request)
+
     # Formulario correcto
     def form_valid(self, form):
 
@@ -297,15 +306,6 @@ class create_consultorios_view(CreateView):
         consultorio.save()
 
         return HttpResponseRedirect(reverse('listado-consultorios'))
-
-    # GET al llamar a la view
-    def get(self, request):
-
-        # Si el usuario no es o staff no permite acceder a los datos de la clinica
-        if (not request.user.is_superuser) and (not request.user.is_staff):
-            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
-
-        return super().get(request)
 
 @method_decorator(login_required, name='dispatch')
 class edit_consultorios_view(UpdateView):
@@ -334,15 +334,7 @@ class delete_consultorios_view(DeleteView):
     form_class = create_edit_consultorios_form
     template_name = 'delete_consultorios_tpl.html'
     success_url = reverse_lazy('listado-consultorios')
-
-    def get_queryset(self):
-
-        # Extrae el consultorio en cuestion
-        qs = Consultorio.objects.filter(idConsultorio__exact = self.kwargs['idConsultorio'])
-
-        return qs
-
-    # GET al llamar a la view
+    
     def get(self, request, **kwargs):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
@@ -350,6 +342,13 @@ class delete_consultorios_view(DeleteView):
             return HttpResponseRedirect(reverse('error-privilegios-clinica'))
 
         return super().get(request)
+
+    def get_queryset(self):
+
+        # Extrae el consultorio en cuestion
+        qs = Consultorio.objects.filter(idConsultorio__exact = self.kwargs['idConsultorio'])
+
+        return qs
 
 ##################################################
 #                   EQUIPAMIENTO                 #
@@ -438,7 +437,14 @@ class create_equipamiento_view(CreateView):
     form_class = create_edit_equipamiento_form
     template_name = 'create_equipamiento_tpl.html'
     
-    # Formulario correcto
+    def get(self, request):
+
+        # Si el usuario no es o staff no permite acceder a los datos de la clinica
+        if (not request.user.is_superuser) and (not request.user.is_staff):
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
+
+        return super().get(request)
+    
     def form_valid(self, form):
 
         equipamiento = form.save(commit = False)
@@ -465,14 +471,6 @@ class create_equipamiento_view(CreateView):
         
         return super().form_invalid(form)
 
-    # GET al llamar a la view
-    def get(self, request):
-
-        # Si el usuario no es o staff no permite acceder a los datos de la clinica
-        if (not request.user.is_superuser) and (not request.user.is_staff):
-            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
-
-        return super().get(request)
 
 @method_decorator(login_required, name='dispatch')
 class edit_equipamiento_view(UpdateView): 
@@ -483,7 +481,14 @@ class edit_equipamiento_view(UpdateView):
     form_class = create_edit_equipamiento_form
     template_name = 'edit_equipamiento_tpl.html'
 
-    # Formulario correcto
+    def get(self, request, **kwargs):
+
+        # Si el usuario no es o staff no permite acceder a los datos de la clinica
+        if (not request.user.is_superuser) or (not request.user.is_staff):
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
+
+        return super().get(request)
+
     def form_valid(self, form):
 
         equipamiento = form.save(commit = False)
@@ -504,15 +509,6 @@ class edit_equipamiento_view(UpdateView):
 
         return HttpResponseRedirect(reverse('id-equipamiento', args=[equipamiento.idEquipamiento]))
 
-    # GET al llamar a la view
-    def get(self, request, **kwargs):
-
-        # Si el usuario no es o staff no permite acceder a los datos de la clinica
-        if (not request.user.is_superuser) or (not request.user.is_staff):
-            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
-
-        return super().get(request)
-
 @method_decorator(login_required, name='dispatch')
 class delete_equipamiento_view(DeleteView):
 
@@ -522,14 +518,6 @@ class delete_equipamiento_view(DeleteView):
     template_name = 'delete_equipamiento_tpl.html'
     success_url = reverse_lazy('listado-equipamiento')
 
-    def get_queryset(self):
-
-        # Extrae el consultorio en cuestion
-        qs = Equipamiento.objects.filter(idEquipamiento__exact = self.kwargs['idEquipamiento'])
-
-        return qs
-
-    # GET al llamar a la view
     def get(self, request, **kwargs):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
@@ -537,6 +525,13 @@ class delete_equipamiento_view(DeleteView):
             return HttpResponseRedirect(reverse('error-privilegios-clinica'))
 
         return super().get(request)
+    
+    def get_queryset(self):
+    
+        # Extrae el consultorio en cuestion
+        qs = Equipamiento.objects.filter(idEquipamiento__exact = self.kwargs['idEquipamiento'])
+
+        return qs
 
 ##################################################
 #                   PROVEEDORES                  #
@@ -617,7 +612,14 @@ class create_proveedores_view(CreateView):
     form_class = create_edit_proveedores_form
     template_name = 'create_proveedores_tpl.html'
     
-    # Formulario correcto
+    def get(self, request):
+
+        # Si el usuario no es o staff no permite acceder a los datos de la clinica
+        if (not request.user.is_superuser) and (not request.user.is_staff):
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
+
+        return super().get(request)
+
     def form_valid(self, form):
 
         proveedor = form.save(commit = False)
@@ -633,18 +635,9 @@ class create_proveedores_view(CreateView):
 
     def form_invalid(self, form):
         
-        messages.warning(self.request, 'Errores en el formulario.')
+        messages.warning(self.request, 'Errores en el formulario')
         
         return super().form_invalid(form)
-
-    # GET al llamar a la view
-    def get(self, request):
-
-        # Si el usuario no es o staff no permite acceder a los datos de la clinica
-        if (not request.user.is_superuser) and (not request.user.is_staff):
-            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
-
-        return super().get(request)
 
 @method_decorator(login_required, name='dispatch')
 class edit_proveedores_view(UpdateView):
@@ -655,7 +648,14 @@ class edit_proveedores_view(UpdateView):
     form_class = create_edit_proveedores_form
     template_name = 'edit_proveedores_tpl.html'
 
-    # Formulario correcto
+    def get(self, request, **kwargs):
+
+        # Si el usuario no es o staff no permite acceder a los datos de la clinica
+        if (not request.user.is_superuser) or (not request.user.is_staff):
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
+
+        return super().get(request)
+
     def form_valid(self, form):
 
         proveedor = form.save(commit = False)
@@ -669,16 +669,6 @@ class edit_proveedores_view(UpdateView):
 
         return HttpResponseRedirect(reverse('id-proveedores', args=[proveedor.idProveedor]))
 
-    # GET al llamar a la view
-    def get(self, request, **kwargs):
-
-        # Si el usuario no es o staff no permite acceder a los datos de la clinica
-        if (not request.user.is_superuser) or (not request.user.is_staff):
-            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
-
-        return super().get(request)
-
-
 @method_decorator(login_required, name='dispatch')
 class delete_proveedores_view(DeleteView):
 
@@ -688,14 +678,6 @@ class delete_proveedores_view(DeleteView):
     template_name = 'delete_proveedores_tpl.html'
     success_url = reverse_lazy('listado-proveedores')
 
-    def get_queryset(self):
-
-        # Extrae el consultorio en cuestion
-        qs = Proveedor.objects.filter(idProveedor__exact = self.kwargs['idProveedor'])
-
-        return qs
-
-    # GET al llamar a la view
     def get(self, request, **kwargs):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
@@ -703,6 +685,13 @@ class delete_proveedores_view(DeleteView):
             return HttpResponseRedirect(reverse('error-privilegios-clinica'))
 
         return super().get(request)
+
+    def get_queryset(self):
+    
+        # Extrae el consultorio en cuestion
+        qs = Proveedor.objects.filter(idProveedor__exact = self.kwargs['idProveedor'])
+
+        return qs
 
 ##################################################
 #                   PROFESIONALES                #
@@ -719,7 +708,15 @@ class profesionales_clinica_view(TemplateView):
 @method_decorator(login_required, name='dispatch')
 class select_profesionales_view(View):
 
-    # POST
+    def get(self, request):
+
+        ctx = dict()
+        # Limpia el form y lo añade al contexto
+        form = select_profesionales_form()
+        ctx['form'] = form
+        
+        return render(request, 'select_profesionales_tpl.html', ctx)
+
     def post(self, request):
 
         ctx = dict()
@@ -749,16 +746,6 @@ class select_profesionales_view(View):
 
             return render(request, 'select_profesionales_tpl.html', ctx)
 
-    # GET
-    def get(self, request):
-
-        ctx = dict()
-        # Limpia el form y lo añade al contexto
-        form = select_profesionales_form()
-        ctx['form'] = form
-        
-        return render(request, 'select_profesionales_tpl.html', ctx)
-
 @method_decorator(login_required, name='dispatch')
 class listado_profesionales_view(ListView):
 
@@ -772,12 +759,12 @@ class listado_profesionales_view(ListView):
          # Seleccion
         if kwargs['fullname'] != 'fullname':
             qs_user = Q(username__icontains = kwargs['fullname'])
-            qs_profesional = Q(profesional__fullname__icontains = kwargs['fullname'])
+            qs_profesional = Q(profesionales__fullname__icontains = kwargs['fullname'])
             qs = qs.filter(qs_user | qs_profesional)
         if kwargs['position'] != 'position':
-             qs = qs.filter(profesional__position__icontains = kwargs['position'])
+             qs = qs.filter(profesionales__position__icontains = kwargs['position'])
         if kwargs['department'] != 'department':
-             qs = qs.filter(profesional__department__icontains = kwargs['department'])
+             qs = qs.filter(profesionales__department__icontains = kwargs['department'])
         ctx['profesionales'] = qs
 
         return render(request, 'listado_profesionales_tpl.html', ctx)
@@ -800,7 +787,19 @@ class id_profesionales_view(DetailView):
 @method_decorator(login_required, name='dispatch')
 class create_profesionales_view(View):
 
-    # POST
+    def get(self, request, *args, **kwargs):
+        
+        # Si el usuario no es superuser no permite acceder a los datos
+        if not request.user.is_superuser:
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
+            
+        # Si esta autorizado asigna el form y sigue
+        ctx = dict()
+        form = create_profesionales_form()
+        ctx['form'] = form
+
+        return render(request, 'create_profesionales_tpl.html', ctx)
+
     def post(self, request):
 
         # Si el usuario no es superuser no permite acceder a los datos
@@ -814,20 +813,19 @@ class create_profesionales_view(View):
         ctx['form'] = form
 
         # Primero crea el User de django, para luego pasarlo a oto_Profesional y validar el form
-        djangouser = request.POST.get('djangouser', '')
-        djangopassword = request.POST.get('djangopassword', '')
-        django_issuper = request.POST.get('django_issuper', False)
-        django_isstaff = request.POST.get('django_isstaff', False)
+        user_login = request.POST.get('user_login', '')
+        user_password = request.POST.get('user_password', '')
+        user_issuperuser = request.POST.get('user_issuperuser', False)
+        user_isstaff = request.POST.get('user_isstaff', False)
         
-        if (djangouser != '' and djangopassword != ''):
-            # Comprueba si existe ya ese usuario
-            if User.objects.filter(username__exact = djangouser).exists():
-                messages.warning(request, 'El usuario ya existe.')
-                return render(request, 'create_profesionales_tpl.html', ctx)
-            # Si no existe lo crea
-            else:
-                user = User.objects.create_user(djangouser, 'django@user.new', djangopassword)
-                user.save()
+        # Comprueba si existe ya ese usuario
+        if User.objects.filter(username__exact = user_login).exists():
+            messages.warning(request, 'El usuario ya existe.')
+            return render(request, 'create_profesionales_tpl.html', ctx)
+        # Si no existe lo crea
+        else:
+            user = User.objects.create_user(user_login, 'fixuSystem@email.usr', user_password)
+            user.save()
 
         # Ahora valida el form
         if form.is_valid():
@@ -835,18 +833,18 @@ class create_profesionales_view(View):
             # Pasa el form a un profesional
             profesional = form.save(commit = False)
             # Recupera el usuario creado
-            user = User.objects.get(username__exact = djangouser)
+            user = User.objects.get(username__exact = user_login)
 
             # Pone el oto_Profesional
             profesional.oto_Profesional = user
             # Pone los campos que faltan de user: email, is active, is staff, is superuser
             user.email = profesional.email
             user.is_active = True
-            user.is_superuser = bool(django_issuper)
+            user.is_superuser = bool(user_issuperuser)
             if user.is_superuser:
                 user.is_staff = True                
             else:    
-                user.is_staff = bool(django_isstaff)
+                user.is_staff = bool(user_isstaff)
 
             # Guarda ambos registros
             profesional.save()
@@ -877,56 +875,67 @@ class create_profesionales_view(View):
                 messages.warning(request, 'Error procesando archivo de imagen')
 
             return HttpResponseRedirect(reverse('id-profesionales', kwargs={'oto_Profesional': user.id}))
-       
         else:
-            messages.warning(request, 'El formularion contiene errores.')
+            messages.warning(request, 'El formularion contiene errores')
+
             return render(request, 'create_profesionales_tpl.html', ctx)
-
-        return render(request, 'create_profesionales_tpl.html', ctx)
-
-    # GET
-    def get(self, request, *args, **kwargs):
-        
-        # Si el usuario no es superuser no permite acceder a los datos
-        if not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
-            
-        # Si esta autorizado asigna el form y sigue
-        ctx = dict()
-        form = create_profesionales_form()
-        ctx['form'] = form
 
         return render(request, 'create_profesionales_tpl.html', ctx)
 
 @method_decorator(login_required, name='dispatch')
 class complete_profesionales_view(View):
-    pass
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+    
+    def get(self, request, **kwargs):
 
-@method_decorator(login_required, name='dispatch')
-class edit_profesionales_view(UpdateView):
-
-    model = Profesional
-    context_object_name = 'profesionales'
-    pk_url_kwarg = 'oto_Profesional'
-    form_class = edit_profesionales_form
-    template_name = 'edit_profesionales_tpl.html'
-
-    def post(self, request, *args, **kwargs):
+        # Si el usuario no es superuser no permite acceder a los datos
+        if not request.user.is_superuser:
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
         
+        # Si es superuser
+        ctx = dict()
+
+        # Recupera los datos de USER que son editables
+        # is_active, is_superuser y is_staff
+        # Recupera los datos del User
+        user_prof = self.kwargs['id']
+        user = User.objects.get(id__exact = int(user_prof))
+        ctx['djangouser'] = user.username
+        ctx['djangouserid'] = user.id
+        ctx['djangopassword'] = user.password
+        ctx['django_isactive'] = user.is_active
+        ctx['django_issuper'] = user.is_superuser
+        ctx['django_isstaff'] = user.is_staff
+
+        # Inicia la form
+        form = edit_profesionales_form(initial={'oto_Profesional': user_prof})
+        ctx['form'] = form
+
+        return render(request, 'complete_profesionales_tpl.html', ctx)
+
+    def post(self, request, **kwargs):
+
         # Si el usuario no es superuser no permite acceder a los datos
         if not request.user.is_superuser:
             return HttpResponseRedirect(reverse('error-privilegios-clinica'))
 
-        # Recupera del POST las keys que no se pasan en el form, referentes al User
-        # Pone los datos de USER que son editables
-        # is_active, is_superuser, is_staff y email
-        djangouser = request.POST.get('djangouser', '')
+        ctx = dict()
+        
+        # Pasa el fom al contexto
+        form = create_profesionales_form(request.POST, request.FILES)
+        ctx['form'] = form
+
+        # Primero crea el User de django, para luego pasarlo a oto_Profesional y validar el form
+        djangouser = request.POST.get('djangouser')
+        djangouserid = int(request.POST.get('oto_Profesional')) 
         django_isactive = request.POST.get('django_isactive', False)
         django_issuper = request.POST.get('django_issuper', False)
         django_isstaff = request.POST.get('django_isstaff', False)
-        django_email = request.POST.get('email', 'django@email.usr')
-        
-        user = User.objects.get(username__exact = djangouser)
+        django_email = request.POST.get('email', 'fixuSystem@email.usr')
+
+        user = User.objects.get(id__exact = djangouserid)
         try:
             if bool(django_isactive):
                 user.is_active = True
@@ -943,11 +952,62 @@ class edit_profesionales_view(UpdateView):
             user.email = django_email
             user.save()
         except:
-            messages.warning(request, 'Error actualizando los datos de usuario/a.')
-            
-            return HttpResponseRedirect(reverse('edit-profesionales', kwargs = {'oto_Profesional': user.id}))
+                messages.warning(request, 'Error actualizando los datos de usuario/a')
 
-        return super().post(request, *args, **kwargs)
+        # Ahora valida el form
+        if form.is_valid():
+            
+            # Crea el registro "vacio"
+            profesional = Profesional()
+            # Pone los registros de control que faltan
+            # Commit = False: evita que se guarde ya en la base de datos
+            profesional = form.save(commit = False)
+            # Campos de control
+            if str(self.request.user) != 'AmonymousUser':
+                profesional.modifiedby = str(self.request.user)
+            else:
+                profesional.modifiedby = 'unix:' + str(self.request.META['USERNAME'])
+            # Limpia y guarda el registro
+            profesional.save()
+    
+            # Si se ha subido una foto, al ultimo profesional añadido le pone
+            # el DNI para identificarlo mejor, respetando la ruta "profesionales/<nombre>.<ext>"
+            # Quedaría "profesionales/<dni>.<ext>"
+            try:
+                # Recupera el paciente grabado
+                inter_profesional = Profesional.objects.get(pk = profesional.oto_Profesional)
+                # Si se introduce un nombre de archivo
+                split_name = str(inter_profesional.picturefile)
+                if split_name != '':
+                    # Trocea el nombre de la ruta por "/" y "."
+                    # La parte del DNI es todo mayusculas
+                    new_name = split_name.split('/')[0] + '/DNI_' + str(inter_profesional.dni).upper() + '.' + split_name.split('/')[1].split('.')[1].upper()
+                    # Si ya existe un archivo con ese nombre lo borra antes de subir el nuevo
+                    if Path(new_name).is_file():
+                        os.remove(new_name)
+                    # Sustituye al picture file original por el nuevo
+                    inter_profesional.picturefile = new_name
+                    # Limpia y guarda el registro
+                    inter_profesional.save()
+                    # Cambia el nombre del archivo en el disco
+                    os.rename(str(settings.MEDIA_ROOT + '/' + split_name), str(settings.MEDIA_ROOT +'/' + new_name))   
+            except:
+                messages.warning(request, 'Error procesando archivo de imagen')
+
+            return HttpResponseRedirect(reverse('id-profesionales', kwargs={'oto_Profesional': user.id}))
+        else:
+            messages.warning(request, 'Error actualizando los datos del/de la profesional')
+              
+            return HttpResponseRedirect(reverse('complete-profesionales', kwargs = {'id': user.id}))
+
+@method_decorator(login_required, name='dispatch')
+class edit_profesionales_view(UpdateView):
+
+    model = Profesional
+    context_object_name = 'profesionales'
+    pk_url_kwarg = 'oto_Profesional'
+    form_class = edit_profesionales_form
+    template_name = 'edit_profesionales_tpl.html'
 
     def get(self, request, *args, **kwargs):
 
@@ -958,7 +1018,7 @@ class edit_profesionales_view(UpdateView):
             return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        
+
         # Recupera el Profesional y User asociado
         qs = Profesional.objects.select_related('oto_Profesional').filter(oto_Profesional__exact = self.kwargs['oto_Profesional'])
 
@@ -972,19 +1032,54 @@ class edit_profesionales_view(UpdateView):
         # is_active, is_superuser y is_staff
         user_prof = getattr(ctx['profesionales'], 'oto_Profesional')
         user = User.objects.get(username__exact = user_prof)
-        ctx['djangouser'] = user.username
-        ctx['django_isactive'] = user.is_active
-        ctx['django_issuper'] = user.is_superuser
-        ctx['django_isstaff'] = user.is_staff
+        ctx['user_'] = user
         
         return ctx
 
+    def post(self, request, *args, **kwargs):
+
+        # Si el usuario no es superuser no permite acceder a los datos
+        if not request.user.is_superuser:
+            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
+
+        # Recupera del POST las keys que no se pasan en el form, referentes al User
+        # Pone los datos de USER que son editables
+        # is_active, is_superuser, is_staff y email
+        user_id = int(request.POST.get('oto_Profesional')) 
+        user_isactive = request.POST.get('user_isactive', False)
+        user_issuperuser = request.POST.get('user_issuperuser', False)
+        user_isstaff = request.POST.get('user_isstaff', False)
+        user_email = request.POST.get('email', 'fixuSystem@email.usr')
+        
+        user = User.objects.get(id__exact = user_id)
+        try:
+            if bool(user_isactive):
+                user.is_active = True
+            else:
+                user.is_active = False
+            
+            if bool(user_issuperuser):
+                user.is_superuser = True
+                user.is_staff = True
+            else:
+                user.is_superuser = False
+                user.is_staff = bool(user_isstaff)
+            
+            user.email = user_email
+            user.save()
+        except:
+            messages.warning(request, 'Error actualizando los datos de usuario/a')
+            
+            return HttpResponseRedirect(reverse('edit-profesionales', kwargs = {'oto_Profesional': user_id}))
+
+        return super().post(request, *args, **kwargs)
+
     def form_valid(self, form):
 
-        # Pone los registros de control que faltan en una instancia "manejable": paciente
+        # Pone los registros de control que faltan
         # Commit = False: evita que se guarde ya en la base de datos
         profesional = form.save(commit = False)
-        #Campos de control
+        # Campos de control
         if str(self.request.user) != 'AmonymousUser':
             profesional.modifiedby = str(self.request.user)
         else:

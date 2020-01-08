@@ -1,7 +1,7 @@
 ########## Forms de gestion_clinica ##########
 
 from django import forms
-from django.forms import ModelForm, Textarea, TextInput, NumberInput, Select, EmailInput
+from django.forms import ModelForm, Textarea, TextInput, NumberInput, Select, EmailInput, HiddenInput
 #from django.forms import forms, fields, widgets
 from fixuSystem.progvars import selTipoEquip
 from .models import Clinica, Consultorio, Equipamiento, Proveedor, Profesional
@@ -123,13 +123,13 @@ class select_profesionales_form(forms.Form):
 # Form para crear profesionales (mezcla User y Profesional)
 class create_profesionales_form(ModelForm):
 
-   # Campos del formulario
-    djangouser = forms.CharField(label = 'Usuario:', max_length = 150, required = True)
-    djangouser.widget = forms.widgets.TextInput(attrs={'style':'width: 200px'})
-    djangopassword = forms.CharField(label = 'Password:', max_length = 150, required = True)
-    djangopassword.widget = forms.widgets.PasswordInput(attrs={'style':'width: 200px'})
-    django_isstaff = forms.BooleanField(label='Es staff:', required = False)
-    django_issuper = forms.BooleanField(label='Es superusuario:', required = False)
+    user_login = forms.CharField(label = 'Usuario:', max_length = 150, required = True)
+    user_login.widget = forms.widgets.TextInput(attrs={'style':'width: 200px'})
+    user_password = forms.CharField(label = 'Password:', max_length = 150, required = True)
+    user_password.widget = forms.widgets.PasswordInput(attrs={'style':'width: 200px'})
+    user_issuperuser = forms.BooleanField(label='Es superusuario:', required = False)    
+    user_isstaff = forms.BooleanField(label='Es staff:', required = False)
+
 
     class Meta:
         model = Profesional
@@ -152,13 +152,14 @@ class create_profesionales_form(ModelForm):
             'notes': Textarea(attrs={'cols': 60, 'rows': 3})
         }
 
-# Form para crear profesionales (mezcla User y Profesional)
+# Form para editar profesionales (mezcla User y Profesional)
 class edit_profesionales_form(ModelForm):
-    
+
     class Meta:
         model = Profesional
         exclude = ['oto_Profesional', 'firstupdated', 'lastupdated', 'modifiedby']
         widgets = {
+            #'oto_Profesional': HiddenInput(),
             'fullname': TextInput(attrs={'style':'width: 175px'}),
             'dni': TextInput(attrs={'style': 'width: 175px'}),
             'numcolegiado': TextInput(attrs={'style': 'width: 175px'}),

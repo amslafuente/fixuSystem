@@ -30,16 +30,10 @@
                 <table class="tbl-forms table-striped tbl-general tbl-35">
 
                     <!-- Texto con el contenido -->
-                    <caption class="tbl-capt">Modificar profesional (Usuario/a: {{ djangouser }})</caption>
+                    <caption class="tbl-capt">Modificar profesional (Usuario/a: {{ user_.username }} - id: {{ user_.id }})</caption>
 
-                        <!-- Si hay mensajes pendientes -->
-                    {% for message in messages %}
-                        <tr>
-                            <th colspan="6" class ="field-errors">
-                                {{ message }}
-                            </th>
-                        </tr>
-                    {% endfor %}
+                    <!-- Errores en el form -->
+                    {% include 'errors_profesionales.html' %}
 
                     <!-- Datos de acceso a django -->
 		   	        <tr>
@@ -47,24 +41,24 @@
                     </tr>
                     <tr>
         			    <td class="tbl-td-10" colspan="2">Superusuario/a:
-                            {% if django_issuper %}
-                                <input type="checkbox" name="django_issuper" id="id_django_issuper" checked>
+                            {% if user_.is_superuser %}
+                                <input type="checkbox" name="user_issuperuser" checked>
                             {% else %}
-                                <input type="checkbox" name="django_issuper" id="id_django_issuper">
+                                <input type="checkbox" name="user_issuperuser">
                             {% endif %}
                         </td>
         			    <td class="tbl-td-10" colspan="2">Administrador/a:
-                            {% if django_isstaff %}
-                                <input type="checkbox" name="django_isstaff" id="id_django_isstaff" checked>
+                            {% if user_.is_staff %}
+                                <input type="checkbox" name="user_isstaff" checked>
                             {% else %}
-                                <input type="checkbox" name="django_isstaff" id="id_django_isstaff">
+                                <input type="checkbox" name="user_isstaff">
                             {% endif %}
                         </td>
                         <td class="tbl-td-10" colspan="2">Está activo:
-                            {% if django_isactive %}
-                                <input type="checkbox" name="django_isactive" id="id_django_isactive" checked>
+                            {% if user_.is_active %}
+                                <input type="checkbox" name="user_isactive" checked>
                             {% else %}
-                                <input type="checkbox" name="django_isactive" id="id_django_isactive">
+                                <input type="checkbox" name="user_isactive">
                             {% endif %}
                         </td>
                     </tr>
@@ -133,11 +127,10 @@
    			    	</tr>
 
         		</table>
-
     	    	<!-- Botones -->
                 <div class="div-botones">
                     <input type="submit" class="btn btn-info" value="Aceptar">
-                    <input type="hidden" name="djangouser" value="{{ djangouser }}">
+                    <input type="hidden" name="oto_Profesional" value="{{ user_.id }}">
           	    	<a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
                 </div>
 

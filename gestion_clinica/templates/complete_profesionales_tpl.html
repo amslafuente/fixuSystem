@@ -27,87 +27,103 @@
     	    	{% csrf_token %}
 
              	<!-- Tabla del profesional -->
-                <table class="tbl-forms table-striped tbl-general tbl-50">
+                <table class="tbl-forms table-striped tbl-general tbl-35">
 
                     <!-- Texto con el contenido -->
-                    <caption class="tbl-capt">Nuevo/a profesional</caption>
+                    <caption class="tbl-capt">Completar datos (Usuario/a: {{ djangouser }} - id: {{ djangouserid }})</caption>
 
                     <!-- Errores en el form -->
                     {% include 'errors_profesionales.html' %}
 
                     <!-- Datos de acceso a django -->
 		   	        <tr>
-	    		        <th class="tbl-th" colspan="4">Usuario/a y clave de acceso al sistema</th>
+	    		        <th class="tbl-th" colspan="6">Roles de acceso al sistema</th>
                     </tr>
                     <tr>
-        			    <td>Usuario/a:</td><td>{{ form.djangouser.as_widget }}</td>
-            		    <td>Clave:</td><td>{{ form.djangopassword.as_widget }}</td>
+        			    <td class="tbl-td-10" colspan="2">Superusuario/a:
+                            {% if django_issuper %}
+                                <input type="checkbox" name="django_issuper" id="id_django_issuper" checked>
+                            {% else %}
+                                <input type="checkbox" name="django_issuper" id="id_django_issuper">
+                            {% endif %}
+                        </td>
+        			    <td class="tbl-td-10" colspan="2">Administrador/a:
+                            {% if django_isstaff %}
+                                <input type="checkbox" name="django_isstaff" id="id_django_isstaff" checked>
+                            {% else %}
+                                <input type="checkbox" name="django_isstaff" id="id_django_isstaff">
+                            {% endif %}
+                        </td>
+                        <td class="tbl-td-10" colspan="2">Está activo:
+                            {% if django_isactive %}
+                                <input type="checkbox" name="django_isactive" id="id_django_isactive" checked>
+                            {% else %}
+                                <input type="checkbox" name="django_isactive" id="id_django_isactive">
+                            {% endif %}
+                        </td>
                     </tr>
                     <tr>
-        			    <td colspan="2">Superusuario/a:&nbsp;&nbsp;&nbsp;{{ form.django_issuper.as_widget }}</td>
-            		    <td colspan="2">Administrador/a:&nbsp;&nbsp;&nbsp;{{ form.django_isstaff.as_widget }}</td>
-                    </tr>
-                    <tr>
-                        <td  class="tbl-td-centro grid-smalltxt grid-info2-color" colspan="4">
+                        <td  class="tbl-td-centro grid-smalltxt grid-info2-color" colspan="6">
+                            El nombre de usuario/a y el password no son editables.<br/>
                             Ser Superusuario/a implica ser también Administrador/a.<br/>
                             Desactive "Superusuario/a" para dar solo privilegios de Administrador/a.                            
                         </td>
                     </tr>
                     <!-- Datos personales -->
                     <tr>
-	    		        <th class="tbl-th" colspan="4">Datos personales</th>
+	    		        <th class="tbl-th" colspan="6">Datos personales</th>
                     </tr>
                     <tr>
-                        <td>Nombre:</td><td>{{ form.fullname.as_widget }}</td>
-                        <td>DNI:</td><td>{{ form.dni.as_widget }}</td>
+                        <td>Nombre:</td><td colspan="2">{{ form.fullname.as_widget }}</td>
+                        <td>DNI:</td><td colspan="2">{{ form.dni.as_widget }}</td>
                     </tr>
                     <tr>
-	    		        <th class="tbl-th" colspan="4">Datos profesionales</th>
+	    		        <th class="tbl-th" colspan="6">Datos form</th>
                     </tr>
 		   	        <tr>
-                        <td>Num. Colegiado/a:</td><td>{{ form.numcolegiado.as_widget }}</td>
-                        <td>NIF:</td><td>{{ form.nif.as_widget }}</td> 
+                        <td>Num. Colegiado/a:</td><td colspan="2">{{ form.numcolegiado.as_widget }}</td>
+                        <td>NIF:</td><td colspan="2">{{ form.nif.as_widget }}</td> 
                     </tr>
                     <tr>
-                        <td>Cargo:</td><td>{{ form.position.as_widget }}</td>
-                        <td>Departamento:</td><td>{{ form.department.as_widget }}</td> 
+                        <td>Cargo:</td><td colspan="2">{{ form.position.as_widget }}</td>
+                        <td>Departamento:</td><td colspan="2">{{ form.department.as_widget }}</td> 
                     </tr>
                     <tr>
-                        <td colspan="2">En activo/De alta:&nbsp;&nbsp;&nbsp;{{ form.currentavail.as_widget }}</td>
-                        <td colspan="2">Empleado de la clínica:&nbsp;&nbsp;&nbsp;{{ form.currentstaff.as_widget }}</td> 
+                        <td colspan="3">De alta:&nbsp;&nbsp;&nbsp;{{ form.currentavail.as_widget }}</td>
+                        <td colspan="3">Empleado/a:&nbsp;&nbsp;&nbsp;{{ form.currentstaff.as_widget }}</td> 
                     </tr>
                     <tr>
-	    		        <th class="tbl-th" colspan="4">Datos de contacto</th>
+	    		        <th class="tbl-th" colspan="6">Datos de contacto</th>
                     </tr>
                     <tr>
-                        <td>Dirección:</td><td colspan="3">{{ form.fulladdress.as_widget }}</td>
+                        <td>Dirección:</td><td colspan="5">{{ form.fulladdress.as_widget }}</td>
                     </tr>
                     <tr>
-                        <td>C.Postal:</td><td>{{ form.postcode.as_widget }}</td>
-                        <td>Localidad:</td><td>{{ form.city.as_widget }}</td> 
+                        <td>C.Postal:</td><td colspan="2">{{ form.postcode.as_widget }}</td>
+                        <td>Localidad:</td><td colspan="2">{{ form.city.as_widget }}</td> 
                     </tr>
                     <tr>
-                        <td>Provincia:</td><td>{{ form.province.as_widget }}</td>
-                        <td>País:</td><td>{{ form.country.as_widget }}</td> 
+                        <td>Provincia:</td><td colspan="2">{{ form.province.as_widget }}</td>
+                        <td>País:</td><td colspan="2">{{ form.country.as_widget }}</td> 
                     </tr>
                     <tr>
-                        <td>Tel.1:</td><td>{{ form.phone1.as_widget }}</td>
-                        <td>Email:</td><td>{{ form.email.as_widget }}</td>
+                        <td>Tel.1:</td><td colspan="2">{{ form.phone1.as_widget }}</td>
+                        <td>Email:</td><td colspan="2">{{ form.email.as_widget }}</td>
                     </tr>
                     <tr>
-                        <td>Tel.2:</td><td colspan="3">{{ form.phone2.as_widget }}</td>
+                        <td>Tel.2:</td><td colspan="5">{{ form.phone2.as_widget }}</td>
                     </tr>
                     <tr>
-	    		        <th class="tbl-th" colspan="4">Fotografía</th>
+	    		        <th class="tbl-th" colspan="6">Fotografía</th>
                     </tr>
                     <tr>
-        			    <td colspan="4">{{ form.picturefile.as_widget }}</td>
+        			    <td colspan="6">{{ form.picturefile.as_widget }}</td>
                     </tr>
                     <tr>
-	    		        <th class="tbl-th" colspan="4">Notas</th>
+	    		        <th class="tbl-th" colspan="6">Notas</th>
                     </tr>
  	    		    <tr>
-                        <td colspan="4">{{ form.notes.as_widget }}
+                        <td colspan="6">{{ form.notes.as_widget }}
    			    	</tr>
 
         		</table>
@@ -115,6 +131,8 @@
     	    	<!-- Botones -->
                 <div class="div-botones">
                     <input type="submit" class="btn btn-info" value="Aceptar">
+                    <input type="hidden" name="djangouser" value="{{ djangouser }}">
+                    <input type="hidden" name="oto_Profesional" value="{{ djangouserid }}">
           	    	<a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
                 </div>
 

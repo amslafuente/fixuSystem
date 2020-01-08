@@ -3,7 +3,7 @@
 
 {% if form.oto_Profesional.errors %}
 <tr>
-    <th colspan="4" class ="field-errors">
+    <th colspan="6" class ="field-errors">
         {% for error in form.oto_Profesional.errors %}
             {{ form.oto_Profesional.label }} : {{ error }}
         {% endfor %}
@@ -13,7 +13,7 @@
 
 {% if form.djangouser.errors %}
 <tr>
-    <th colspan="4" class ="field-errors">
+    <th colspan="6" class ="field-errors">
         {% for error in form.djangouser.errors %}
             {{ form.djangouser.label }} : {{ error }}
         {% endfor %}
@@ -23,7 +23,7 @@
 
 {% if form.djangopassword.errors %}
 <tr>
-    <th colspan="4" class ="field-errors">
+    <th colspan="6" class ="field-errors">
         {% for error in form.djangopassword.errors %}
             {{ form.djangopassword.label }} : {{ error }}
         {% endfor %}
@@ -34,7 +34,7 @@
 <!-- Si hay mensajes pendientes -->
 {% for message in messages %}
 <tr>
-    <th colspan="4" class ="field-errors">
+    <th colspan="6" class ="field-errors">
         {{ message }}
     </th>
 </tr>
