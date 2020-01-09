@@ -11,21 +11,41 @@
 </tr>
 {% endif %}
 
-{% if form.djangouser.errors %}
+{% if form.user_login.errors %}
 <tr>
     <th colspan="6" class ="field-errors">
-        {% for error in form.djangouser.errors %}
-            {{ form.djangouser.label }} : {{ error }}
+        {% for error in form.user_login.errors %}
+            {{ form.user_login.label }} : {{ error }}
         {% endfor %}
     </th>
 </tr>
 {% endif %}
 
-{% if form.djangopassword.errors %}
+{% if form.user_password.errors %}
 <tr>
     <th colspan="6" class ="field-errors">
-        {% for error in form.djangopassword.errors %}
-            {{ form.djangopassword.label }} : {{ error }}
+        {% for error in form.user_password.errors %}
+            {{ form.user_password.label }} : {{ error }}
+        {% endfor %}
+    </th>
+</tr>
+{% endif %}
+
+{% if form.dni.errors %}
+<tr>
+    <th colspan="6" class ="field-errors">
+        {% for error in form.dni.errors %}
+            {{ form.dni.label }} : {{ error }}
+        {% endfor %}
+    </th>
+</tr>
+{% endif %}
+
+{% if form.nif.errors %}
+<tr>
+    <th colspan="6" class ="field-errors">
+        {% for error in form.nif.errors %}
+            {{ form.nif.label }} : {{ error }}
         {% endfor %}
     </th>
 </tr>

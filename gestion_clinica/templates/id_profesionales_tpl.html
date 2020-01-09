@@ -30,17 +30,17 @@
         <section class="sect-home-page-menu">
 
             <!-- Tabla del profesional -->
-            <table class="tbl-forms table-striped tbl-general tbl-60">
+            <table class="tbl-forms table-striped tbl-general tbl-50">
 
                 <!-- Texto con el contenido -->
-                <caption class="tbl-capt">Usuario/a del sistema: {{ profesionales.oto_Profesional }} (Activo/a: {{ profesionales.oto_Profesional.is_active|yesno:'Si,No' }})</caption>
+                <caption class="tbl-capt">Usuario/a del sistema: {{ profesionales.oto_Profesional.username }} - id: {{ profesionales.oto_Profesional.id }}</caption>
             
                 <!-- Datos personales -->
                 <tr>
-                    <th class="tbl-th" colspan="4">Datos personales y profesionales</th>
+                    <th class="tbl-th" colspan="6">Datos personales y profesionales</th>
                 </tr>
                 <tr>
-                    <td class="tbl-td-80" colspan="3">
+                    <td class="tbl-td-80" colspan="5">
                         <table class="tbl-in-tbl">
             		        <tr>
 		            	        <th class="tbl-th-izq tbl-td-50">Nombre</th>
@@ -48,7 +48,7 @@
             		        </tr>
 	            	        <tr>
 			                    <td>{{ profesionales.fullname }}</td>
-   				                <td>{{ profesionales.dni }}</td>
+   				                <td>{{ profesionales.dni|upper }}</td>
         	    	        </tr>
             		        <tr>
                                 <th class="tbl-th-izq">Colegiado/a</th>
@@ -75,29 +75,35 @@
                         {% endif %}
                 </tr>
                 <tr>
-                    <th class="tbl-th" colspan="2">De alta</th>
-                    <th class="tbl-th" colspan="2">Empleado/a</th>
+                    <th class="tbl-th" colspan="3">De alta</th>
+                    <th class="tbl-th" colspan="3">Empleado/a</th>
                 </tr>
                 <tr>
                     {% if profesionales.currentavail %}
-                        <td class="tbl-td-centro avail" colspan="2">{{ profesionales.currentavail|yesno:'Si,No' }}</td>
+                        <td class="tbl-td-centro avail" colspan="3">{{ profesionales.currentavail|yesno:'Si,No' }}</td>
                     {% else %}
-                        <td class="tbl-td-centro not-avail" colspan="2">{{ profesionales.currentavail|yesno:'Si,No' }}</td>
+                        <td class="tbl-td-centro not-avail" colspan="3">{{ profesionales.currentavail|yesno:'Si,No' }}</td>
                     {% endif %}
                     {% if profesionales.currentstaff %}
-                        <td class="tbl-td-centro avail" colspan="2">{{ profesionales.currentstaff|yesno:'Si,No' }}</td>
+                        <td class="tbl-td-centro avail" colspan="3">{{ profesionales.currentstaff|yesno:'Si,No' }}</td>
                     {% else %}
-                        <td class="tbl-td-centro not-avail" colspan="2">{{ profesionales.currentstaff|yesno:'Si,No' }}</td>
+                        <td class="tbl-td-centro not-avail" colspan="3">{{ profesionales.currentstaff|yesno:'Si,No' }}</td>
                     {% endif %}
                 </tr>
                 <tr>
-                    <th class="tbl-th" colspan="4">Roles de acceso al sistema</th>
+                    <th class="tbl-th" colspan="6">Roles de acceso al sistema</th>
                 </tr>
                 <tr>
+                    <th class="tbl-th" colspan="2">Activo/a</th>
                     <th class="tbl-th" colspan="2">Superusuario/a</th>
                     <th class="tbl-th" colspan="2">Administrador/a</th>
                 </tr>
                 <tr>
+                    {% if profesionales.oto_Profesional.is_active %}
+                    <td class="tbl-td-centro avail" colspan="2">{{ profesionales.oto_Profesional.is_active|yesno:'Si,No' }}</td>
+                    {% else %}
+                        <td class="tbl-td-centro not-avail" colspan="2">{{ profesionales.oto_Profesional.is_active|yesno:'Si,No' }}</td>
+                    {% endif %}
                     {% if profesionales.oto_Profesional.is_superuser %}
                         <td class="tbl-td-centro avail" colspan="2">{{ profesionales.oto_Profesional.is_superuser|yesno:'Si,No' }}</td>
                     {% else %}
@@ -110,31 +116,31 @@
                     {% endif %}
                 </tr>
                 <tr>
-                    <th class="tbl-th" colspan="4">Datos de contacto</th>
+                    <th class="tbl-th" colspan="6">Datos de contacto</th>
                 </tr>
                 <tr>
-                    <td>Dirección:</td><td colspan="3">{{ profesionales.fulladdress }}</td>
+                    <td>Dirección:</td><td colspan="5">{{ profesionales.fulladdress }}</td>
                 </tr>
                 <tr>
-                    <td>C.Postal:</td><td>{{ profesionales.postcode }}</td>
-                    <td>Localidad:</td><td>{{ profesionales.city }}</td> 
+                    <td class="tbl-td-25">C.Postal:</td><td colspan="2">{{ profesionales.postcode }}</td>
+                    <td class="tbl-td-25">Localidad:</td><td colspan="2">{{ profesionales.city }}</td> 
                 </tr>
                 <tr>
-                    <td>Provincia:</td><td>{{ profesionales.position }}</td>
-                    <td>País:</td><td>{{ profesionales.department }}</td> 
+                    <td>Provincia:</td><td colspan="2">{{ profesionales.province }}</td>
+                    <td>País:</td><td colspan="2">{{ profesionales.country }}</td> 
                 </tr>
                 <tr>
-                    <td>Tel.1:</td><td>{{ profesionales.phone1 }}</td>
-                    <td>Email:</td><td>{{ profesionales.email }}</td>
+                    <td>Tel.1:</td><td colspan="2">{{ profesionales.phone1 }}</td>
+                    <td>Email:</td><td colspan="2">{{ profesionales.email }}</td>
                 </tr>
                 <tr>
-                    <td>Tel.2:</td><td colspan="3">{{ profesionales.phone2 }}</td>
+                    <td>Tel.2:</td><td colspan="5">{{ profesionales.phone2 }}</td>
                 </tr>
                 <tr>
-                    <th class="tbl-th" colspan="4">Notas</th>
+                    <th class="tbl-th" colspan="6">Notas</th>
                 </tr>
                 <tr>
-                    <td colspan="4">{{ profesionales.notes }}
+                    <td colspan="6">{{ profesionales.notes }}
                 </tr>
             </table>
             

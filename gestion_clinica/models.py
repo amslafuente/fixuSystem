@@ -69,7 +69,7 @@ class Profesional(models.Model):
         return self.fullname
 
     def get_absolute_url(self):
-        return reverse('id-profesionales', args=[self.oto_Profesional])
+        return reverse('id-profesionales', args=[self.oto_Profesional.id])
 
     class Meta:
         verbose_name = 'Profesional'

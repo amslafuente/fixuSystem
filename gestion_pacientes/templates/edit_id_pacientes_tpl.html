@@ -41,7 +41,7 @@
 	    		        <th class="tbl-th" colspan="6">Datos personales</th>
                     </tr>
                     <tr>
-						<td class="tbl-td-10">DNI:</td><td>{{ form.dni }}</td>
+						<td class="tbl-td-10">DNI:</td><td>{{ form.dni.as_widget }}</td>
         			    <td class="tbl-td-10">Nombre:</td><td>{{ form.name.as_widget }}</td>
             		    <td class="tbl-td-10">Apellidos:</td><td>{{ form.familyname.as_widget }}</td>
                     </tr>

@@ -9,7 +9,7 @@ class create_pacientes_form(forms.ModelForm):
 
     class Meta:
         model = Paciente
-        exclude = ['firstupdated', 'lastupdated', 'modifiedby']
+        exclude = ['firstupdated', 'lastupdated']
         widgets = {
             'name': TextInput(attrs={'style': 'width: 140px;'}),
             'familyname': TextInput(attrs={'style': 'width: 160px'}),
@@ -53,11 +53,11 @@ class edit_id_pacientes_form(forms.ModelForm):
 
     class Meta:
         model = Paciente
-        exclude = ['idPaciente', 'firstupdated', 'lastupdated']
+        exclude = ['firstupdated', 'lastupdated']
         widgets = {
             'name': TextInput(attrs={'style': 'width: 140px;'}),
             'familyname': TextInput(attrs={'style': 'width: 160px'}),
-            'dni': TextInput(attrs={'style': 'width: 120px;', 'readonly': True}),
+            'dni': TextInput(attrs={'style': 'width: 120px;'}),
             'birthdate': DateInput(attrs={'style': 'width: 120px'}),
             'sex': Select(attrs={'style': 'width: 140px'}),
             'job': TextInput(attrs={'style': 'width: 160px'}),
