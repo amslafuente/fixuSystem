@@ -34,7 +34,7 @@
 
                     <!-- Errores en el form -->
                     {% include 'errors_profesionales.html' %}
-
+                    {{ form.profesionales.as_p}}
                     <!-- Datos de acceso a django -->
 		   	        <tr>
                         <th class="tbl-th" colspan="6">Roles de acceso al sistema</th>
@@ -63,7 +63,7 @@
 	    		        <th class="tbl-th" colspan="6">Datos form</th>
                     </tr>
 		   	        <tr>
-                        <td>Num. Colegiado/a:</td><td colspan="2">{{ form.numcolegiado.as_widget }}</td>
+                        <td>Colegiado/a:</td><td colspan="2">{{ form.numcolegiado.as_widget }}</td>
                         <td>NIF:</td><td colspan="2">{{ form.nif.as_widget }}</td> 
                     </tr>
                     <tr>

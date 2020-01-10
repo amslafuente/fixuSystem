@@ -1017,33 +1017,46 @@ class edit_profesionales_view(UpdateView):
             return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        
-        # Recupera el registro a editar
+
+        # Recupera el registro del Profesional a editar
         qs = Profesional.objects.select_related('oto_Profesional').filter(oto_Profesional__exact = self.kwargs['id'])
         return qs
 
     def get_context_data(self, **kwargs):
-        
-        # Pasa User al contexto
+
+        # Pasa User login, id y password al contexto
         ctx = super().get_context_data(**kwargs)
         profesional = ctx['profesionales']
-        
         user = getattr(profesional, 'oto_Profesional')
         ctx['user_login'] = user.username
         ctx['user_id'] = user.id
         ctx['user_password'] = user.password
-        ctx['user_issuperuser'] = user.is_superuser
-        ctx['user_isstaff'] = user.is_staff
-        ctx['user_isactive'] = user.is_active
         return ctx
+    
+    def get_initial(self):
+
+        initial = super().get_initial()
+        # Ponee los valores iniciales de los campos user.is_... del User
+        user = User.objects.get(id__exact = self.kwargs['id']) 
+        if user.is_superuser:
+            user.is_staff = True       
+        initial = {    
+            'user_issuperuser': user.is_superuser,
+            'user_isstaff': user.is_staff,            
+            'user_isactive': user.is_active,            
+        }
+        return initial
 
     def post(self, request, *args, **kwargs):
 
-        # Actualiza el User
+        # Actualiza el user.is_... y el user.email
         user = User.objects.get(id__exact = request.POST.get('user_id'))
         user.is_active = bool(request.POST.get('user_isactive')) 
         user.is_superuser = bool(request.POST.get('user_issuperuser'))
-        user.is_staff = bool(request.POST.get('user_isstaff'))
+        if user.is_superuser:
+            user.is_staff = True
+        else:
+            user.is_staff = bool(request.POST.get('user_isstaff'))
         user.email = request.POST.get('email')
         user.save()
         return super().post(request, *args, **kwargs)
