@@ -148,6 +148,7 @@
             <div class="div-botones">
                 <a href="{% url 'select-profesionales' %}"><input type="button" class="btn btn-info" value="Listado de profesionales"></a>
                 <a href="{% url 'edit-profesionales' profesionales.oto_Profesional.id %}"><input type="button" class="btn btn-info" value="Editar"></a>
+                <a href="{% url 'id-clave-profesionales' profesionales.oto_Profesional.id %}"><input type="button" class="btn btn-danger" value="Cambiar clave"></a>
                 <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
             </div>
 

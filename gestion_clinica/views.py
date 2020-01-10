@@ -700,8 +700,15 @@ class delete_proveedores_view(DeleteView):
 ##### ID DE PROFESIONALES #####
 
 @method_decorator(login_required, name='dispatch')
-class profesionales_clinica_view(TemplateView):    
+class profesionales_clinica_view(TemplateView):
+
     template_name = 'profesionales_clinica_tpl.html'
+
+    def get_context_data(self, **kwargs):
+
+        ctx = super().get_context_data(**kwargs)
+        ctx['id'] = self.request.user.id
+        return ctx
 
 ##### SELECCIONA Y MUESTRA PROFESIONALES #####
 
@@ -751,7 +758,7 @@ class listado_profesionales_view(ListView):
         ctx = dict()
         # Actua sobre la tabla de los usuarios User de django, y desde ahí accede a la tabla Profesional
         # Filtra el queryset de User y de Profesional
-        qs = User.objects.all().select_related('profesionales').order_by('username')
+        qs = User.objects.all().select_related('profesionales').order_by('profesionales__fullname')
         # Seleccion
         if kwargs['fullname'] != 'fullname':
             qs_user = Q(username__icontains = kwargs['fullname'])
@@ -777,6 +784,8 @@ class id_profesionales_view(DetailView):
         # Extrae el profesional en cuestion
         qs = Profesional.objects.select_related('oto_Profesional').filter(oto_Profesional__exact = self.kwargs['id'])
         return qs
+
+##### CREA Y EDITA PROFESIONALES #####
 
 @method_decorator(login_required, name='dispatch')
 class create_profesionales_view(View):
@@ -872,14 +881,15 @@ class complete_profesionales_view(View):
         # Si es superuser
         ctx = dict()
         # Recupera los datos de USER
-        user_prof = int(self.kwargs['id'])
-        user = User.objects.get(id__exact = user_prof)
+        user = User.objects.get(id__exact = self.kwargs['id'])
         ctx['user_id'] = user.id
+        ctx['user_login'] = user.username
+        ctx['user_password'] = user.password
 
         # Inicia la form con los datos del User. Los del Profesional están en blanco.
         initial_data = {
-            'user_login': user.username,
-            'user_password': user.password,
+            #'user_login': user.username,
+            #'user_password': user.password,
             'user_isactive': user.is_active,
             'user_issuperuser': user.is_superuser,
             'user_isstaff': user.is_staff,
@@ -898,45 +908,24 @@ class complete_profesionales_view(View):
 
         ctx = dict()        
         # Pasa el form POST y FILES
-        form = edit_profesionales_form(request.POST, request.FILES)
+        form = create_edit_profesionales_form(request.POST, request.FILES)
 
-        # Primero actualiza el User de django, para luego pasarlo a oto_Profesional
-        # Recupera campos del POST
-        user_id = request.POST.get('user_id')
-        user_isactive = request.POST.get('user_isactive', False)
-        user_issuperuser = request.POST.get('user_issuperuser', False)
-        user_isstaff = request.POST.get('user_isstaff', False)
-        user_email = request.POST.get('email', 'fixuSystem@email.usr')
-
-        # Extrae el User
-        user = User.objects.get(id__exact = user_id)
-
-        # Ajusta los Is... y el email del User
-        try:
-            if bool(user_isactive):
-                user.is_active = True
-            else:
-                user.is_active = False
-            
-            if bool(user_issuperuser):
-                user.is_superuser = True
+        # Valida el form
+        if form.is_valid():
+            # Extrae el User
+            user = User.objects.get(id__exact = self.kwargs['id'])
+            # Cambia los is_...
+            user.is_active = form.cleaned_data['user_isactive']
+            user.is_superuser = form.cleaned_data['user_issuperuser']
+            if user.is_superuser:
                 user.is_staff = True
             else:
-                user.is_superuser = False
-                user.is_staff = bool(user_isstaff)
-            user.email = user_email
-            
-            # Guarda User
+                user_isstaff = form.cleaned_data['user_isstaff']
+            # Cambia el email_...
+            user.email = form.cleaned_data['email']
             user.save()
-        except:
-            messages.warning(request, 'Error actualizando los datos de usuario/a')
-            
-            return HttpResponseRedirect(reverse('complete-profesionales', kwargs = {'id': user.id}))
 
-        # Si va bien valida el form
-        if form.is_valid():
-
-            # Construye los 19 datos del modelo Profesional e INSERT el registro
+            # Ahora construye los 19 datos del modelo Profesional e INSERT el registro
             profesional = Profesional(
                 oto_Profesional = user,
                 dni = form.cleaned_data['dni'],
@@ -991,13 +980,11 @@ class complete_profesionales_view(View):
                     os.rename(str(settings.MEDIA_ROOT + '/' + split_name), str(settings.MEDIA_ROOT +'/' + new_name))
             except:
                 messages.warning(request, 'Error procesando archivo de imagen')
-
             return HttpResponseRedirect(reverse('id-profesionales', kwargs={'id': user.id}))
 
         else:
             messages.warning(request, 'Error actualizando los datos del/de la profesional')
-
-            return HttpResponseRedirect(reverse('complete-profesionales', kwargs = {'id': user.id}))
+            return HttpResponseRedirect(reverse('complete-profesionales', kwargs = {'id': self.kwargs['id']}))
 
 @method_decorator(login_required, name='dispatch')
 class edit_profesionales_view(UpdateView):
@@ -1060,3 +1047,33 @@ class edit_profesionales_view(UpdateView):
         user.email = request.POST.get('email')
         user.save()
         return super().post(request, *args, **kwargs)
+
+##### CAMBIA CLAVE PROFESIONALES #####
+
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+
+@method_decorator(login_required, name='dispatch')
+class id_clave_profesionales_view(View):
+
+    def get(self, request, **kwargs):
+
+        ctx = dict()
+        form = PasswordChangeForm(request.user)
+        ctx['form'] = form
+        return render(request, 'id_clave_profesionales_tpl.html', ctx)
+
+    def post(self, request):
+
+        ctx = dict()
+        form = PasswordChangeForm(request.user, request.POST)
+        ctx['form'] = form
+
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return HttpResponseRedirect(reverse('id-profesionales', kwargs={'id': user.id}))
+        else:
+            messages.error(request, 'Please correct the error below.')
+        return render(request, 'id_clave_profesionales_tpl.html', ctx)

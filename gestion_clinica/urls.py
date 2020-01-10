@@ -54,10 +54,12 @@ urlpatterns = [
     # Profesionales
     # Seleccion de pacientes a listar
     path('profesionales/consultar/', views.select_profesionales_view.as_view(), name = 'select-profesionales'),
-    # Muestra, lista, crea, edita y borra
+    # Muestra, lista, crea, edita
     path('profesionales/<int:id>/', views.id_profesionales_view.as_view(), name = 'id-profesionales'),
     path('profesionales/listado/<str:fullname>/<str:position>/<str:department>/', views.listado_profesionales_view.as_view(), name = 'listado-profesionales'),
     path('profesionales/nuevo/', views.create_profesionales_view.as_view(), name = 'create-profesionales'),
     path('profesionales/completar/<int:id>/', views.complete_profesionales_view.as_view(), name = 'complete-profesionales'),
     path('profesionales/modificar/<int:id>/', views.edit_profesionales_view.as_view(), name = 'edit-profesionales'),
+    # Muestra, lista, crea, edita
+    path('profesionales/cambiar-clave/<int:id>/', views.id_clave_profesionales_view.as_view(), name = 'id-clave-profesionales'),
 ]

@@ -31,15 +31,21 @@
 
             <div class="div-clinica">
                 <div>
-                    <a href="{% url 'select-profesionales' %}">
-                        <button style="width: 320px;" type="button" class="btn btn-info btn-shadow">Relación de profesionales</button>
-                    </a>
-                </div>
-                <div>
                     <a href="{% url 'create-profesionales' %}">
                         <button style="width: 320px;" type="button" class="btn btn-info btn-shadow">Nuevo profesional</button>
                     </a>
                 </div>
+                <div>
+                    <a href="{% url 'id-profesionales' id %}">
+                        <button style="width: 320px;" type="button" class="btn btn-info btn-shadow">Datos del profesional en línea</button>
+                    </a>
+                </div>                                
+                <div>
+                    <a href="{% url 'select-profesionales' %}">
+                        <button style="width: 320px;" type="button" class="btn btn-info btn-shadow">Relación de profesionales</button>
+                    </a>
+                </div>
+
             </div>
 
         </section>

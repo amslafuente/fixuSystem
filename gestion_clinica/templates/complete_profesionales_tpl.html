@@ -30,7 +30,7 @@
                 <table class="tbl-forms table-striped tbl-general tbl-35">
 
                     <!-- Texto con el contenido -->
-                    <caption class="tbl-capt">Completar datos (Usuario/a: {{ form.user_login.value }} - id: {{ user_id }})</caption>
+                    <caption class="tbl-capt">Completar datos (Usuario/a: {{ user_login }} - id: {{ user_id }})</caption>
 
                     <!-- Errores en el form -->
                     {% include 'errors_profesionales.html' %}
@@ -113,9 +113,9 @@
     	    	<!-- Botones -->
                 <div class="div-botones">
                     <input type="submit" class="btn btn-info" value="Aceptar">
-                    <input type="hidden" name="user_login" value="{{ form.user_login.value }}">
+                    <input type="hidden" name="user_login" value="{{ user_login }}">
                     <input type="hidden" name="user_id" value="{{ user_id }}">
-                    {{ form.user_password }}
+                    <input type="hidden" name="user_password" value="{{ user_password }}">
           	    	<a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
                 </div>
 

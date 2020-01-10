@@ -123,9 +123,9 @@ class select_profesionales_form(forms.Form):
 class create_edit_profesionales_form(ModelForm):
 
     user_login = forms.CharField(label = 'Usuario:', max_length = 150, required = True)
-    user_login.widget = forms.widgets.TextInput(attrs={'style':'width: 175px'})
+    user_login.widget = forms.widgets.TextInput(attrs={'style':'width: 320px'})
     user_password = forms.CharField(label = 'Password:', max_length = 150, required = True)
-    user_password.widget = forms.widgets.PasswordInput(attrs={'style':'width: 175px'})
+    user_password.widget = forms.widgets.PasswordInput(attrs={'style':'width: 320px'})
     user_isactive = forms.BooleanField(label='Activo:', required = False, initial = True)    
     user_issuperuser = forms.BooleanField(label='Es superusuario:', required = False)    
     user_isstaff = forms.BooleanField(label='Es staff:', required = False)
