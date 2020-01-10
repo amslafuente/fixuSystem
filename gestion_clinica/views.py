@@ -136,6 +136,11 @@ class init_clinica_view(View):
 class error_privilegios_clinica_view(TemplateView):
     template_name = 'error_privilegios_clinica_tpl.html'
 
+# Error si el usuario NO ES SUPERUSUARIO
+@method_decorator(login_required, name='dispatch')
+class error_profesionales_clinica_view(TemplateView):
+    template_name = 'error_privilegios_profesionales_tpl.html'
+
 # Error si ya existe un registro y se pretende crear otro
 @method_decorator(login_required, name='dispatch')
 class error_init_clinica_view(TemplateView):
@@ -779,6 +784,16 @@ class id_profesionales_view(DetailView):
     pk_url_kwarg = 'id'
     template_name = 'id_profesionales_tpl.html'
 
+    def get(self, request, *args, **kwargs):
+
+        # Comrprueba si los datos de ese Profesional están completos
+        existe = Profesional.objects.filter(oto_Profesional__exact = self.kwargs['id']).exists()
+        if not existe:
+            messages.warning(self.request, 'Los datos de este/a profesional están incompletos')
+            return HttpResponseRedirect(reverse('complete-profesionales', kwargs = {'id': self.kwargs['id']}))
+        else:
+            return super().get(request, *args, **kwargs)
+
     def get_queryset(self):
 
         # Extrae el profesional en cuestion
@@ -794,7 +809,7 @@ class create_profesionales_view(View):
         
         # Si el usuario no es superuser no permite acceder a los datos
         if not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
+            return HttpResponseRedirect(reverse('error-privilegios-profesionales'))
             
         # Si esta autorizado asigna el form y sigue
         ctx = dict()
@@ -806,7 +821,7 @@ class create_profesionales_view(View):
 
         # Si el usuario no es superuser no permite acceder a los datos
         if not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
+            return HttpResponseRedirect(reverse('error-privilegios-profesionales'))
   
         ctx = dict()        
         # Pasa el fom al contexto
@@ -874,9 +889,11 @@ class complete_profesionales_view(View):
     
     def get(self, request, **kwargs):
 
-        # Si el usuario no es superuser no permite acceder a los datos
-        if not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
+        # Si el usuario no es superuser o no es propio usuario no permite acceder a los datos
+        if (not request.user.is_superuser and request.user.id != self.kwargs['id']):
+            return HttpResponseRedirect(reverse('error-privilegios-profesionales'))
+        else:
+            return super().get(request, *args, **kwargs)
         
         # Si es superuser
         ctx = dict()
@@ -902,9 +919,9 @@ class complete_profesionales_view(View):
 
     def post(self, request, **kwargs):
 
-        # Si el usuario no es superuser no permite acceder a los datos
-        if not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
+        # Si el usuario no es superuser o no es propio usuario no permite acceder a los datos
+        if (not request.user.is_superuser and request.user.id != self.kwargs['id']):
+            return HttpResponseRedirect(reverse('error-privilegios-profesionales'))
 
         ctx = dict()        
         # Pasa el form POST y FILES
@@ -997,9 +1014,9 @@ class edit_profesionales_view(UpdateView):
 
     def get(self, request, *args, **kwargs):
     
-        # Si el usuario no es superuser no permite acceder a los datos
-        if not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('error-privilegios-clinica'))
+        # Si el usuario no es superuser o no es propio usuario no permite acceder a los datos
+        if (not request.user.is_superuser and request.user.id != self.kwargs['id']):
+            return HttpResponseRedirect(reverse('error-privilegios-profesionales'))
         else:
             return super().get(request, *args, **kwargs)
 
@@ -1036,6 +1053,10 @@ class edit_profesionales_view(UpdateView):
 
     def post(self, request, *args, **kwargs):
 
+        # Si el usuario no es superuser o no es propio usuario no permite acceder a los datos
+        if (not request.user.is_superuser and request.user.id != self.kwargs['id']):
+            return HttpResponseRedirect(reverse('error-privilegios-profesionales'))
+
         # Actualiza el user.is_... y el user.email
         user = User.objects.get(id__exact = request.POST.get('user_id'))
         user.is_active = bool(request.POST.get('user_isactive')) 
@@ -1063,7 +1084,7 @@ class id_clave_profesionales_view(View):
         ctx['form'] = form
         return render(request, 'id_clave_profesionales_tpl.html', ctx)
 
-    def post(self, request):
+    def post(self, request, **kwargs):
 
         ctx = dict()
         form = PasswordChangeForm(request.user, request.POST)
@@ -1072,8 +1093,7 @@ class id_clave_profesionales_view(View):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)  # Important!
-            messages.success(request, 'Your password was successfully updated!')
-            return HttpResponseRedirect(reverse('id-profesionales', kwargs={'id': user.id}))
+            return HttpResponseRedirect(reverse('id-profesionales', kwargs = {'id': self.kwargs['id']}))
         else:
-            messages.error(request, 'Please correct the error below.')
+            messages.warning(request, 'Errores en el formulario')
         return render(request, 'id_clave_profesionales_tpl.html', ctx)

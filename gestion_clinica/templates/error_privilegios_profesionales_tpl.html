@@ -1,0 +1,44 @@
+<!-- ************************* -->
+<!--   init_error_usuario_tpl  -->
+<!-- ************************* -->
+
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+    	<title>fixuSystem - Fisioterapia - Gestión de clínica</title>
+
+    {% endblock %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+		<!-- Menú principal con imágenes -->
+        <section class="sect-home-page-menu">
+
+           	<!-- Informa de que no se pueden crear datos -->
+            <table class="tbl-forms table-striped tbl-general tbl-50">
+                <!-- Texto con el contenido -->
+                <caption class="tbl-capt">ERROR DE PRIVILEGIOS</caption>
+                <tr>
+    	        	<td class="tbl-td-centro">Este/a usuario/a no puede modificar datos de otros/as usuarios/as.</td>
+    		    </tr>
+            </table>
+
+		    <!-- Botones de acción -->
+            <div class="div-botones">
+                <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Volver"></a>
+            </div>
+
+        </section>
+
+    {% endblock %}

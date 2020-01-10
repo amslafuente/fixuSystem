@@ -19,6 +19,7 @@ urlpatterns = [
     path('error-iniciar/', views.error_init_clinica_view.as_view(), name = 'error-init-clinica'),
     # Error si trata de un usuario NO SUPERUSER
     path('error-privilegios/', views.error_privilegios_clinica_view.as_view(), name = 'error-privilegios-clinica'),
+    path('error-profesionales/', views.error_profesionales_clinica_view.as_view(), name = 'error-privilegios-profesionales'),
 
     ##### Instalaciones y servicios #####
 

@@ -1,5 +1,72 @@
-<form method="post">
-    {% csrf_token %}
-    {{ form }}
-    <button type="submit">Save changes</button>
-  </form>
+{% extends 'base.html' %}
+
+    <!-- **************** -->
+    <!--     Script JS    -->
+    <!-- **************** -->
+
+    {% block JS %}
+
+    {% endblock %}
+
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
+    {% block title %}
+
+    	<title>fixuSystem - Fisioterapia - Gestión de clínica</title>
+
+    {% endblock %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
+
+    {% block content %}
+
+        {% load static %}
+
+		<!-- Menú principal con imágenes -->
+        <section class="sect-home-page-menu">
+            
+            <!-- Formularion de nuevo equipamiento -->
+	        <form method="POST">
+            
+                {% csrf_token %}                 
+                
+                <!-- Tabla del profesional -->
+                <table class="tbl-forms table-striped tbl-general tbl-50">
+
+                    <!-- Texto con el contenido -->
+                    <caption class="tbl-capt">Modificar clave de acceso (Usuario/a: {{ user.username }})</caption>
+
+                        <!-- Errores en el form -->
+                        {{form.non_field_errors}}
+                        
+                        {% for field in form %}
+                            <tr>
+                                <td class="tbl-td">{{field.label_tag}}</th>
+                                <td>{{ field }}</td>
+                            </tr>
+                            {% if field.errors %}
+                                <tr>
+                                    <td class="tbl-td" colspan="2">
+                                        {{ field.errors }}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                               
+                </table>
+                
+                <!-- Botones -->
+                <div class="div-botones">
+                    <input type="submit" class="btn btn-info" value="Aceptar cambios">
+			        <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Volver"></a>
+                </div>
+
+            </form>
+  
+        </section>
+
+    {% endblock %}
