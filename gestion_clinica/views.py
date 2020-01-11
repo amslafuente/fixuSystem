@@ -141,6 +141,11 @@ class error_privilegios_clinica_view(TemplateView):
 class error_profesionales_clinica_view(TemplateView):
     template_name = 'error_privilegios_profesionales_tpl.html'
 
+# Error si el usuario ES ROOT
+@method_decorator(login_required, name='dispatch')
+class error_root_clinica_view(TemplateView):
+    template_name = 'error_root_tpl.html'
+
 # Error si ya existe un registro y se pretende crear otro
 @method_decorator(login_required, name='dispatch')
 class error_init_clinica_view(TemplateView):
@@ -763,7 +768,8 @@ class listado_profesionales_view(ListView):
         ctx = dict()
         # Actua sobre la tabla de los usuarios User de django, y desde ahí accede a la tabla Profesional
         # Filtra el queryset de User y de Profesional
-        qs = User.objects.all().select_related('profesionales').order_by('profesionales__fullname')
+        # EXCLUYE al usuario ROOT por consistencia con los sistemas unix
+        qs = User.objects.all().select_related('profesionales').exclude(username__iexact = 'root').order_by('profesionales__fullname')
         # Seleccion
         if kwargs['fullname'] != 'fullname':
             qs_user = Q(username__icontains = kwargs['fullname'])
@@ -786,7 +792,7 @@ class id_profesionales_view(DetailView):
 
     def get(self, request, *args, **kwargs):
 
-        # Comrprueba si los datos de ese Profesional están completos
+        # Comprueba si los datos de ese Profesional están completos (si no existe no lo están)
         existe = Profesional.objects.filter(oto_Profesional__exact = self.kwargs['id']).exists()
         if not existe:
             messages.warning(self.request, 'Los datos de este/a profesional están incompletos')
@@ -890,23 +896,24 @@ class complete_profesionales_view(View):
     def get(self, request, **kwargs):
 
         # Si el usuario no es superuser o no es propio usuario no permite acceder a los datos
-        if (not request.user.is_superuser and request.user.id != self.kwargs['id']):
+        if (not request.user.is_superuser) and (request.user.id != self.kwargs['id']):
             return HttpResponseRedirect(reverse('error-privilegios-profesionales'))
-        else:
-            return super().get(request, *args, **kwargs)
         
         # Si es superuser
         ctx = dict()
         # Recupera los datos de USER
-        user = User.objects.get(id__exact = self.kwargs['id'])
+        user = User.objects.get(id__exact = self.kwargs['id'])  
+        
+        # Si el usuario es ROOT no se toca, por consistencia con el usuario de unix
+        if user.username.upper() == 'ROOT':
+            return HttpResponseRedirect(reverse('error-root'))     
+        # Si no es root continua
         ctx['user_id'] = user.id
         ctx['user_login'] = user.username
         ctx['user_password'] = user.password
 
         # Inicia la form con los datos del User. Los del Profesional están en blanco.
         initial_data = {
-            #'user_login': user.username,
-            #'user_password': user.password,
             'user_isactive': user.is_active,
             'user_issuperuser': user.is_superuser,
             'user_isstaff': user.is_staff,
@@ -920,7 +927,7 @@ class complete_profesionales_view(View):
     def post(self, request, **kwargs):
 
         # Si el usuario no es superuser o no es propio usuario no permite acceder a los datos
-        if (not request.user.is_superuser and request.user.id != self.kwargs['id']):
+        if (not request.user.is_superuser) and (request.user.id != self.kwargs['id']):
             return HttpResponseRedirect(reverse('error-privilegios-profesionales'))
 
         ctx = dict()        
@@ -1015,7 +1022,7 @@ class edit_profesionales_view(UpdateView):
     def get(self, request, *args, **kwargs):
     
         # Si el usuario no es superuser o no es propio usuario no permite acceder a los datos
-        if (not request.user.is_superuser and request.user.id != self.kwargs['id']):
+        if (not request.user.is_superuser) and (request.user.id != self.kwargs['id']):
             return HttpResponseRedirect(reverse('error-privilegios-profesionales'))
         else:
             return super().get(request, *args, **kwargs)
@@ -1054,7 +1061,7 @@ class edit_profesionales_view(UpdateView):
     def post(self, request, *args, **kwargs):
 
         # Si el usuario no es superuser o no es propio usuario no permite acceder a los datos
-        if (not request.user.is_superuser and request.user.id != self.kwargs['id']):
+        if (not request.user.is_superuser) and (request.user.id != self.kwargs['id']):
             return HttpResponseRedirect(reverse('error-privilegios-profesionales'))
 
         # Actualiza el user.is_... y el user.email

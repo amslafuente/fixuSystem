@@ -26,7 +26,7 @@
         	{% if clinica %}
 
            		<!-- Tabla del clinica -->
-                <table class="tbl-general tbl-forms tbl-70 table-striped">
+                <table class="tbl-forms table-striped tbl-general tbl-70">
 
                     <!-- Texto con el contenido -->
                     <caption class="tbl-capt">EMPRESA <br/> {{ clinica.clinicname }}</caption>
@@ -46,7 +46,7 @@
                 </table>
 
                 <!-- Direccion -->
-                <table class="tbl-general tbl-forms tbl-70 table-striped">
+                <table class="tbl-forms table-striped tbl-general tbl-70">
 
                     <caption class="tbl-capt">Dirección</caption>
 
@@ -65,7 +65,7 @@
                 </table>
 
                 <!-- Datos de contacto -->
-                <table class="tbl-general tbl-forms tbl-70 table-striped">
+                <table class="tbl-forms table-striped tbl-general tbl-70">
 
                     <caption class="tbl-capt">Datos de contacto</caption>
 
@@ -92,7 +92,7 @@
     		{% else %}
 
            		<!-- Informa de que no existen datos -->
-                <table class="tbl-general tbl-forms tbl-40 table-striped">
+                <table class="tbl-forms table-striped tbl-general tbl-40">
                     <!-- Texto con el contenido -->
                     <caption class="tbl-capt">SIN DATOS DE LA CLINICA</caption>
                     <tr>
@@ -103,7 +103,7 @@
 		        <!-- Botones de acción -->
                 <div class="div-botones">
                     <a href="{% url 'init-clinica' %}"><input type="button" class="btn btn-info" value="Si"></a>
-                    <a href="{% url 'home-page' %}"><input type="button" class="btn btn-info" value="No"></a>
+                    <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="No"></a>
                 </div>
 
             {% endif %}

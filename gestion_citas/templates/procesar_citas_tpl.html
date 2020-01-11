@@ -30,7 +30,7 @@
                 <div>
                     <a href="{% url 'recordatorios-citas' %}">
                         <button style="width: 480px;" type="button" class="btn btn-info btn-shadow">
-                            Recordatorio de citas<br/>(Ultima vez: {{ last_notif }} h.)<br/>
+                            Enviar recordatorio de citas<br/>(Ultima vez: {{ last_notif }})<br/>
                             {% if with_errors %}
                                 <span class="grid-smalltxt not-avail">CON ERRORES</span>
                             {% endif %}                        
@@ -39,7 +39,7 @@
                 <div>
                     <a href="{% url 'pasadas-canceladas-citas' %}">
                         <button style="width: 480px;" type="button" class="btn btn-info btn-shadow">
-                            Procesar citas pasadas o canceladas<br/>(Ultima vez: {{ last_proc }} h.)
+                            Borrar citas pasadas o canceladas<br/>(Ultima vez: {{ last_proc }})
                         </button>
                     </a>
                 </div>

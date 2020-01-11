@@ -20,7 +20,8 @@ urlpatterns = [
     # Error si trata de un usuario NO SUPERUSER
     path('error-privilegios/', views.error_privilegios_clinica_view.as_view(), name = 'error-privilegios-clinica'),
     path('error-profesionales/', views.error_profesionales_clinica_view.as_view(), name = 'error-privilegios-profesionales'),
-
+    path('error-root/', views.error_root_clinica_view.as_view(), name = 'error-root'),
+    
     ##### Instalaciones y servicios #####
 
     # Menu Instalaciones y servicios

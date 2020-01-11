@@ -123,9 +123,9 @@ class select_profesionales_form(forms.Form):
 class create_edit_profesionales_form(ModelForm):
 
     user_login = forms.CharField(label = 'Usuario:', max_length = 150, required = True)
-    user_login.widget = forms.widgets.TextInput(attrs={'style':'width: 320px'})
+    user_login.widget = forms.widgets.TextInput(attrs={'style':'width: 300px'})
     user_password = forms.CharField(label = 'Password:', max_length = 150, required = True)
-    user_password.widget = forms.widgets.PasswordInput(attrs={'style':'width: 320px'})
+    user_password.widget = forms.widgets.PasswordInput(attrs={'style':'width: 300px'})
     user_isactive = forms.BooleanField(label='Activo:', required = False, initial = True)    
     user_issuperuser = forms.BooleanField(label='Es superusuario:', required = False)    
     user_isstaff = forms.BooleanField(label='Es staff:', required = False)
@@ -140,7 +140,7 @@ class create_edit_profesionales_form(ModelForm):
             'nif': TextInput(attrs={'style': 'width: 175px'}),
             'position': TextInput(attrs={'style': 'width: 175px'}),
             'department': TextInput(attrs={'style': 'width: 175px'}),
-            'fulladdress': TextInput(attrs={'style': 'width: 514px'}),
+            'fulladdress': TextInput(attrs={'style': 'width: 504px'}),
             'postcode': NumberInput(attrs={'style': 'width: 175px', 'min': 0, 'max': 99999}),
             'city': TextInput(attrs={'style': 'width: 175px'}),
             'province': TextInput(attrs={'style': 'width: 175px'}),

@@ -64,13 +64,13 @@
                     </tr>
                     <tr>
         			    <td class="tbl-td-der">Usuario/a:</td><td colspan="4">{{ form.user_login.as_widget }}</td>
-        			    <td>{{ form.user_issuperuser.as_widget }} Superusuario/a</td>                    </tr>
+        			    <td>{{ form.user_issuperuser.as_widget }} Superusuario/a</td>                    
                     <tr>
                         <td class="tbl-td-der">Clave:</td><td colspan="4">{{ form.user_password.as_widget }}</td>
                         <td>{{ form.user_isstaff.as_widget }} Administrador/a</td>
                     </tr>
                     <tr>
-                        <td class="tbl-td-der">Repetir clave:</td><td colspan="4"><input type="password" onblur="compare_Psswd()" name="password_rep" style="width: 320px" required id="id_password_rep"></td>
+                        <td class="tbl-td-der">Repetir clave:</td><td colspan="4"><input type="password" onblur="compare_Psswd()" name="password_rep" style="width: 300px" required id="id_password_rep"></td>
                         <td>{{ form.user_isactive.as_widget }} Activo/a</td>                        
                     </tr>
                     <tr>
