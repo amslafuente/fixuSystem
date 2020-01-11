@@ -40,9 +40,9 @@
 	    		        <th class="tbl-th" colspan="6">Roles de acceso al sistema</th>
                     </tr>
                     <tr>
-        			    <td class="tbl-td-10" colspan="2">Superusuario/a: {{ form.user_issuperuser.as_widget }}</td>
-        			    <td class="tbl-td-10" colspan="2">Administrador/a: {{ form.user_isstaff.as_widget }}</td>
-                        <td class="tbl-td-10" colspan="2">Está activo: {{ form.user_isactive.as_widget }}</td>
+        			    <td class="tbl-td-10" colspan="2">{{ form.user_issuperuser.as_widget }} Superusuario/a</td>
+        			    <td class="tbl-td-10" colspan="2">{{ form.user_isstaff.as_widget }} Administrador/a</td>
+                        <td class="tbl-td-10" colspan="2">{{ form.user_isactive.as_widget }} Está activo</td>
                     </tr>
                     <tr>
                         <td  class="tbl-td-centro grid-smalltxt grid-info2-color" colspan="6">
@@ -56,44 +56,44 @@
 	    		        <th class="tbl-th" colspan="6">Datos personales</th>
                     </tr>
                     <tr>
-                        <td>Nombre:</td><td colspan="2">{{ form.fullname.as_widget }}</td>
-                        <td>DNI:</td><td colspan="2">{{ form.dni.as_widget }}</td>
+                        <td class="tbl-td-der">Nombre:</td><td colspan="2">{{ form.fullname.as_widget }}</td>
+                        <td class="tbl-td-der">DNI:</td><td colspan="2">{{ form.dni.as_widget }}</td>
                     </tr>
                     <tr>
 	    		        <th class="tbl-th" colspan="6">Datos form</th>
                     </tr>
 		   	        <tr>
-                        <td>Num. Colegiado/a:</td><td colspan="2">{{ form.numcolegiado.as_widget }}</td>
-                        <td>NIF:</td><td colspan="2">{{ form.nif.as_widget }}</td> 
+                        <td class="tbl-td-der">Colegiado/a:</td><td colspan="2">{{ form.numcolegiado.as_widget }}</td>
+                        <td class="tbl-td-der">NIF:</td><td colspan="2">{{ form.nif.as_widget }}</td> 
                     </tr>
                     <tr>
-                        <td>Cargo:</td><td colspan="2">{{ form.position.as_widget }}</td>
-                        <td>Departamento:</td><td colspan="2">{{ form.department.as_widget }}</td> 
+                        <td class="tbl-td-der">Cargo:</td><td colspan="2">{{ form.position.as_widget }}</td>
+                        <td class="tbl-td-der">Departamento:</td><td colspan="2">{{ form.department.as_widget }}</td> 
                     </tr>
                     <tr>
-                        <td colspan="3">De alta:&nbsp;&nbsp;&nbsp;{{ form.currentavail.as_widget }}</td>
-                        <td colspan="3">Empleado/a:&nbsp;&nbsp;&nbsp;{{ form.currentstaff.as_widget }}</td> 
+                        <td colspan="3">&nbsp;&nbsp;&nbsp;{{ form.currentavail.as_widget }} De alta</td>
+                        <td colspan="3">&nbsp;&nbsp;&nbsp;{{ form.currentstaff.as_widget }} Es empleado/a</td> 
                     </tr>
                     <tr>
 	    		        <th class="tbl-th" colspan="6">Datos de contacto</th>
                     </tr>
                     <tr>
-                        <td>Dirección:</td><td colspan="5">{{ form.fulladdress.as_widget }}</td>
+                        <td class="tbl-td-der">Dirección:</td><td colspan="5">{{ form.fulladdress.as_widget }}</td>
                     </tr>
                     <tr>
-                        <td>C.Postal:</td><td colspan="2">{{ form.postcode.as_widget }}</td>
-                        <td>Localidad:</td><td colspan="2">{{ form.city.as_widget }}</td> 
+                        <td class="tbl-td-der">C.Postal:</td><td colspan="2">{{ form.postcode.as_widget }}</td>
+                        <td class="tbl-td-der">Localidad:</td><td colspan="2">{{ form.city.as_widget }}</td> 
                     </tr>
                     <tr>
-                        <td>Provincia:</td><td colspan="2">{{ form.province.as_widget }}</td>
-                        <td>País:</td><td colspan="2">{{ form.country.as_widget }}</td> 
+                        <td class="tbl-td-der">Provincia:</td><td colspan="2">{{ form.province.as_widget }}</td>
+                        <td class="tbl-td-der">País:</td><td colspan="2">{{ form.country.as_widget }}</td> 
                     </tr>
                     <tr>
-                        <td>Tel.1:</td><td colspan="2">{{ form.phone1.as_widget }}</td>
-                        <td>Email:</td><td colspan="2">{{ form.email.as_widget }}</td>
+                        <td class="tbl-td-der">Tel.1:</td><td colspan="2">{{ form.phone1.as_widget }}</td>
+                        <td class="tbl-td-der">Email:</td><td colspan="2">{{ form.email.as_widget }}</td>
                     </tr>
                     <tr>
-                        <td>Tel.2:</td><td colspan="5">{{ form.phone2.as_widget }}</td>
+                        <td class="tbl-td-der">Tel.2:</td><td colspan="5">{{ form.phone2.as_widget }}</td>
                     </tr>
                     <tr>
 	    		        <th class="tbl-th" colspan="6">Fotografía</th>
