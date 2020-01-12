@@ -18,6 +18,68 @@
 
         {% load static %}
 
-        {{ form.as_table }}
+        <section class="sect-home-page-menu">
+
+            <!-- Tabla mostrando pacientes -->
+            <table class="tbl-general tbl-forms tbl-70 table-striped">
+    
+                <!-- Texto con el contenido -->
+                <caption class="tbl-capt">Listado de pacientes con citas pendientes
+                    {% if is_paginated %}
+                        <span> - Página {{ page_obj.number }} de {{ paginator.num_pages }}</span>
+                    {% endif %}
+                </caption>
+    
+                <!-- Cabecera de la tabla -->
+                <tr>
+                    <th class="tbl-th-izq">Nombre</th>
+                    <th class="tbl-th-izq">Cita</th>
+                    <th class="tbl-th-izq">Acción</th>  
+                </tr>
+
+                <!-- NO devuelve ningun paciente avisa y cierra la tabla -->
+                {% if not citas %}
+                    <tr>
+                        <th colspan="3" class="field-errors">
+                            <span>Ningún paciente con esos datos</span>
+                        </th>
+                    </tr>
+    
+                <!-- SI devuelve algun paciente muestra y cierra la tabla -->
+                {% else %}
+    
+                    <!-- Devuelve los pacientes en un querySet llamada pacientes -->
+                    {% for cita in citas %}
+                        <tr>
+                            {% if head_order == 'A' %}
+                                <td>{{ cita.fk_Paciente.familyname }}, {{ cita.fk_Paciente.name }}</td>
+                            {% else %}
+                               <td>{{ cita.fk_Paciente.name }} {{ cita.fk_Paciente.familyname }}</td>
+                            {% endif %}
+                            <td>
+                                {{ cita.appdate|date:'d/b/Y' }} a las {{cita.apptime|date:'H:i'}}
+                            </td>
+                            <!-- Enlaces a crear consulta desde cita -->
+                            <td>
+                                <div class="div-fechas">
+                                    <a href="{% url 'create-desdecita-consultas' cita.idCita %}"><input type="button" class="btn btn-info btn-sm" value="Crear consulta"></a>
+                                </div>
+                            </td>
+                       </tr>
+                    {% endfor %}
+    
+                  {% endif %}
+    
+            </table>
+    
+            <!-- Incluye PAGINADOR-->
+            {% include 'paginador.html' %}
+    
+            <!-- Botones de acción -->
+            <div class="div-botones">
+                <a href="{% url 'menu-consultas' %}"><input type="button" class="btn btn-info" value="Menu de consultas"></a>
+            </div>
+    
+        </section>
 
     {% endblock %}
