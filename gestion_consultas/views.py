@@ -68,27 +68,11 @@ class select_desdepaciente_consultas_view(View):
         elif kwarg_orderby == 'P':
             qs = qs.order_by('fk_Paciente__idPaciente', 'appdate', 'apptime')
         else:
-<<<<<<< HEAD
-            pacientes = pacientes.order_by('familyname')
-
-        # Para cada paciente seleccionado busca sus citas PENDIENTES, no pasadas
-        listacitas = list()
-        for paciente in pacientes:
-            citas = Cita.objects.filter(fk_Paciente__idPaciente = paciente.idPaciente).exclude(appdate__lt = datetime.date.today()).exclude(status__icontains = 'Pasa a consulta')
-            for cita in citas:
-                citaspaciente = (paciente.idPaciente, paciente.familyname, paciente.name, cita.idCita, cita.appdate)
-                listacitas.append(citaspaciente)                
-        ctx['listacitas'] = listacitas
-            
-=======
             qs = qs.order_by('fk_Paciente__familyname', 'appdate', 'apptime')
         
         ctx['citas'] = qs
         ctx['head_order'] = kwarg_orderby
-
-        print(ctx['citas'])
               
->>>>>>> db8d97d11f7989a4e4d86eaaf3e40b973ffde4c4
         return render(request, 'select_desdepaciente_consultas_tpl.html', ctx)
 
 
