@@ -29,6 +29,13 @@
             <table class="tbl-forms table-striped tbl-general tbl-50">
                 <!-- Texto con el contenido -->
                 <caption class="tbl-capt">ERROR DE USUARIO</caption>
+                
+                <!-- Si hay mensajes pendientes -->
+                <!-- Este bucle borra los messages pendientes para que no aparezcan más tarde -->
+                {% for message in messages %}
+                <tr><td class="tbl-td-centro">Usuario ROOT</td></tr>
+                {% endfor %}
+
                 <tr>
     	        	<td class="tbl-td-centro">ROOT no es un usuario de fixuSystem.<br/>Este usuario solo es accesible desde la aplicación de administración.</td>
     		    </tr>

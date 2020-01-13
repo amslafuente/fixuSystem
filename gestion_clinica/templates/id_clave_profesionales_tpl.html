@@ -1,14 +1,6 @@
 {% extends 'base.html' %}
 
     <!-- **************** -->
-    <!--     Script JS    -->
-    <!-- **************** -->
-
-    {% block JS %}
-
-    {% endblock %}
-
-    <!-- **************** -->
     <!-- Título de página -->
     <!-- **************** -->
 
@@ -38,25 +30,42 @@
                 <table class="tbl-forms table-striped tbl-general tbl-50">
 
                     <!-- Texto con el contenido -->
-                    <caption class="tbl-capt">Modificar clave de acceso (Usuario/a: {{ user.username }})</caption>
+                    <caption class="tbl-capt">Modificar clave de usuario/a</caption>
 
-                        <!-- Errores en el form -->
-                        {{form.non_field_errors}}
+                        <!-- Cabecera -->
+                        <tr>
+                            <th class="tbl-th" colspan="2">
+                                Usuario/a: {{ form.user.username }} (ID: {{ form.user.id }})
+                            </th>
+                        </tr>
                         
+                        <!-- Campos del formulario -->                       
                         {% for field in form %}
-                            <tr>
-                                <td class="tbl-td">{{field.label_tag}}</th>
-                                <td>{{ field }}</td>
-                            </tr>
-                            {% if field.errors %}
-                                <tr>
-                                    <td class="tbl-td" colspan="2">
-                                        {{ field.errors }}
-                                    </td>
-                                </tr>
-                            {% endif %}
+                        <tr>
+                            <td class="tbl-td">{{ field.label_tag }}</td>
+                            <td>{{ field }}</td>
+                        </tr>
                         {% endfor %}
-                               
+
+                        <!-- Si hay mensajes pendientes -->
+                        {% for message in messages %}
+                        <tr>
+                            <th colspan="2" class ="field-errors">
+                                {{ message }}
+                            </th>
+                        </tr>
+                        {% endfor %}
+
+                        {% if form.errors %}
+                        <tr>
+                            <th colspan="2" class ="field-errors">
+                                {% for key, value in form.errors.items %} 
+                                    {{ value }}                            
+                                {% endfor %}
+                            </th>
+                        </tr>
+                        {% endif %}
+      
                 </table>
                 
                 <!-- Botones -->

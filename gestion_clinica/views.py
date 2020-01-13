@@ -1086,20 +1086,33 @@ class id_clave_profesionales_view(View):
 
     def get(self, request, **kwargs):
 
-        ctx = dict()
-        form = PasswordChangeForm(request.user)
+        ctx = dict()        
+        # Si es superuser permite cambiar cualquier usuario
+        # Si no es superuser solo permite que se cambie a si mismo
+        if request.user.is_superuser:
+            user_ = User.objects.get(id__exact = self.kwargs['id'])
+        elif request.user.id == self.kwargs['id']:
+            user_ = User.objects.get(id__exact = request.user.id)                    
+        else:
+            return HttpResponseRedirect(reverse('error-privilegios-profesionales'))
+      
+        # Pasa en usuario
+        form = PasswordChangeForm(user_)
         ctx['form'] = form
         return render(request, 'id_clave_profesionales_tpl.html', ctx)
 
     def post(self, request, **kwargs):
 
         ctx = dict()
-        form = PasswordChangeForm(request.user, request.POST)
+        # Recupera el form, pero... OJO al usuario
+        # Este el el usuario cambiado, que puede ser diferente de request.user
+        user_ = User.objects.get(id__exact = self.kwargs['id'])
+        form = PasswordChangeForm(user_, request.POST) # Ese user NO es el correcto, hay que cogerlo de self.kwargs['id'])
         ctx['form'] = form
-
+        
         if form.is_valid():
-            user = form.save()
-            update_session_auth_hash(request, user)  # Important!
+            user_ = form.save()
+            update_session_auth_hash(request, user_)  # Importante!
             return HttpResponseRedirect(reverse('id-profesionales', kwargs = {'id': self.kwargs['id']}))
         else:
             messages.warning(request, 'Errores en el formulario')
