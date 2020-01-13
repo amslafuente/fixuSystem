@@ -13,8 +13,8 @@ class Consulta(models.Model):
     idConsulta = models.AutoField(primary_key = True, unique = True)
     # OneToOne de la cita
     oto_Cita = models.OneToOneField(Cita, on_delete = models.PROTECT, related_name = 'cita')
-    # OneToOne del paciente
-    oto_Paciente = models.OneToOneField(Paciente, on_delete = models.PROTECT, related_name = 'paciente')
+    # Foreignkey del paciente
+    fk_Paciente = models.ForeignKey(Paciente, on_delete = models.PROTECT, related_name = 'paciente')
     # Profesional que trató al paciente
     fk_Profesional = models.ForeignKey(Profesional, on_delete = models.PROTECT, related_name = 'profesional')
     # Campos normales

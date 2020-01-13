@@ -13,7 +13,7 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views import View
 from django.contrib import messages
-from .forms import select_paciente_consultas_form
+from gestion_pacientes.forms import select_pacientes_form
 
 
 ##### PROCESO DE CREACION DE CONSULTAS #####
@@ -27,46 +27,48 @@ class select_paciente_consultas_view(View):
 
         ctx = dict()
         # Limpia el form y lo añade al contexto
-        form = select_paciente_consultas_form()
+        form = select_pacientes_form()
         ctx['form'] = form
         return render(request, 'select_paciente_consultas_tpl.html', ctx)
+
+    # Se devuelve el form no por POST, sino por GET
+    # Ese GET pasa los parametros a select_desdepaciente_consultas_view 
 
 # Lista los pacientes seleccionados con sus citas pendientes, ara eleigir una cita
 @method_decorator(login_required, name='dispatch')
 class select_desdepaciente_consultas_view(View):
 
-    # POST
-    def post(self, request):
 
-        # En el POST se entrega la idCita
-        # Con esa idCita se crea la ficha de consulta nueva
-
-
-        pass
-
-    # GET
+    # GET: Recibe los parametros de select_paciente_consultas_view
     def get(self, request, **kwargs):
         
-        ctx = dict()
-        
-        # Seleciona los pacientes que cumplen las condiciones
+        ctx = dict()        
+        # Recupera el GET y seleciona los pacientes que cumplen las condiciones
         kwarg_dni = request.GET.get('dni', '')
         kwarg_name = request.GET.get('name', '')        
         kwarg_familyname = request.GET.get('familyname', '')
         kwarg_orderby = request.GET.get('orderby', 'A')
-
-        pacientes = Paciente.objects.all()
+        
+        # Todas las citas       
+        qs = Cita.objects.select_related('fk_Paciente').all()
+        # Ahora elige según en campo con seleccion
         if kwarg_dni != '':
-            pacientes = pacientes.filter(dni__icontains = kwarg_dni)
+            qs = qs.filter(fk_Paciente__dni__icontains = kwarg_dni)
         if kwarg_name != '':
-            pacientes = pacientes.filter(name__icontains = kwarg_name)
+            qs = qs.filter(fk_Paciente__name__icontains = kwarg_name)
         if kwarg_familyname != '':
-            pacientes = pacientes.filter(familyname__icontains = kwarg_familyname)
+            qs = qs.filter(fk_Paciente__familyname__icontains = kwarg_familyname)
+        # Ahora excluye las citas pasadas o que ya tienen ficha
+        qs = qs.exclude(appdate__lt = datetime.date.today()).exclude(status__icontains = 'Pasa a consulta')
+        # Ahora ordena
         if kwarg_orderby == 'N':
-            pacientes = pacientes.order_by('name')
+            qs = qs.order_by('fk_Paciente__name', 'appdate', 'apptime')
         elif kwarg_orderby == 'D':
-            pacientes = pacientes.order_by('dni')
+            qs = qs.order_by('fk_Paciente__dni', 'appdate', 'apptime')
+        elif kwarg_orderby == 'P':
+            qs = qs.order_by('fk_Paciente__idPaciente', 'appdate', 'apptime')
         else:
+<<<<<<< HEAD
             pacientes = pacientes.order_by('familyname')
 
         # Para cada paciente seleccionado busca sus citas PENDIENTES, no pasadas
@@ -78,7 +80,26 @@ class select_desdepaciente_consultas_view(View):
                 listacitas.append(citaspaciente)                
         ctx['listacitas'] = listacitas
             
+=======
+            qs = qs.order_by('fk_Paciente__familyname', 'appdate', 'apptime')
+        
+        ctx['citas'] = qs
+        ctx['head_order'] = kwarg_orderby
+
+        print(ctx['citas'])
+              
+>>>>>>> db8d97d11f7989a4e4d86eaaf3e40b973ffde4c4
         return render(request, 'select_desdepaciente_consultas_tpl.html', ctx)
+
+
+    # POST
+    def post(self, request):
+
+        # En el POST se entrega la idCita
+        # Con esa idCita se crea la ficha de consulta nueva
+
+
+        pass
 
 # Crea la ficha de consulta a partir de la cita selecionada
 class create_desdecita_consultas_view(View):
