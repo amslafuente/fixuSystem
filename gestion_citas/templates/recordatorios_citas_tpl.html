@@ -1,18 +1,10 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
 		<title>fixuSystem - Fisioterapia  - Gestión de citas</title>
 
     {% endblock title %}
-
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
 
     {% block JS %}
 
@@ -22,27 +14,26 @@
             // Informa de que se está procesando el correo
             document.getElementById('id_infoProc').innerHTML = "PROCESANDO NOTIFICACIONES...";
         }
-    
+
+        function hideButton() {
+            // Pone invisible el boton de notificar
+            document.getElementById('notifyButton').style.display = "none";
+        }
+
     </script> 
 
     {% endblock JS %}
-
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
 
     {% block content %}
 
         {% load static %}
 
-		<!-- Taba principal con imágenes -->
         <section class="sect-home-page-menu">
         
             <form method="GET">
     
                 <table class="tbl-forms tbl-general tbl-70">
 
-                    <!-- Texto con el contenido -->
                     <caption id="id_infoProc" class="tbl-capt">Número de citas pendientes de notificar</caption>
                 
                     <tr>
@@ -70,7 +61,7 @@
                 <!-- Botones de acción -->
                 <div class="div-botones">
                     {% if numregsemail > 0 or numregstelef > 0 %}
-                        <input onclick="infoProc()" type="submit" class="btn btn-danger" value="Notificar citas"/>
+                        <input onclick="infoProc()" id="notifyButton" type="submit" class="btn btn-danger" value="Notificar citas"/>
                         <input type="hidden" name="day" value="{{ form.day.value }}" />
                         <input type="hidden" name="untilday" value="{{ form.untilday.value }}" />
                     {% endif %}

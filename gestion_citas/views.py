@@ -793,8 +793,9 @@ class customNotifDias(forms.Form):
     
     day = fields.IntegerField(required = False)
     untilday = fields.BooleanField(required = False)
-    day.widget = widgets.NumberInput(attrs={'style': 'width: 50px', 'min': 1, 'max': 99})   
-  
+    day.widget = widgets.NumberInput(attrs={'style': 'width: 50px', 'min': 1, 'max': 99, 'onchange': 'hideButton()'})   
+    untilday.widget = widgets.CheckboxInput(attrs={'onclick': 'hideButton()'})
+
 @method_decorator(login_required, name='dispatch')
 class pasadas_canceladas_citas_view(View):
 
