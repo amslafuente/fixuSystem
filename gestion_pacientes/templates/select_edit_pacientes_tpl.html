@@ -12,26 +12,22 @@
 
             {% load static %}
 
-   	        <!-- Formularios de entrada de ID y DNI -->
             <table class="tbl-forms table-striped tbl-general tbl-35">
 
-                <!-- Texto con el contenido -->
-            	<caption class="tbl-capt">Criterios de edición</caption>
+            	<caption class="tbl-capt">Selección para edición</caption>
 
-                    <!-- Si hay mensajes pendientes -->
                     {% for message in messages %}
-                        <th colspan="2" style="text-align: center; font-family: serif; font-variant: small-caps; padding: 5px; color: white; background-color: rgb(224, 89, 36);">
+                        <th colspan="2" class ="field-errors">
                             {{ message }}
                         </th>
                     {% endfor %}
 
-                    <!-- Form ID y DNI -->
                     <tr>
                         <form method="POST">
             	    	    {% csrf_token %}
                             <td class="tbl-td">ID Paciente:</td>
                             <td>{{ form.idpac.as_widget }}</td>
-                            <td ><input type="submit" class="btn btn-info" value=" Buscar ID"></td>
+                            <td><input type="submit" class="btn btn-info" value=" Buscar ID"></td>
                         </form>
                     </tr>
                     <tr>

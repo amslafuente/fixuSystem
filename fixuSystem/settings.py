@@ -92,8 +92,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 ###############
-                'home_page.context_procs.get_prog_vers',
-                'home_page.context_procs.get_datos_clinica',
+                'fixuSystem.context_procs.get_prog_vers',
+                'fixuSystem.context_procs.get_datos_clinica',
 
             ],
         },

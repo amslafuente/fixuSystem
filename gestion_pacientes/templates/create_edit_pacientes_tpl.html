@@ -1,49 +1,36 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
     	<title>fixuSystem - Fisioterapia - Gestión de pacientes</title>
 
     {% endblock title %}
 
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
-
     {% block content %}
 
         {% load static %}
 
-		<!-- Menú principal con imágenes -->
         <section class="sect-home-page-menu">
 
-            <!-- Formularion de nuevo paciente -->
+            <!-- Formulario de paciente -->
             <!-- enctype="multipart/form-data se usa para poder subir imagenes binarias -->
 	        <form method="POST" enctype="multipart/form-data">
 
     	    	{% csrf_token %}
 
-              	<!-- Tabla del paciente -->
-				 <table class="tbl-forms table-striped tbl-general tbl-60">
+                <table class="tbl-forms table-striped tbl-general tbl-60">
 
-                    <!-- Texto con el contenido -->
-                    <caption class="tbl-capt">Editar paciente - ID: {{ idPaciente }}</caption>
+                    <caption class="tbl-capt">Ficha de Paciente</caption>
 
-                    <!-- Errores en el form -->
                     {% include 'errors_pacientes.html' %}
 
-                    <!-- Datos personales -->
 		   	        <tr>
 	    		        <th class="tbl-th" colspan="6">Datos personales</th>
                     </tr>
                     <tr>
 						<td class="tbl-td-10">DNI:</td><td>{{ form.dni.as_widget }}</td>
+            		    <td class="tbl-td-10">Apellidos:</td><td>{{ form.familyname.as_widget }}</td>						
         			    <td class="tbl-td-10">Nombre:</td><td>{{ form.name.as_widget }}</td>
-            		    <td class="tbl-td-10">Apellidos:</td><td>{{ form.familyname.as_widget }}</td>
                     </tr>
 	            	<tr>
 			    	    <td class="tbl-td-10">F.nacim.:</td><td>{{ form.birthdate.as_widget }}</td>
@@ -53,7 +40,6 @@
 	    		    <tr>
 		    		    <td class="tbl-td-10">Foto:</td><td colspan="5">{{ form.picturefile.as_widget }}</td>
    			    	</tr>
-                    <!-- Domicilio -->
 		       	    <tr>
 	    	    	    <th class="tbl-th" colspan="6">Domicilio</th>
                     </tr>
@@ -66,7 +52,6 @@
 		    	    	<td class="tbl-td-10">Provincia:</td><td>{{ form.province.as_widget }}</td>
  			    	    <td class="tbl-td-10">País:</td><td >{{ form.country.as_widget }}</td>
        				</tr>
-                    <!-- Datos de contacto -->
 	    	   	    <tr>
 	        		    <th class="tbl-th" colspan="6">Datos de contacto</th>
                     </tr>
@@ -76,10 +61,8 @@
                         <td class="tbl-td-10">E-mail:</td><td>{{ form.email.as_widget }}</td>
        				</tr>
         			<tr>
-	        			<td class="tbl-td-10" colspan="2">Notifica cita:&nbsp;&nbsp;&nbsp;{{ form.notifyappoint.as_widget }} ............</td>
-						<td class="tbl-td-10">por:</td><td colspan="2">{{ form.notifyvia.as_widget }}</td>
+	        			<td colspan="6">{{ form.notifyappoint.as_widget }}&nbsp;&nbsp;&nbsp;Desea recibir recordatorios de las citas pendientes por: {{ form.notifyvia.as_widget }}</td>
    			    	</tr>
-                    <!-- Notas -->
 	    	   	    <tr>
 	        		    <th class="tbl-th" colspan="6">Notas</th>
                     </tr>
@@ -89,7 +72,7 @@
 
                 </table>
 
-     	    	<!-- Botones -->
+    	    	<!-- Botones -->
                 <div class="div-botones">
 		        	<input type="submit" class="btn btn-info" value="Aceptar">
 	    	    	<a href="{% url 'menu-pacientes' %}"><input type="button" class="btn btn-info" value="Menu de pacientes"></a>

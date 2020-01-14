@@ -1,7 +1,13 @@
-from .models import Clinica
-from fixuSystem.progvars import PROG_VERS
+from gestion_clinica.models import Clinica
+from .progvars import PROG_VERS
 
-########## FUNCIONES GLOBALES ##########
+
+
+#########################################
+#                                       #
+#     PROCESADORES DE CONTEXTO          #
+#                                       #
+#########################################
 
 # Devuelve version del programa
 def get_prog_vers(request):

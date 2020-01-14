@@ -1,7 +1,7 @@
 <!-- Errores en el form -->
 {{ form.non_field_errors }}
 
-<!-- Error en dni -->
+<!-- Error en los campos del form  -->
 {% if form.dni.errors %}
 <tr>
     <th colspan="6" class ="field-errors">
@@ -12,7 +12,6 @@
 </tr>
 {% endif %}
 
-<!-- Error en birthdate -->
 {% if form.birthdate.errors %}
 <tr>
     <th colspan="6" class ="field-errors">
@@ -23,20 +22,9 @@
 </tr>
 {% endif %}
 
-<!-- Error en modifiedby -->
-{% if form.modifiedby.errors %}
-<tr>
-    <th colspan="6" class ="field-errors">
-        {% for error in form.modifiedby.errors %}
-            {{ form.modifiedby.label }} : {{ error }}
-        {% endfor %}
-    </th>
-</tr>
-{% endif %}
-
 <!-- Si hay mensajes pendientes -->
 {% for message in messages %}
-    <th colspan="6" style="text-align: center; font-family: serif; font-variant: small-caps; padding: 5px; color: white; background-color: rgb(224, 89, 36);">
+    <th colspan="6" class ="field-errors">
         {{ message }}
     </th>
 {% endfor %}

@@ -3,11 +3,18 @@ from django.urls import reverse
 from django.db.models.fields.related import ForeignKey
 from fixuSystem.progvars import modeVia, sexDef
 
-########## TABLA DE GESTION DE PACIENTES ##########
+
+
+#########################################
+#                                       #
+#           TABLA DE PACIENTES          #
+#                                       #
+#########################################
 
 class Paciente(models.Model):
 
     idPaciente = models.AutoField(primary_key = True, unique = True)
+
     dni = models.CharField("DNI", max_length = 9, db_index = True, unique = True)
     name = models.CharField("Nombre", max_length = 50)
     familyname = models.CharField("Apellidos", max_length = 100)
@@ -22,10 +29,10 @@ class Paciente(models.Model):
     phone1 = models.PositiveIntegerField("Teléfono principal")
     phone2 = models.PositiveIntegerField("Teléfono alternativo", null = True, blank = True)
     job = models.CharField("Ocupación", max_length = 20, blank = True)
-    notes = models.TextField("Notas", blank = True)
-    picturefile = models.ImageField("Archivo foto", upload_to = 'pacientes/',  null = True, blank = True)
     notifyappoint = models.BooleanField("Notificar citas", default = False)
     notifyvia = models.CharField("Notificar por", max_length = 10, choices = modeVia, default = 'Email')
+    picturefile = models.ImageField("Archivo foto", upload_to = 'pacientes/',  null = True, blank = True)
+    notes = models.TextField("Notas", blank = True)
     # Campos de control
     firstupdated = models.DateTimeField("Fecha registro", auto_now_add = True)
     lastupdated = models.DateTimeField("Fecha actualización", auto_now = True)

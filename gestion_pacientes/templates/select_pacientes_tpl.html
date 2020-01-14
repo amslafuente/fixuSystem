@@ -1,18 +1,10 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
 		<title>fixuSystem - Fisioterapia  - Gestión de pacientes</title>
 
     {% endblock title %}
-
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
 
     {% block content %}
 
@@ -20,20 +12,15 @@
 
         {% load static %}
 
-	    <!-- Formulario de entrada de criterios -->
         <form method="POST">
 
 		    {% csrf_token %}
 
             <table class="tbl-forms table-striped tbl-general tbl-35">
+        	    <caption class="tbl-capt">Selección para listado</caption>
 
-                <!-- Texto con el contenido -->
-        	    <caption class="tbl-capt">Selección de pacientes</caption>
-
-                <!-- Errores en el form -->
                 {% include 'errors_pacientes.html' %}
 
-                <!-- Campos para el contenido -->
                 <tr>
                     <td class="tbl-td">DNI:</td>
                     <td>{{ form.dni.as_widget }}</td>

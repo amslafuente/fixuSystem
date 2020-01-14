@@ -39,12 +39,12 @@ icalendar==4.0.3
 idna==2.8
 initial-setup==0.3.76
 kiwisolver==1.1.0
-langtable==0.0.48
+langtable==0.0.50
 libcomps==0.1.14
 lxml==4.4.0
 Mako==1.1.0.dev0
 MarkupSafe==1.1.1
-matplotlib==3.1.1
+matplotlib==3.1.2
 meson==0.52.0
 mod-wsgi==4.6.6
 mysql-client==0.0.1
