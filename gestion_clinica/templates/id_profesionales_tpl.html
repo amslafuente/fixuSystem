@@ -1,41 +1,21 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!--     Script JS    -->
-    <!-- **************** -->
-
-    {% block JS %}
-
-    {% endblock %}
-
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
     	<title>fixuSystem - Fisioterapia - Gestión de clínica</title>
 
-    {% endblock %}
-
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
+    {% endblock title %}
 
     {% block content %}
 
         {% load static %}
 
-		<!-- Menú principal con imágenes -->
         <section class="sect-home-page-menu">
 
-            <!-- Tabla del profesional -->
             <table class="tbl-forms table-striped tbl-general tbl-50">
 
-                <!-- Texto con el contenido -->
                 <caption class="tbl-capt">Usuario/a del sistema: {{ profesionales.oto_Profesional.username }} - id: {{ profesionales.oto_Profesional.id }}</caption>
             
-                <!-- Datos personales -->
                 <tr>
                     <th class="tbl-th" colspan="6">Datos personales y profesionales</th>
                 </tr>
@@ -142,6 +122,7 @@
                 <tr>
                     <td colspan="6">{{ profesionales.notes }}
                 </tr>
+                
             </table>
             
     	    <!-- Botones -->
@@ -154,4 +135,4 @@
 
         </section>
 
-    {% endblock %}
+    {% endblock content %}

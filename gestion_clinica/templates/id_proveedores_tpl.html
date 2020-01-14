@@ -1,41 +1,21 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!--     Script JS    -->
-    <!-- **************** -->
-
-    {% block JS %}
-
-    {% endblock %}
-
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
     	<title>fixuSystem - Fisioterapia - Gestión de clínica</title>
 
-    {% endblock %}
-
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
+    {% endblock title %}
 
     {% block content %}
 
         {% load static %}
 
-		<!-- Menú principal con imágenes -->
         <section class="sect-home-page-menu">
 
-            <!-- Tabla del consultorio -->
             <table class="tbl-forms table-striped tbl-general tbl-50">
 
-                <!-- Texto con el contenido -->
-                <caption class="tbl-capt">Proveedor: ID-{{ proveedores.idProveedor }}</caption>
+                <caption class="tbl-capt">Proveedor: {{ proveedores.fullname }}</caption>
 
-                    <!-- Datos personales -->
 		   	        <tr>
 	    		        <th class="tbl-th" colspan="2">Datos de la empresa</th>
                     </tr>
@@ -67,7 +47,7 @@
 	    		        <th class="tbl-th" colspan="4">Proveedor: {{ proveedores.isProveedor|yesno:"Si,No,Indet." }}</th>
                     </tr>
                     <tr>
-                        <td>Teléfono: {{ proveedores.phoneProveeor }}</td>
+                        <td>Teléfono: {{ proveedores.phoneProveedor }}</td>
                         <td>Correo electrónico: {{ proveedores.Proveedor }}</td>
                     </tr>
                     <tr>
@@ -94,10 +74,10 @@
 
     	    <!-- Botones -->
             <div class="div-botones">
-                <a href="{% url 'listado-proveedores' %}"><input type="button" class="btn btn-info" value="Aceptar"></a>
+                <a href="{% url 'listado-proveedores' %}"><input type="button" class="btn btn-info" value="Listado de proveedores"></a>
 	    	    <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
             </div>
 
         </section>
 
-    {% endblock %}
+    {% endblock content %}

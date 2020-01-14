@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+    {% block title %}
+
+    	<title>fixuSystem - Fisioterapia - Gestión de clínica</title>
+
+    {% endblock title %}
+
+    {% block content %}
+
+        {% load static %}
+
+        <section class="sect-home-page-menu">
+
+	        <form method="POST">
+
+    	    	{% csrf_token %}
+
+                <table class="tbl-forms table-striped tbl-general tbl-40">
+
+                    <caption class="tbl-capt">Consultorio/Dependencia</caption>
+
+                    {% include 'errors_consultorios.html' %}
+
+		   	        <tr>
+	    		        <th class="tbl-th" colspan="4">Descripción</th>
+                    </tr>
+                    <tr>
+        			    <td class="tbl-td-20 tbl-td-der">{{ form.officeID.label }}</td><td colspan="3">{{ form.officeID.as_widget }}</td>
+                    </tr>
+                    <tr>
+            		    <td class="tbl-td-20 tbl-td-der">{{ form.officeDesc.label }}</td><td colspan="3">{{ form.officeDesc.as_widget }}</td>
+                    </tr>
+		   	        <tr>
+	    		        <th class="tbl-th" colspan="4">Situación y disponibilidad</th>
+                    </tr>
+	            	<tr>
+		    		    <td class="tbl-td-20 tbl-td-der">{{ form.officeLocation.label }}</td><td colspan="3">{{ form.officeLocation.as_widget }}</td>
+                    </tr>
+                    <tr>
+			    	    <td class="tbl-td-20 tbl-td-der">{{ form.officeDepartment.label }}</td><td colspan="3">{{ form.officeDepartment.as_widget }}
+                    </tr>
+	    		    <tr>
+                        <td class="tbl-td-20 tbl-td-der">{{ form.officePhone.label }}</td><td>{{ form.officePhone.as_widget }}
+
+                        <td class="tbl-td-20 tbl-td-der">{{ form.officeIsavail.label }}</td><td>{{ form.officeIsavail.as_widget }}</td>
+
+       				</tr>
+		   	        <tr>
+	    		        <th class="tbl-th" colspan="4">Equipamiento y notas</th>
+                    </tr>
+                    <tr>
+                        <td class="tbl-td-20 tbl-td-der">{{ form.officeEquipment.label }}</td><td colspan="3">{{ form.officeEquipment.as_widget }}
+   			    	</tr>
+	    		    <tr>
+                        <td class="tbl-td-20 tbl-td-der">{{ form.officeNotes.label }}</td><td colspan="3">{{ form.officeNotes.as_widget }}
+   			    	</tr>
+
+        		</table>
+
+    	    	<!-- Botones -->
+                <div class="div-botones">
+		        	<input type="submit" class="btn btn-info" value="Aceptar">
+                    <a href="{% url 'listado-consultorios' %}"><input type="button" class="btn btn-info" value="Listado de consultorios"></a>
+	    	    	<a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
+                </div>
+
+	        </form>
+
+        </section>
+
+    {% endblock content %}

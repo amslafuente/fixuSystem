@@ -30,20 +30,14 @@
             <div class="div-cuerpo-menu">
                 <div>
                     <a href={% url 'select-paciente-consultas' %}>
-                        <img width="200" src="{% static "img/menu_cconsultas_crear.png" %}" alt="Crear ficha de consulta">
+                        <img width="200" src="{% static "img/menu_consultas_create.png" %}" alt="Crear ficha de consulta">
                     </a>
                 </div>
                 <div>
-                    <a href={% url 'id-consultas' 1 %}>
-                        <img width="200" src="{% static "img/menu_consultas_abrir.png" %}" alt="Abrir ficha de consulta">
+                    <a href={% url 'select-paciente-consultas' %}>
+                        <img width="200" src="{% static "img/menu_consultas_openedit.png" %}" alt="Abrir/Editar ficha de consulta">
                     </a>
                 </div>
-                <div>
-                    <a href={% url 'edit-consultas' 1 %}>
-                        <img width="200" src="{% static "img/menu_consultas_editar.png" %}" alt="Editar ficha de consulta">
-                    </a>
-                </div>
-            </div>
 
         </section>
 

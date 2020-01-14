@@ -1,70 +1,48 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!--     Script JS    -->
-    <!-- **************** -->
-
-    {% block JS %}
-
-
-    {% endblock JS %}
-
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
     	<title>fixuSystem - Fisioterapia - Gestión de clínica</title>
 
-    {% endblock %}
-
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
+    {% endblock title %}
 
     {% block content %}
 
         {% load static %}
 
-		<!-- Menú principal con imágenes -->
         <section class="sect-home-page-menu">
 
-            <!-- Formularion de nuevo equipamiento -->
+            <!-- Formulario de equipamiento -->
 	        <form method="POST">
 
     	    	{% csrf_token %}
 
-             	<!-- Tabla del equipamiento -->
-                <table class="tbl-forms table-striped tbl-general tbl-50">
+                <table class="tbl-forms table-striped tbl-general tbl-45">
 
-                    <!-- Texto con el contenido -->
-                    <caption class="tbl-capt">Nuevo equipamiento/material</caption>
+                    <caption class="tbl-capt">Equipamiento/Material</caption>
 
-                    <!-- Errores en el form -->
                     {% include 'errors_equipamiento.html' %}
 
-                    <!-- Datos personales -->
 		   	        <tr>
 	    		        <th class="tbl-th" colspan="4">Descripción</th>
                     </tr>
                     <tr>
-        			    <td class="tbl-td-40">Refer./Ident./Num. Serie:</td><td colspan="3">{{ form.equipID.as_widget }}</td>
+        			    <td class="tbl-td-40 tbl-td-der">{{ form.equipID.label }}</td><td colspan="3">{{ form.equipID.as_widget }}</td>
                     </tr>
                     <tr>
-            		    <td class="tbl-td-40">Descripción:</td><td colspan="3">{{ form.equipDesc.as_widget }}</td>
+            		    <td class="tbl-td-40 tbl-td-der">{{ form.equipDesc.label }}</td><td colspan="3">{{ form.equipDesc.as_widget }}</td>
                     </tr>
                     <tr>
-            		    <td class="tbl-td-40">Tipo/Clase:</td><td colspan="3">{{ form.equipType.as_widget }}</td>
+            		    <td class="tbl-td-40 tbl-td-der">{{ form.equipType.label }}</td><td colspan="3">{{ form.equipType.as_widget }}</td>
                     </tr>
 		   	        <tr>
 	    		        <th class="tbl-th" colspan="4">Situación</th>
                     </tr>
 	            	<tr>
-		    		    <td class="tbl-td-40">Situación (edif./planta):</td><td colspan="3">{{ form.fk_Location.as_widget }}</td>
+		    		    <td class="tbl-td-40 tbl-td-der">Localización</td><td colspan="3">{{ form.fk_Location.as_widget }}</td>
                     </tr>
                     <tr>
-			    	    <td class="tbl-td-40">Departamento:</td><td colspan="3">{{ form.equipDepartment.as_widget }}
+			    	    <td class="tbl-td-40 tbl-td-der">{{ form.equipDepartment.label }}</td><td colspan="3">{{ form.equipDepartment.as_widget }}
                     </tr>
                     <tr>
 	    		        <th class="tbl-th" colspan="4">Control de Operatividad/Stock</th>
@@ -77,16 +55,16 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Control Operatividad:</td><td>{{ form.equipIsavail.as_widget }}</td>
-                        <td>Control Stock:</td><td>{{ form.stockwarning.as_widget }}</td>
+                        <td class="tbl-td-der">{{ form.equipIsavail.label }}</td><td>{{ form.equipIsavail.as_widget }}</td>
+                        <td class="tbl-td-der">{{ form.stockwarning.label }}</td><td>{{ form.stockwarning.as_widget }}</td>
                     </tr>
                     <tr>
                         <td colspan="4">
                             <div class="div-control-stock">
-                                Límite de aviso (unids.):&nbsp;{{ form.stocklimit.as_widget }}
+                                {{ form.stocklimit.label }}&nbsp;&nbsp;&nbsp;&nbsp;{{ form.stocklimit.as_widget }}
                             </div>
                             <div class="div-control-stock">
-                                Stock actual (unids.):&nbsp;&nbsp;&nbsp;&nbsp;{{ form.stockavail.as_widget }}
+                                {{ form.stockavail.label }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ form.stockavail.as_widget }}
                             </div>                                    
                         </td>
                      </tr>
@@ -94,13 +72,13 @@
 	    		        <th class="tbl-th" colspan="4">Fabricante y Proveedor</th>
                     </tr>
                     <tr>
-                        <td class="tbl-td-40">Fabricante:</td><td colspan="3">{{ form.fk_Manufact.as_widget }}
+                        <td class="tbl-td-40 tbl-td-der">Referencia Fabricante</td><td colspan="3">{{ form.fk_Manufact.as_widget }}
                     </tr>
                     <tr>
-                        <td class="tbl-td-40">Proveedor:</td><td colspan="3">{{ form.fk_Proveedor.as_widget }}</td>
+                        <td class="tbl-td-40 tbl-td-der">Referencia Proveedor</td><td colspan="3">{{ form.fk_Proveedor.as_widget }}</td>
                     </tr>
                     <tr>
-                        <td class="tbl-td-40">S.A.T.:</td><td colspan="3">{{ form.fk_SAT.as_widget }}</td>
+                        <td class="tbl-td-40 tbl-td-der">Referencia S.A.T.</td><td colspan="3">{{ form.fk_SAT.as_widget }}</td>
                     </tr>
   		   	        <tr>
 	    		        <th class="tbl-th" colspan="4">Notas</th>
@@ -122,4 +100,4 @@
 
         </section>
 
-    {% endblock %}
+    {% endblock content %}

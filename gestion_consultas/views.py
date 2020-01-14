@@ -15,8 +15,11 @@ from django.views import View
 from django.contrib import messages
 from gestion_pacientes.forms import select_pacientes_form
 
-
-##### PROCESO DE CREACION DE CONSULTAS #####
+############################################
+#                                          #
+#     PROCESO DE CREACION DE CONSULTAS     #
+#                                          #
+############################################
 
 # Busca los pacientes en funcion del dni, apellidos o nomnbre
 @method_decorator(login_required, name='dispatch')
@@ -39,7 +42,7 @@ class select_paciente_consultas_view(View):
 class select_desdepaciente_consultas_view(View):
 
 
-    # GET: Recibe los parametros de select_paciente_consultas_view
+    # GET: Recibe los parametros desde select_paciente_consultas_view
     def get(self, request, **kwargs):
         
         ctx = dict()        
@@ -89,15 +92,21 @@ class select_desdepaciente_consultas_view(View):
 class create_desdecita_consultas_view(View):
     pass
 
-##### ID DE CONSULTA #####
+############################################
+#                                          #
+#          ABRIR/EDITAR CONSULTAS          #
+#                                          #
+############################################
 
+@method_decorator(login_required, name='dispatch')
+class select_paciente_id_edit_consultas_view(View):   
+    pass
 
+@method_decorator(login_required, name='dispatch')
 class id_consultas_view(DetailView):
     pass
 
 
-##### EDICION  DE CONSULTAS #####
-
-
+@method_decorator(login_required, name='dispatch')
 class edit_consultas_view(UpdateView):
     pass

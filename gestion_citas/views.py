@@ -835,8 +835,6 @@ class pasadas_canceladas_citas_view(View):
         if numregs > 0:
             ctx['mensaje'] = 'Error al procesar la base de datos.'
             ctx['numregs'] = numregs
-        else:
-            ctx['mensaje'] = 'No hay más citas para procesar.'            
 
             return render(request, 'pasadas_canceladas_citas_tpl.html', ctx)
         
@@ -845,7 +843,7 @@ class pasadas_canceladas_citas_view(View):
             ctx['mensaje'] = 'No hay más citas para borrar.'   
 
             return render(request, 'pasadas_canceladas_citas_tpl.html', ctx)
-    
+                
     # GET
     def get(self, request):
                 

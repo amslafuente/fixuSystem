@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+    {% block title %}
+
+    	<title>fixuSystem - Fisioterapia - Gestión de cĺínica</title>
+
+    {% endblock title %}
+
+    {% block content %}
+
+        {% load static %}
+
+        <section class="sect-home-page-menu">
+
+            <!-- Formulario de crear/editar clinica -->
+            <!-- enctype="multipart/form-data se usa para poder subir imagenes binarias -->
+	        <form method="POST" enctype="multipart/form-data">
+
+    	    	{% csrf_token %}
+
+                <table class="tbl-forms table-striped tbl-general tbl-55">
+
+                    <caption class="tbl-capt">Datos de la clinica</caption>
+
+                    {% include 'errors_clinica.html' %}
+
+		   	        <tr>
+	    		        <th class="tbl-th" colspan="4">Datos profesionales</th>
+                    </tr>
+                    <tr>
+        			    <td class="tbl-td-der tbl-td-20">{{ form.clinicname.label }}</td>
+                        <td>{{ form.clinicname.as_widget }}</td>
+		    		    <td class="tbl-td-der">{{ form.nif.label }}</td>
+                        <td>{{ form.nif.as_widget }}</td>
+                    </tr>
+                    <tr>
+                        <td class="tbl-td-der">{{ form.ownerfullname.label }}:</td>
+                        <td>{{ form.ownerfullname.as_widget }}</td>
+                        <td class="tbl-td-der">{{ form.dni.label }}</td>
+                        <td>{{ form.dni.as_widget }}</td>
+                    </tr>
+                    <tr>
+               		    <td class="tbl-td-der">{{ form.numcolegiado.label }}</td>
+                        <td colspan="3">{{ form.numcolegiado.as_widget }}</td>
+   			    	</tr>
+                    <tr>
+                        <td class="tbl-td-der">{{ form.picturefile.label }}:</td>
+                        <td colspan="3">{{ form.picturefile.as_widget }}</td>
+                    </tr>
+
+		       	    <tr>
+	    	    	    <th class="tbl-th" colspan="4">Domicilio</th>
+                    </tr>
+    	    		<tr>
+	    	    		<td class="tbl-td-der">{{ form.fulladdress.label }}</td><td>{{ form.fulladdress.as_widget }}</td>
+                        <td class="tbl-td-der">{{ form.city.label }}</td><td>{{ form.city.as_widget }}</td>
+                    </tr>
+                    <tr>
+                        <td class="tbl-td-der">{{ form.postcode.label }}</td><td>{{ form.postcode.as_widget }}</td>
+		    	    	<td class="tbl-td-der">{{ form.province.label }}</td><td>{{ form.province.as_widget }}</td>
+        			</tr>
+
+	    	   	    <tr>
+	        		    <th class="tbl-th" colspan="4">Datos de contacto</th>
+                    </tr>
+    	    		<tr>
+		    	    	<td class="tbl-td-der">{{ form.phone1.label }}</td>
+                        <td>{{ form.phone1.as_widget }}</td>
+                        <td class="tbl-td-der">{{ form.email.label }}</td>
+                        <td colspan="3">{{ form.email }}</td>                        
+       				</tr>
+                    <tr>
+			    	    <td class="tbl-td-der">{{ form.phone2.label }}</td>
+                        <td colspan="3">{{ form.phone2.as_widget }}</td>
+                    </tr>
+
+	    	   	    <tr>
+	        		    <th class="tbl-th" colspan="4">{{ form.notes.label }}</th>
+                    </tr>
+	    		    <tr>
+    				    <td class="tbl-td-centro" colspan="4">{{ form.notes.as_widget }}</td>
+    			    </tr>
+
+                </table>
+
+     	    	<!-- Botones -->
+                <div class="div-botones">
+		        	<input type="submit" class="btn btn-info" value="Aceptar">
+	    	    	<a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
+                </div>
+
+	        </form>
+
+        </section>
+
+    {% endblock content %}

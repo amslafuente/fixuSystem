@@ -2,12 +2,22 @@
 <!-- Errores en el form -->
 {{ form.non_field_errors }}
 
-<!-- Error en la identif del consultorio -->
-{% if form.officeID.errors %}
+<!-- Errores en los campos obligatorios -->
+{% if form.fullname.errors %}
 <tr>
     <th colspan="4" class ="field-errors">
-        {% for error in form.officeID.errors %}
-            {{ form.officeID.label }} : {{ error }}
+        {% for error in form.fullname.errors %}
+            {{ form.fullname.label }} : {{ error }}
+        {% endfor %}
+    </th>
+</tr>
+{% endif %}
+
+{% if form.fulladdress.errors %}
+<tr>
+    <th colspan="4" class ="field-errors">
+        {% for error in form.fulladdress.errors %}
+            {{ form.fulladdress.label }} : {{ error }}
         {% endfor %}
     </th>
 </tr>
@@ -15,7 +25,9 @@
 
 <!-- Si hay mensajes pendientes -->
 {% for message in messages %}
-    <th colspan="4" style="text-align: center; font-family: serif; font-variant: small-caps; padding: 5px; color: white; background-color: rgb(224, 89, 36);">
+<tr>
+    <th colspan="4" class ="field-errors">
         {{ message }}
     </th>
+</tr>
 {% endfor %}

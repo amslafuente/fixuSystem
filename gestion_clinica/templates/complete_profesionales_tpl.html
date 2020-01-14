@@ -1,41 +1,28 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
     	<title>fixuSystem - Fisioterapia - Gestión de clínica</title>
 
     {% endblock title %}
 
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
-
     {% block content %}
 
         {% load static %}
 
-		<!-- Menú principal con imágenes -->
         <section class="sect-home-page-menu">
 
-            <!-- Formularion de nuevo equipamiento -->
+            <!-- Formularion de completar profesionales -->
 	        <form method="POST" enctype="multipart/form-data">
 
     	    	{% csrf_token %}
 
-             	<!-- Tabla del profesional -->
                 <table class="tbl-forms table-striped tbl-general tbl-35">
 
-                    <!-- Texto con el contenido -->
                     <caption class="tbl-capt">Completar datos (Usuario/a: {{ user_login }} - id: {{ user_id }})</caption>
 
-                    <!-- Errores en el form -->
                     {% include 'errors_profesionales.html' %}
 
-                    <!-- Datos de acceso a django -->
 		   	        <tr>
 	    		        <th class="tbl-th" colspan="6">Roles de acceso al sistema</th>
                     </tr>
@@ -51,7 +38,7 @@
                             Desactive "Superusuario/a" para dar solo privilegios de Administrador/a.                            
                         </td>
                     </tr>
-                    <!-- Datos personales -->
+
                     <tr>
 	    		        <th class="tbl-th" colspan="6">Datos personales</th>
                     </tr>

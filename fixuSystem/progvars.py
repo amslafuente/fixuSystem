@@ -5,7 +5,7 @@ Variables to be used in different apps.
 
 ##### VERSION DEL PROGRAMA #####
 
-PROG_VERS = '0.60'
+PROG_VERS = '0.70'
 
 ##### CONFIG: VARIABLES DE LA APP GESTION_PACIENTES #####
 

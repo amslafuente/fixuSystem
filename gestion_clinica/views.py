@@ -1,5 +1,3 @@
-########## Views de gestion_clinica ###########
-
 from django.shortcuts import render, reverse
 from django.urls import reverse_lazy
 from django.http import request, HttpResponseRedirect
@@ -25,35 +23,39 @@ from django.forms import forms, fields, widgets
 from fixuSystem.progvars import selTipoEquip
 from django.db.models import Q
 
-########## MUESTRA MENU DE GESTION DE SERVICIOS ##########
+
+
+#################################################
+#                                               #
+#          MENU DE GESTION DE SERVICIOS         #
+#                                               #
+#################################################
 
 @method_decorator(login_required, name='dispatch')
 class instalac_servic_clinica_view(TemplateView):
     template_name = 'instalac_servic_clinica_tpl.html'
 
-##################################################
-#                     CLINICA                    #
-##################################################
 
-########## MUESTRA DATOS DE CLINICA ##########
+
+#################################################
+#                                               #
+#             DATOS DE LA CLINICA               #
+#                                               #
+#################################################
 
 class info_clinica_view(View):
 
     def get(self, request):
 
+        ctx = dict()
         # Recupera el primer registro encontrado, que es el que vale
         qs = Clinica.objects.first()
-        ctx = dict()
         ctx['clinica'] = qs
-
         return render (request, 'info_clinica_tpl.html', ctx)
-
- ########## INICIALIZA DATOS DE CLINICA ##########
 
 @method_decorator(login_required, name='dispatch')
 class init_clinica_view(View):
 
-    # GET al llamar a la view
     def get(self, request):
 
         # Si el usuario no es superuser no permite acceder a los datos de la clinica
@@ -61,37 +63,29 @@ class init_clinica_view(View):
             return HttpResponseRedirect(reverse('error-privilegios-clinica'))
         
         # Cuenta los registros de la base de datos Clinica
-        qs_count = Clinica.objects.count()
-
         # Si ya existe un registro avisa de que solo se puede editar, no crear
+        qs_count = Clinica.objects.count()
         if qs_count > 0:
             return HttpResponseRedirect(reverse('error-init-clinica'))
-        # Si no existe pasa a crearlo
         else:
             ctx = dict()
-            # Asocia la form y la pasa al contexto
             form = init_edit_info_clinica_form()
             ctx['form'] = form
+            return render(request, 'init_edit_info_clinica_tpl.html', ctx)
 
-            return render(request, 'init_info_clinica_tpl.html', ctx)
-
-    # POST al volver del formulario
     def post(self, request):
 
-        # Se meten los datos del formulario
         ctx= dict()
         form = init_edit_info_clinica_form(request.POST, request.FILES)
-
-        # Si el formulario es valido
+        
+        # Si el form es valido
         if form.is_valid():
-            # Almacena temporalmente
             clinica = form.save(commit = False)
             # Datos de control
             if str(self.request.user) != 'AmonymousUser':
                 clinica.modifiedby = str(self.request.user)
             else:
                 clinica.modifiedby = 'unix:' + str(self.request.META['USERNAME'])
-            # Finalmente guarda
             clinica.save()
 
             # Si se ha subido una foto, a los datos de la clinica le cambia
@@ -100,10 +94,9 @@ class init_clinica_view(View):
             # Quedaría "clinica/<logo-clinica"
             try:
                 # Recupera la clinica
-                inter_clinica = Clinica.objects.first()
-
-                # Si se introduce un nombre de archivo
-                split_name = str(inter_clinica.picturefile)
+                clinica = Clinica.objects.first()
+                # Si se introduce un nombre de archivo...
+                split_name = str(clinica.picturefile)
                 if split_name != '':
                     # Trocea el nombre de la ruta por "/" y "."
                     # La parte del nombre es todo minusculas
@@ -112,46 +105,19 @@ class init_clinica_view(View):
                     if Path(new_name).is_file():
                         os.remove(new_name)
                     # Sustituye al picture file original por el nuevo
-                    inter_clinica.picturefile = new_name
+                    clinica.picturefile = new_name
                     # Limpia y guarda el registro
-                    inter_clinica.save()
+                    clinica.save()
                     # Cambia el nombre del archivo en el disco
                     os.rename(str(settings.MEDIA_ROOT + '/' + split_name), str(settings.MEDIA_ROOT +'/' + new_name))
             except:
                 messages.warning(request, 'Error procesando archivo de imagen')
-
             return HttpResponseRedirect(reverse('info-clinica'))
-
-        # Si la form no es valida recarga co  los errores
+        # Si el form no es valido recarga con errores
         else:
-            # Mensajes de error
             messages.warning(request, 'Errores en el formulario')
-            # Regresa al formulario
             ctx['form'] = form
-            
             return render(request, 'init_info_clinica_tpl.html', ctx)
-
-# Error si el usuario NO ES SUPERUSUARIO
-@method_decorator(login_required, name='dispatch')
-class error_privilegios_clinica_view(TemplateView):
-    template_name = 'error_privilegios_clinica_tpl.html'
-
-# Error si el usuario NO ES SUPERUSUARIO
-@method_decorator(login_required, name='dispatch')
-class error_profesionales_clinica_view(TemplateView):
-    template_name = 'error_privilegios_profesionales_tpl.html'
-
-# Error si el usuario ES ROOT
-@method_decorator(login_required, name='dispatch')
-class error_root_clinica_view(TemplateView):
-    template_name = 'error_root_tpl.html'
-
-# Error si ya existe un registro y se pretende crear otro
-@method_decorator(login_required, name='dispatch')
-class error_init_clinica_view(TemplateView):
-    template_name = 'error_init_clinica_tpl.html'
-
-########## EDITA DATOS DE CLINICA ##########
 
 @method_decorator(login_required, name='dispatch')
 class edit_info_clinica_view(UpdateView):
@@ -160,9 +126,8 @@ class edit_info_clinica_view(UpdateView):
     context_object_name ='clinica'
     pk_url_kwarg = 'idClinica'
     form_class = init_edit_info_clinica_form
-    template_name = 'edit_info_clinica_tpl.html'
+    template_name = 'init_edit_info_clinica_tpl.html'
 
-    # Con el GET comprueba si el usuario tiene privilegios
     def get(self, request, *args, **kwargs):
 
         # Si no es superusuario no permite acceder a los datos de clinica
@@ -171,32 +136,23 @@ class edit_info_clinica_view(UpdateView):
         else:
             return super().get(request, *args, **kwargs)
 
-    # Actualiza el campo modifiedby y la foto
     def form_valid(self, form):
 
-        # Pone los registros de control que faltan en una instancia "manejable": clinica
-        # Commit = False: evita que se guarde ya en la base de datos
         clinica = form.save(commit = False)
         # Campos de control
         if str(self.request.user) != 'AmonymousUser':
             clinica.modifiedby = str(self.request.user)
         else:
             clinica.modifiedby = 'unix:' + str(self.request.META['USERNAME'])
-        # Limpia y guarda el registro
         clinica.save()
 
         # Si se actualiza el logo se renombra a 'logo-clinica' (sin extension) y se borra el antiguo
         if 'picturefile' in form.changed_data:
-            picture_changed = True
-        else:
-            picture_changed = False
-      
-        if picture_changed:
             try:
                 # Recupera la clinica
-                inter_clinica = Clinica.objects.first()
+                clinica = Clinica.objects.first()
                 # Si se introduce un nombre de archivo
-                split_name = str(inter_clinica.picturefile)
+                split_name = str(clinica.picturefile)
                 if split_name != '':
                     # Trocea el nombre de la ruta por "/" y "."
                     # La parte del DNI es todo mayusculas
@@ -205,21 +161,22 @@ class edit_info_clinica_view(UpdateView):
                     if Path(new_name).is_file():
                         os.remove(new_name)
                     # Sustituye al picture file original por el nuevo
-                    inter_clinica.picturefile = new_name
+                    clinica.picturefile = new_name
                     # Limpia y guarda el registro
-                    inter_clinica.save()
+                    clinica.save()
                     # Cambia el nombre del archivo en el disco
                     os.rename(str(settings.MEDIA_ROOT + '/' + split_name), str(settings.MEDIA_ROOT +'/' + new_name))
             except:
                 messages.warning(request, 'Error procesando archivo de imagen')
-
         return HttpResponseRedirect(reverse('info-clinica'))
 
-##################################################
-#                 CONSULTORIOS                   #
-##################################################
 
-##### MUESTRA EL ID CONSULTORIO CONCRETO #####
+
+#################################################
+#                                               #
+#             DATOS DE CONSULTORIOS             #
+#                                               #
+#################################################
 
 @method_decorator(login_required, name='dispatch')
 class id_consultorios_view(DetailView):
@@ -231,12 +188,8 @@ class id_consultorios_view(DetailView):
 
     def get_queryset(self):
 
-        # Extrae el consultorio en cuestion
         qs = Consultorio.objects.filter(idConsultorio__exact = self.kwargs['idConsultorio'])
-        
         return qs
-
-##### LISTADO DE CONSULTORIOS #####
 
 @method_decorator(login_required, name='dispatch')
 class listado_consultorios_view(ListView):
@@ -253,21 +206,17 @@ class listado_consultorios_view(ListView):
         kwarg_filterdesc = (self.request.GET.get('filterdesc') or '').lower()
         kwarg_filterlocat = (self.request.GET.get('filterlocat') or '').lower()
         kwarg_orderby = (self.request.GET.get('orderby') or '')
-
        # Fullname
         if kwarg_filterdesc == '':
             qs = Consultorio.objects.all().order_by('officeID')
         else:
             qs = Consultorio.objects.filter(officeID__icontains = kwarg_filterdesc).order_by('officeID')
-
-        # Area
+        # Location
         if kwarg_filterlocat != '':
             qs = qs.filter(officeLocation__icontains = kwarg_filterlocat)
-        
         # OrderBy ASC
         if kwarg_orderby != '':
             qs = qs.order_by(kwarg_orderby)
-
         return qs
 
     def get_context_data(self, **kwargs):
@@ -280,10 +229,7 @@ class listado_consultorios_view(ListView):
         ctx['filterdesc'] = (self.request.GET.get('filterdesc') or '').lower()
         ctx['filterlocat'] = (self.request.GET.get('filterlocat') or '').lower()
         ctx['orderby'] = (self.request.GET.get('orderby') or '')
-
         return ctx
-
-########## EDITA DATOS DE CLINICA ##########
 
 @method_decorator(login_required, name='dispatch')
 class create_consultorios_view(CreateView):
@@ -292,18 +238,15 @@ class create_consultorios_view(CreateView):
     context_object_name = 'consultorios'
     pk_url_kwarg = 'idConsultorio'
     form_class = create_edit_consultorios_form
-    template_name = 'create_consultorios_tpl.html'
+    template_name = 'create_edit_consultorios_tpl.html'
 
-    # GET al llamar a la view
     def get(self, request):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) and (not request.user.is_staff):
             return HttpResponseRedirect(reverse('error-privilegios-clinica'))
-
         return super().get(request)
 
-    # Formulario correcto
     def form_valid(self, form):
 
         consultorio = form.save(commit = False)
@@ -312,9 +255,7 @@ class create_consultorios_view(CreateView):
             consultorio.modifiedby = str(self.request.user)
         else:
             consultorio.modifiedby = 'unix:' + str(self.request.META['USERNAME'])
-        # Limpia y guarda el registro
         consultorio.save()
-
         return HttpResponseRedirect(reverse('listado-consultorios'))
 
 @method_decorator(login_required, name='dispatch')
@@ -324,15 +265,14 @@ class edit_consultorios_view(UpdateView):
     context_object_name = 'consultorios'
     pk_url_kwarg = 'idConsultorio'
     form_class = create_edit_consultorios_form
-    template_name = 'edit_consultorios_tpl.html'
+    template_name = 'create_edit_consultorios_tpl.html'
 
-    # GET al llamar a la view
+
     def get(self, request, **kwargs):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) or (not request.user.is_staff):
             return HttpResponseRedirect(reverse('error-privilegios-clinica'))
-
         return super().get(request)
 
 @method_decorator(login_required, name='dispatch')
@@ -350,21 +290,21 @@ class delete_consultorios_view(DeleteView):
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) or (not request.user.is_staff):
             return HttpResponseRedirect(reverse('error-privilegios-clinica'))
-
         return super().get(request)
 
     def get_queryset(self):
 
         # Extrae el consultorio en cuestion
         qs = Consultorio.objects.filter(idConsultorio__exact = self.kwargs['idConsultorio'])
-
         return qs
 
-##################################################
-#                   EQUIPAMIENTO                 #
-##################################################
 
-##### ID DE EQUIPAMIENTO #####
+
+#################################################
+#                                               #
+#             DATOS DE EQUIPAMIENTO             #
+#                                               #
+#################################################
 
 @method_decorator(login_required, name='dispatch')
 class id_equipamiento_view(DetailView):
@@ -377,11 +317,8 @@ class id_equipamiento_view(DetailView):
     def get_queryset(self, **kwargs):
 
         # Extrae el equipo en cuestion
-        qs = Equipamiento.objects.filter(idEquipamiento__exact = self.kwargs['idEquipamiento'])
-        
+        qs = Equipamiento.objects.filter(idEquipamiento__exact = self.kwargs['idEquipamiento'])        
         return qs
-
-##### LISTADO DE EQUIPAMIENTO #####
 
 @method_decorator(login_required, name='dispatch')
 class listado_equipamiento_view(ListView):
@@ -405,27 +342,23 @@ class listado_equipamiento_view(ListView):
             qs = Equipamiento.objects.all().order_by('equipDesc')
         else:
             qs = Equipamiento.objects.filter(equipType__icontains = kwarg_filter).order_by('equipDesc')
-
         # Condit
         if kwarg_condition != '':
             qs = qs.filter(equipDesc__icontains = kwarg_condition)
-        
         # Ctrl
         if kwarg_ctrl == 'stock':
             qs = qs.filter(stockwarning = True)
         elif kwarg_ctrl == 'oper':
             qs = qs.filter(stockwarning = False)
-
         # OrderBy ASC
         if kwarg_orderby != '':
             qs = qs.order_by(kwarg_orderby)
-
         return qs
 
     def get_context_data(self, **kwargs):
 
         ctx = super().get_context_data(**kwargs)
-        # Form al contexto
+        # Form de filtro al contexto
         filterform = customEquipamientoForm(self.request.GET) or customEquipamientoForm()
         ctx['form'] = filterform
         # Obtiene el filtro y condicion actual del GET   
@@ -433,10 +366,7 @@ class listado_equipamiento_view(ListView):
         ctx['condition'] = (self.request.GET.get('condition') or '').lower()
         ctx['ctrl'] = (self.request.GET.get('ctrl') or '').lower()
         ctx['orderby'] = (self.request.GET.get('orderby') or '')
-
         return ctx
-
-##### CREACION Y EDICION DE EQUIPAMIENTO #####
 
 @method_decorator(login_required, name='dispatch')
 class create_equipamiento_view(CreateView):
@@ -445,15 +375,15 @@ class create_equipamiento_view(CreateView):
     context_object_name = 'equipamientos'
     pk_url_kwarg = 'idEquipamiento'
     form_class = create_edit_equipamiento_form
-    template_name = 'create_equipamiento_tpl.html'
+    template_name = 'create_edit_equipamiento_tpl.html'
     
     def get(self, request):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) and (not request.user.is_staff):
             return HttpResponseRedirect(reverse('error-privilegios-clinica'))
-
-        return super().get(request)
+        else:
+            return super().get(request)
     
     def form_valid(self, form):
 
@@ -472,13 +402,11 @@ class create_equipamiento_view(CreateView):
             equipamiento.modifiedby = 'unix:' + str(self.request.META['USERNAME'])
         # Limpia y guarda el registro
         equipamiento.save()
-
-        return HttpResponseRedirect(reverse('listado-equipamiento'))
+        return HttpResponseRedirect(reverse('id-equipamiento', args=[equipamiento.idEquipamiento]))
 
     def form_invalid(self, form):
 
-        messages.warning(self.request, 'Errores en el formulario.')
-        
+        messages.warning(self.request, 'Errores en el formulario')        
         return super().form_invalid(form)
 
 
@@ -489,14 +417,13 @@ class edit_equipamiento_view(UpdateView):
     context_object_name = 'equipamiento'
     pk_url_kwarg = 'idEquipamiento'
     form_class = create_edit_equipamiento_form
-    template_name = 'edit_equipamiento_tpl.html'
+    template_name = 'create_edit_equipamiento_tpl.html'
 
     def get(self, request, **kwargs):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) or (not request.user.is_staff):
             return HttpResponseRedirect(reverse('error-privilegios-clinica'))
-
         return super().get(request)
 
     def form_valid(self, form):
@@ -516,7 +443,6 @@ class edit_equipamiento_view(UpdateView):
             equipamiento.modifiedby = 'unix:' + str(self.request.META['USERNAME'])
         # Limpia y guarda el registro
         equipamiento.save()
-
         return HttpResponseRedirect(reverse('id-equipamiento', args=[equipamiento.idEquipamiento]))
 
 @method_decorator(login_required, name='dispatch')
@@ -533,21 +459,22 @@ class delete_equipamiento_view(DeleteView):
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) or (not request.user.is_staff):
             return HttpResponseRedirect(reverse('error-privilegios-clinica'))
-
-        return super().get(request)
+        else:
+            return super().get(request)
     
     def get_queryset(self):
     
         # Extrae el consultorio en cuestion
         qs = Equipamiento.objects.filter(idEquipamiento__exact = self.kwargs['idEquipamiento'])
-
         return qs
 
-##################################################
-#                   PROVEEDORES                  #
-##################################################
 
-##### ID DE PROVEEDORES #####
+
+#################################################
+#                                               #
+#             DATOS DE PROVEEDORES              #
+#                                               #
+#################################################
 
 @method_decorator(login_required, name='dispatch')
 class id_proveedores_view(DetailView):
@@ -561,10 +488,8 @@ class id_proveedores_view(DetailView):
 
         # Extrae el equipo en cuestion
         qs = Proveedor.objects.filter(idProveedor__exact = self.kwargs['idProveedor'])
-        
         return qs
 
-##### LISTADO DE PROVEEDORES #####
 
 @method_decorator(login_required, name='dispatch')
 class listado_proveedores_view(ListView):
@@ -587,15 +512,12 @@ class listado_proveedores_view(ListView):
             qs = Proveedor.objects.all().order_by('fullname')
         else:
             qs = Proveedor.objects.filter(fullname__icontains = kwarg_filtername).order_by('fullname')
-
         # Area
         if kwarg_filterarea != '':
             qs = qs.filter(area__icontains = kwarg_filterarea)
-        
          # OrderBy
         if kwarg_orderby != '':
             qs = qs.order_by(kwarg_orderby)
-
         return qs
 
     def get_context_data(self, **kwargs):
@@ -608,10 +530,7 @@ class listado_proveedores_view(ListView):
         ctx['filtername'] = (self.request.GET.get('filtername') or '').lower()
         ctx['filterarea'] = (self.request.GET.get('filterarea') or '').lower()
         ctx['orderby'] = (self.request.GET.get('orderby') or '')
-
         return ctx
-
-##### CREACION Y EDICION DE PROVEEDORES #####
 
 @method_decorator(login_required, name='dispatch')
 class create_proveedores_view(CreateView):
@@ -620,15 +539,15 @@ class create_proveedores_view(CreateView):
     context_object_name = 'proveedores'
     pk_url_kwarg = 'idProveedor'
     form_class = create_edit_proveedores_form
-    template_name = 'create_proveedores_tpl.html'
+    template_name = 'create_edit_proveedores_tpl.html'
     
     def get(self, request):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) and (not request.user.is_staff):
             return HttpResponseRedirect(reverse('error-privilegios-clinica'))
-
-        return super().get(request)
+        else:
+            return super().get(request)
 
     def form_valid(self, form):
 
@@ -640,13 +559,11 @@ class create_proveedores_view(CreateView):
             proveedor.modifiedby = 'unix:' + str(self.request.META['USERNAME'])
         # Limpia y guarda el registro
         proveedor.save()
-        
-        return HttpResponseRedirect(reverse('listado-proveedores'))
+        return HttpResponseRedirect(reverse('id-proveedores', args=[proveedor.idProveedor]))
 
     def form_invalid(self, form):
         
         messages.warning(self.request, 'Errores en el formulario')
-        
         return super().form_invalid(form)
 
 @method_decorator(login_required, name='dispatch')
@@ -656,15 +573,15 @@ class edit_proveedores_view(UpdateView):
     context_object_name = 'proveedores'
     pk_url_kwarg = 'idProveedor'
     form_class = create_edit_proveedores_form
-    template_name = 'edit_proveedores_tpl.html'
+    template_name = 'create_edit_proveedores_tpl.html'
 
     def get(self, request, **kwargs):
 
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) or (not request.user.is_staff):
             return HttpResponseRedirect(reverse('error-privilegios-clinica'))
-
-        return super().get(request)
+        else:
+            return super().get(request)
 
     def form_valid(self, form):
 
@@ -676,7 +593,6 @@ class edit_proveedores_view(UpdateView):
             proveedor.modifiedby = 'unix:' + str(self.request.META['USERNAME'])
         # Limpia y guarda el registro
         proveedor.save()
-
         return HttpResponseRedirect(reverse('id-proveedores', args=[proveedor.idProveedor]))
 
 @method_decorator(login_required, name='dispatch')
@@ -693,21 +609,22 @@ class delete_proveedores_view(DeleteView):
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) or (not request.user.is_staff):
             return HttpResponseRedirect(reverse('error-privilegios-clinica'))
-
-        return super().get(request)
+        else:
+            return super().get(request)
 
     def get_queryset(self):
     
         # Extrae el consultorio en cuestion
         qs = Proveedor.objects.filter(idProveedor__exact = self.kwargs['idProveedor'])
-
         return qs
 
-##################################################
-#                   PROFESIONALES                #
-##################################################
 
-##### ID DE PROFESIONALES #####
+
+#################################################
+#                                               #
+#         DATOS DE LA PROFESIONALES             #
+#                                               #
+#################################################
 
 @method_decorator(login_required, name='dispatch')
 class profesionales_clinica_view(TemplateView):
@@ -719,8 +636,6 @@ class profesionales_clinica_view(TemplateView):
         ctx = super().get_context_data(**kwargs)
         ctx['id'] = self.request.user.id
         return ctx
-
-##### SELECCIONA Y MUESTRA PROFESIONALES #####
 
 @method_decorator(login_required, name='dispatch')
 class select_profesionales_view(View):
@@ -1076,7 +991,9 @@ class edit_profesionales_view(UpdateView):
         user.save()
         return super().post(request, *args, **kwargs)
 
-##### CAMBIA CLAVE PROFESIONALES #####
+
+
+##### CAMBIO DE CLAVE PROFESIONALES #####
 
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -1117,3 +1034,31 @@ class id_clave_profesionales_view(View):
         else:
             messages.warning(request, 'Errores en el formulario')
         return render(request, 'id_clave_profesionales_tpl.html', ctx)
+
+
+
+#################################################
+#                                               #
+#              ERRORES DE PRIVILEGIOS           #
+#                                               #
+#################################################
+
+# Error si el usuario NO ES SUPERUSUARIO
+@method_decorator(login_required, name='dispatch')
+class error_privilegios_clinica_view(TemplateView):
+    template_name = 'error_privilegios_clinica_tpl.html'
+
+# Error si el usuario NO ES SUPERUSUARIO
+@method_decorator(login_required, name='dispatch')
+class error_profesionales_clinica_view(TemplateView):
+    template_name = 'error_privilegios_profesionales_tpl.html'
+
+# Error si el usuario ES ROOT
+@method_decorator(login_required, name='dispatch')
+class error_root_clinica_view(TemplateView):
+    template_name = 'error_root_tpl.html'
+
+# Error si ya existe un registro y se pretende crear otro
+@method_decorator(login_required, name='dispatch')
+class error_init_clinica_view(TemplateView):
+    template_name = 'error_init_clinica_tpl.html'

@@ -16,19 +16,12 @@ urlpatterns = [
     # Nueva consulta desde cita
     path('nueva/<int:idCita>', views.create_desdecita_consultas_view.as_view(), name = 'create-desdecita-consultas'),
     
+    # Seleccion de consultas para ver o editar
 
-
-
-
-
-    # Nueva consulta
-    #path('nueva/', views.create_consultas_view.as_view(), name = 'create-consultas'),
-
-    # Seleccion de consultas
+    #path('paciente/',views.select_paciente_id_edit_consultas_view.as_view(), name = 'select-paciente-id-edit-consultas'),
+    
     # Consulta concreta, consulta a través de cita y consulta a traves de paciente (con fecha o sin fecha)
     path('revisar/<int:idConsulta>/', views.id_consultas_view.as_view(), name = 'id-consultas'),
     path('modificar/<int:idConsulta>/', views.id_consultas_view.as_view(), name = 'edit-consultas'),    
-    #path('consulta/cita/<int:idCita>/', views.id_consultas_citas_view.as_view(), name = 'id-consultas-citas'),
-    #path('consulta/<int:idPaciente/', views.id_consultas_pacientes_view.as_view(), name = 'id-consultas-pacientes'),
 
 ]

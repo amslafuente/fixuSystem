@@ -1,35 +1,23 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
     	<title>fixuSystem - Fisioterapia - Gestión de cĺínica</title>
 
-    {% endblock %}
-
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
+    {% endblock title %}
 
     {% block content %}
 
         {% load static %}
 
-		<!-- Menú principal con imágenes -->
         <section class="sect-home-page-menu">
 
-
-       		<!-- SI EXISTEN DATOS los muestra -->
         	{% if clinica %}
 
-           		<!-- Tabla del clinica -->
                 <table class="tbl-forms table-striped tbl-general tbl-70">
 
                     <!-- Texto con el contenido -->
-                    <caption class="tbl-capt">EMPRESA <br/> {{ clinica.clinicname }}</caption>
+                    <caption class="tbl-capt">EMPRESA:<br/> {{ clinica.clinicname }}</caption>
 
     		        <tr>
     		    	    <td class="tbl-td tbl-td-20">Titular:</td>
@@ -43,9 +31,9 @@
                         <td class="tbl-td  tbl-td-20">NIF:</td>
                         <td colspan="2">{{ clinica.nif }}</td>
                     </tr>
+
                 </table>
 
-                <!-- Direccion -->
                 <table class="tbl-forms table-striped tbl-general tbl-70">
 
                     <caption class="tbl-capt">Dirección</caption>
@@ -62,25 +50,26 @@
 		    	        <td class="tbl-td tbl-td-20">Provincia:</td>
                         <td colspan="2">{{ clinica.province }}</td>
             		</tr>
+
                 </table>
 
-                <!-- Datos de contacto -->
                 <table class="tbl-forms table-striped tbl-general tbl-70">
 
                     <caption class="tbl-capt">Datos de contacto</caption>
 
                     <tr>
     	    	    	<td class="tbl-td tbl-td-20">Teléfono 1:</td>
-                        <td class="tbl-td">{{ clinica.phone1 }}</td>
-    	    	    	<td class="tbl-td tbl-td-20">Teléfono 2:</td>
-                        <td class="tbl-td">{{ clinica.phone2 }}</td>
+                        <td class="tbl-td" colspan="2">{{ clinica.phone1 }}</td>
+    	    	    	<td class="tbl-td tbl-td-20">E-mail:</td>
+                        <td class="tbl-td" colspan="2">{{ clinica.email }}</td>
     			    </tr>
                     <tr>
-    	    	    	<td class="tbl-td tbl-td-20">E-mail:</td>
-                        <td class="tbl-td">{{ clinica.email }}</td>
+    	    	    	<td class="tbl-td tbl-td-20">Teléfono 2:</td>
+                        <td class="tbl-td" colspan="2">{{ clinica.phone2 }}</td>                        
     	    	    	<td class="tbl-td tbl-td-20">Notas</td>
-	    	    	    <td class="tbl-td">{{ clinica.notes }}</td>
+	    	    	    <td class="tbl-td" colspan="2">{{ clinica.notes }}</td>
                     </tr>
+
         	    </table>
 
 		        <!-- Botones de acción -->
@@ -91,13 +80,13 @@
 
     		{% else %}
 
-           		<!-- Informa de que no existen datos -->
                 <table class="tbl-forms table-striped tbl-general tbl-40">
-                    <!-- Texto con el contenido -->
+
                     <caption class="tbl-capt">SIN DATOS DE LA CLINICA</caption>
                     <tr>
     	    	       	<td class="tbl-td-centro">¿ Desea introducir la información ahora ?</td>
     		        </tr>
+
                 </table>
 
 		        <!-- Botones de acción -->
@@ -110,4 +99,4 @@
 
         </section>
 
-    {% endblock %}
+    {% endblock content %}

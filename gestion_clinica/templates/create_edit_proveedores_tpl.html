@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+    {% block title %}
+
+    	<title>fixuSystem - Fisioterapia - Gestión de clínica</title>
+
+    {% endblock title %}
+
+    {% block content %}
+
+        {% load static %}
+
+        <section class="sect-home-page-menu">
+
+	        <form method="POST">
+
+    	    	{% csrf_token %}
+
+                <table class="tbl-forms table-striped tbl-general tbl-60">
+
+                    <caption class="tbl-capt">Proveedor</caption>
+
+                    {% include 'errors_proveedores.html' %}
+
+		   	        <tr>
+	    		        <th class="tbl-th" colspan="4">Datos de la empresa</th>
+                    </tr>
+                    <tr>
+        			    <td class="tbl-td-der">{{ form.fullname.label }}</td><td>{{ form.fullname.as_widget }}</td>
+                        <td class="tbl-td-der">{{ form.area.label }}</td><td>{{ form.area.as_widget }}</td>
+		   	        <tr>
+                        <td class="tbl-td-der">{{ form.owner.label }}</td><td>{{ form.owner.as_widget }}</td>
+                        <td class="tbl-td-der">{{ form.nif.label }}</td><td>{{ form.nif.as_widget }}</td>
+                    </tr>
+                    <tr>
+			    	    <td class="tbl-td-der">{{ form.fulladdress.label }}</td><td colspan="3">{{ form.fulladdress.as_widget }}</td>
+                    </tr>
+
+                    <tr>
+	    		        <th class="tbl-th" colspan="4">{{ form.isManufact.as_widget }}&nbsp;&nbsp;&nbsp;Fabricante</th>
+                    </tr>
+                    <tr>
+                        <td class="tbl-td-der">{{ form.phoneManufact.label }}</td><td>{{ form.phoneManufact.as_widget }}</td>
+                        <td class="tbl-td-der">{{ form.emailManufact.label }}</td><td>{{ form.emailManufact.as_widget }}</td>
+                    </tr>
+                    <tr>
+                        <td class="tbl-td-der">{{ form.contactManufact.label }}</td><td colspan="3">{{ form.contactManufact.as_widget }}</td>
+                    </tr>
+                    <tr>
+	    		        <th class="tbl-th" colspan="4">{{ form.isProveedor.as_widget }}&nbsp;&nbsp;&nbsp;Proveedor</th>
+                    </tr>
+                    <tr>
+                        <td class="tbl-td-der">{{ form.phoneProveedor.label }}</td><td>{{ form.phoneProveedor.as_widget }}</td>
+                        <td class="tbl-td-der">{{ form.emailProveedor.label }}</td><td>{{ form.emailProveedor.as_widget }}</td>
+                    </tr>
+                    <tr>
+                        <td class="tbl-td-der">{{ form.contactProveedor.label }}</td><td colspan="3">{{ form.contactProveedor.as_widget }}</td>
+                    </tr>
+                     <tr>
+	    		        <th class="tbl-th" colspan="4">{{ form.isSAT.as_widget }}&nbsp;&nbsp;&nbsp;S.A.T.</th>
+                    </tr>
+                    <tr>
+                        <td class="tbl-td-der">{{ form.phoneSAT.label }}</td><td>{{ form.phoneSAT.as_widget }}</td>
+                        <td class="tbl-td-der">{{ form.emailSAT.label }}</td><td>{{ form.emailSAT.as_widget }}</td>
+                    </tr>
+                    <tr>
+                        <td class="tbl-td-der">{{ form.contactSAT.label }}</td><td colspan="3">{{ form.contactSAT.as_widget }}</td>
+                    </tr>
+                    <tr>
+	    		        <th class="tbl-th" colspan="4">Notas</th>
+                    </tr>
+	    		    <tr>
+                        <td colspan="4">{{ form.notas.as_widget }}
+   			    	</tr>
+
+        		</table>
+
+    	    	<!-- Botones -->
+                <div class="div-botones">
+		        	<input type="submit" class="btn btn-info" value="Aceptar">
+                    <a href="{% url 'listado-proveedores' %}"><input type="button" class="btn btn-info" value="Listado de proveedores"></a>
+	    	    	<a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
+                </div>
+
+	        </form>
+
+        </section>
+    
+    {% endblock content %}

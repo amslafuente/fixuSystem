@@ -1,22 +1,42 @@
-########## Forms de gestion_clinica ##########
-
 from django import forms
 from django.forms import ModelForm, Textarea, TextInput, NumberInput, Select, EmailInput, HiddenInput, CheckboxInput
 from fixuSystem.progvars import selTipoEquip
 from .models import Clinica, Consultorio, Equipamiento, Proveedor, Profesional
 from django.conf import settings
 
-# Form para crear clinica
+#################################
+#                               #
+#       FORMS DE CLINICA        #
+#                               #
+#################################
+
 class init_edit_info_clinica_form(ModelForm):
 
     class Meta:
         model = Clinica
         exclude = ['firstupdated', 'lastupdated', 'modifiedby']
-        widgets = {
-            'notes': Textarea(attrs={'cols': 80, 'rows': 5})
+        widgets = {            
+            'clinicname': TextInput(attrs={'style': 'width: 300px'}), 
+            'nif': TextInput(attrs={'style': 'width: 200px'}), 
+            'ownerfullname': TextInput(attrs={'style': 'width: 300px'}), 
+            'dni': TextInput(attrs={'style': 'width: 200px'}),
+            'numcolegiado': TextInput(attrs={'style': 'width: 200px'}),
+            'fulladdress': TextInput(attrs={'style': 'width: 300px'}),
+            'city': TextInput(attrs={'style': 'width: 200px'}),
+            'postcode': NumberInput(attrs={'style': 'width: 200px', 'min': 0, 'max': 99999}),
+            'province': TextInput(attrs={'style': 'width: 200px'}),
+            'phone1': NumberInput(attrs={'style': 'width: 200px', 'min': 0, 'max': 999999999}),
+            'phone2': NumberInput(attrs={'style': 'width: 200px', 'min': 0, 'max': 999999999}),
+            'email': EmailInput(attrs={'style': 'width: 200px'}),
+            'notes': Textarea(attrs={'cols': 70, 'rows': 3})
             }
 
-# Form para crear consultorios
+#################################
+#                               #
+#     FORMS DE CONSULTORIOS     #
+#                               #
+#################################
+
 class create_edit_consultorios_form(ModelForm):
 
     class Meta:
@@ -35,12 +55,17 @@ class create_edit_consultorios_form(ModelForm):
 # Form de filtro para consultorio
 class customConsultorioForm(forms.Form):
 
-    filterdesc = forms.CharField(label = 'Descrip.', required = False, max_length = 10)
+    filterdesc = forms.CharField(label = 'DESCR', required = False, max_length = 10)
     filterdesc.widget = forms.widgets.TextInput(attrs={'style': 'width: 100px'})
-    filterlocat = forms.CharField(label = 'Situac.', required = False, max_length = 10)
+    filterlocat = forms.CharField(label = 'LOCAL', required = False, max_length = 10)
     filterlocat.widget = forms.widgets.TextInput(attrs={'style': 'width: 100px'})
 
-# Form para crear equipamiento
+#################################
+#                               #
+#     FORMS DE EQUIPAMIENTO     #
+#                               #
+#################################
+
 class create_edit_equipamiento_form(ModelForm):
 
     class Meta:
@@ -57,7 +82,7 @@ class create_edit_equipamiento_form(ModelForm):
             'fk_SAT': Select(attrs={'style': 'width: 360px'}),
             'stocklimit': NumberInput(attrs={'style': 'width: 85px', 'min': 0, 'max': 99999}),
             'stockavail': NumberInput(attrs={'style': 'width: 85px', 'min': 0, 'max': 99999}),
-            'notes': Textarea(attrs={'cols': 57, 'rows': 2})
+            'notes': Textarea(attrs={'cols': 56, 'rows': 3})
             }
 
 # Widget de filtrado de tipo de equipamiento
@@ -79,7 +104,13 @@ class customEquipamientoForm(forms.Form):
     ctrl = forms.CharField(label = 'Ctrl', required = False, max_length = 10)
     ctrl.widget = forms.widgets.Select(attrs={'style': 'width: 80px'}, choices=[('', ''), ('oper', 'Oper'), ('stock', 'Stock')])
 
-# Form para crear proveedores
+
+#################################
+#                               #
+#      FORMS DE PROVEEDORES     #
+#                               #
+#################################
+
 class create_edit_proveedores_form(ModelForm):
 
     class Meta:
@@ -87,20 +118,20 @@ class create_edit_proveedores_form(ModelForm):
         exclude = ['firstupdated', 'lastupdated', 'modifiedby']
         widgets = {
             'fullname': TextInput(attrs={'style': 'width: 320px'}),
-            'area': TextInput(attrs={'style': 'width: 224px'}),
+            'area': TextInput(attrs={'style': 'width: 180px'}),
             'owner': TextInput(attrs={'style': 'width: 320px'}),
-            'nif': TextInput(attrs={'style': 'width: 224px'}),
-            'fulladdress': TextInput(attrs={'style': 'width: 710px'}),
-            'contactManufact': TextInput(attrs={'style': 'width: 686px'}),
+            'nif': TextInput(attrs={'style': 'width: 180px'}),
+            'fulladdress': TextInput(attrs={'style': 'width: 630px'}),
+            'contactManufact': TextInput(attrs={'style': 'width: 630px'}),
             'phoneManufact': NumberInput(attrs={'style': 'width: 120px', 'min': 0, 'max': 999999999}),
-            'emailManufact': EmailInput(attrs={'style': 'width: 300px'}),
-            'contactProveedor': TextInput(attrs={'style': 'width: 686px'}),
-            'phoneProveedor': NumberInput(attrs={'style': 'width: 122px', 'min': 0, 'max': 999999999}),
-            'emailProveedor': EmailInput(attrs={'style': 'width: 302px'}),
-            'contactSAT': TextInput(attrs={'style': 'width: 686px'}),
-            'phoneSAT': NumberInput(attrs={'style': 'width: 135px', 'min': 0, 'max': 999999999}),
-            'emailSAT': EmailInput(attrs={'style': 'width: 315px'}),
-            'notas': Textarea(attrs={'cols': 82, 'rows': 2})
+            'emailManufact': EmailInput(attrs={'style': 'width: 180px'}),
+            'contactProveedor': TextInput(attrs={'style': 'width: 630px'}),
+            'phoneProveedor': NumberInput(attrs={'style': 'width: 120px', 'min': 0, 'max': 999999999}),
+            'emailProveedor': EmailInput(attrs={'style': 'width: 180px'}),
+            'contactSAT': TextInput(attrs={'style': 'width: 630px'}),
+            'phoneSAT': NumberInput(attrs={'style': 'width: 120px', 'min': 0, 'max': 999999999}),
+            'emailSAT': EmailInput(attrs={'style': 'width: 180px'}),
+            'notas': Textarea(attrs={'cols': 76, 'rows': 2})
             }
 
 # Form de filtro para proveedor
@@ -111,7 +142,14 @@ class customProveedorForm(forms.Form):
     filterarea = forms.CharField(label = 'Area', required = False, max_length = 10)
     filterarea.widget = forms.widgets.TextInput(attrs={'style': 'width: 100px'})
 
-# Form para seleccionar profesionales para mostrar
+
+#################################
+#                               #
+#     FORMS DE PROFESIONALES    #
+#                               #
+#################################
+
+# Selección de profesionales
 class select_profesionales_form(forms.Form):
 
     # Campos del formulario

@@ -1,74 +1,49 @@
-<!-- ************************* -->
-<!--   delete_consultorio_tpl  -->
-<!-- ************************* -->
 
 {% extends 'base.html' %}
-
-    <!-- **************** -->
-    <!--     Script JS    -->
-    <!-- **************** -->
-
-    {% block JS %}
-
-    {% endblock %}
-
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
 
     {% block title %}
 
     	<title>fixuSystem - Fisioterapia - Gestión de clínica</title>
 
-    {% endblock %}
-
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
+    {% endblock title %}
 
     {% block content %}
 
         {% load static %}
 
-		<!-- Menú principal con imágenes -->
         <section class="sect-home-page-menu">
 
-            <!-- Formularion de nuevo consultorio -->
-            <!-- enctype="multipart/form-data se usa para poder subir imagenes binarias -->
 	        <form method="POST">
 
     	    	{% csrf_token %}
 
-             	<!-- Tabla del consultorio -->
                 <table class="tbl-forms table-striped tbl-general tbl-40">
 
-                    <!-- Texto con el contenido -->
                     <caption class="tbl-capt">Borrar proveedor</caption>
 
-                    <!-- Errores en el form -->
                     {% include 'errors_consultorios.html' %}
 
-                    <!-- Datos personales -->
 		   	        <tr>
 	    		        <th class="tbl-th" colspan="2">¿ Confirma el borrado ?</th>
                     </tr>
                     <tr>
-        			    <td class="tbl-td-40">Denom./Identif.:</td><td>{{ consultorios.officeID }}</td>
+        			    <td class="tbl-td-40">Empresa:</td><td>{{ proveedores.fullname }}</td>
                     </tr>
                     <tr>
-            		    <td class="tbl-td-40">Descripción:</td><td>{{ consultorios.officeDesc }}</td>
+            		    <td class="tbl-td-40">Area:</td><td>{{ proveedores.area }}</td>
                     </tr>
 	            	<tr>
-		    		    <td class="tbl-td-40">Situación (edif./planta):</td><td>{{ consultorios.officeLocation }}</td>
+		    		    <td class="tbl-td-40">Propietario:</td><td>{{ proveedores.owner }}</td>
                     </tr>
                     <tr>
-			    	    <td class="tbl-td-40">Departamento:</td><td>{{ consultorios.officeDepartment }}
+			    	    <td class="tbl-td-40">Dirección</td><td>{{ proveedores.fulladdress }}
                     </tr>
         		</table>
 
     	    	<!-- Botones -->
                 <div class="div-botones">
 		        	<input type="submit" class="btn btn-danger" value="Confirmar borrado">
+                    <a href="{% url 'listado-proveedores' %}"><input type="button" class="btn btn-info" value="Listado de proveedores"></a>                    
 	    	    	<a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
                 </div>
 
@@ -76,4 +51,4 @@
 
         </section>
 
-    {% endblock %}
+    {% endblock content %}

@@ -1,81 +1,66 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!--     Script JS    -->
-    <!-- **************** -->
-
-    {% block JS %}
-
-    {% endblock %}
-
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
     	<title>fixuSystem - Fisioterapia - Gestión de clínica</title>
 
-    {% endblock %}
-
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
+    {% endblock title %}
 
     {% block content %}
 
         {% load static %}
 
-		<!-- Menú principal con imágenes -->
         <section class="sect-home-page-menu">
 
-            <!-- Tabla del consultorio -->
             <table class="tbl-forms table-striped tbl-general tbl-40">
 
-                <!-- Texto con el contenido -->
-                <caption class="tbl-capt">Consultorio/Dependencia: {{consultorios.officeID }}</caption>
+                <caption class="tbl-capt">Consultorio/Dependencia: {{ consultorios.officeID }}</caption>
 
-                <!-- Datos personales -->
 		        <tr>
-	                <th class="tbl-th" colspan="4">Descripción</th>
+	                <th class="tbl-th" colspan="4">Identificación y descripción</th>
                 </tr>
+
                 <tr>
-            	    <td colspan="4">{{ consultorios.officeDesc }}</td>
+            	    <td class="tbl-td tbl-td-30">Identificación:</td><td colspan="3">{{ consultorios.officeID }}</td>                
+            	</tr>
+                <tr>
+                    <td class="tbl-td tbl-td-30">Descripción:</td><td colspan="3">{{ consultorios.officeDesc }}</td>
                 </tr>
 		   	    <tr>
 	    		    <th class="tbl-th" colspan="4">Situación y disponibilidad</th>
                 </tr>
 	            <tr>
-		    	    <td class="tbl-td-40">Situación (edif./planta):</td><td colspan="3">{{ consultorios.officeLocation }}</td>
+		    	    <td class="tbl-td-30">Localización:</td><td colspan="3">{{ consultorios.officeLocation }}</td>
                 </tr>
                 <tr>
-			        <td class="tbl-td-40">Departamento:</td><td colspan="3">{{ consultorios.officeDepartment }}
+			        <td class="tbl-td-30">Departamento:</td><td colspan="3">{{ consultorios.officeDepartment }}
                 </tr>
 	    		<tr>
-                    <td class="tbl-td tbl-td-40">Teléfono:</td><td>{{ consultorios.officePhone }}</td>
+                    <td class="tbl-td tbl-td-30">Teléfono:</td><td>{{ consultorios.officePhone }}</td>
                         {% if consultorios.officeIsavail %}
-                            <td>Disponible:</td><td class="tbl-td-centro avail">Si</td>
+                            <td class="tbl-td-der">Operativo:</td><td class="tbl-td-centro avail">Si</td>
                         {% else %}
-                            <td>Disponible:</td><td class="tbl-td-centro not-avail">No</td>
+                            <td class="tbl-td-der">Operativo:</td><td class="tbl-td-centro not-avail">No</td>
                         {% endif %}
+                </tr>
 		   	    <tr>
 	    		    <th class="tbl-th" colspan="4">Equipamiento y notas</th>
                 </tr>
                 <tr>
-                    <td class="tbl-td-40">Equipamiento:</td><td colspan="3">{{ consultorios.officeEquipment }}
+                    <td class="tbl-td-30">Equipamiento:</td><td colspan="3">{{ consultorios.officeEquipment }}
    			    </tr>
 	    		<tr>
-                    <td class="tbl-td-40">Notas:</td><td colspan="3">{{ consultorios.officeNotes }}
+                    <td class="tbl-td-30">Notas:</td><td colspan="3">{{ consultorios.officeNotes }}
    			    </tr>
 
         	</table>
 
     	    <!-- Botones -->
             <div class="div-botones">
-                <a href="{% url 'listado-consultorios' %}"><input type="button" class="btn btn-info" value="Aceptar"></a>
+                <a href="{% url 'listado-consultorios' %}"><input type="button" class="btn btn-info" value="Listado de consultorios"></a>
 	    	    <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
             </div>
 
         </section>
 
-    {% endblock %}
+    {% endblock content %}

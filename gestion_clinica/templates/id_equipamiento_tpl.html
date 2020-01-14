@@ -1,41 +1,21 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!--     Script JS    -->
-    <!-- **************** -->
-
-    {% block JS %}
-
-    {% endblock %}
-
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
     	<title>fixuSystem - Fisioterapia - Gestión de clínica</title>
 
-    {% endblock %}
-
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
+    {% endblock title %}
 
     {% block content %}
 
         {% load static %}
 
-		<!-- Menú principal con imágenes -->
         <section class="sect-home-page-menu">
 
-            <!-- Tabla del consultorio -->
             <table class="tbl-general tbl-forms tbl-60 table-striped">
 
-                <!-- Texto con el contenido -->
-                <caption class="tbl-capt">Equipamiento: ID: {{ equipamientos.idEquipamiento }} / {{ equipamientos.equipID }}</caption>
+                <caption class="tbl-capt">Equipamiento: {{ equipamientos.equipID }}</caption>
 
-                <!-- Descripción -->
 		        <tr>
 	                <th class="tbl-th" colspan="6">Descripción y localización</th>
                 </tr>
@@ -81,7 +61,7 @@
                     </td>                    
                 </tr>
                 
-                    <!-- Disponibilidad -->
+                <!-- Disponibilidad -->
                 {% else %}
                 <tr>
                     <th class="tbl-th" colspan="6">Control de Operatividad</th>
@@ -129,4 +109,4 @@
 
         </section>
 
-    {% endblock %}
+    {% endblock content %}
