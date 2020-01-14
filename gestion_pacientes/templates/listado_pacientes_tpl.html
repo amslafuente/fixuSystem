@@ -12,7 +12,7 @@
 
         <section class="sect-home-page-menu">
 
-            <table class="tbl-forms table-striped tbl-general tbl-60">
+            <table class="tbl-forms table-striped tbl-general tbl-70">
 
 	        	<caption class="tbl-capt">Listado de pacientes
                     {% if is_paginated %}
@@ -40,7 +40,7 @@
                    		<tr>
 			           	    <td class="tbl-td-centro">{{ paciente.idPaciente }}</td>
                             <td class="tbl-td-centro">{{ paciente.dni }}</td>
-        		   	    {% if head_order == 'A' %}
+        		   	    {% if head_order == 'fam' %}
 	    	    	        <td>{{ paciente.familyname }}, {{ paciente.name }}</td>
 		                {% else %}
     		    	   		<td>{{ paciente.name }} {{ paciente.familyname }}</td>

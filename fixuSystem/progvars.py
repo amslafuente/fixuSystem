@@ -1,8 +1,3 @@
-"""
-Variables to be used in different apps.
-
-"""
-
 ##### VERSION DEL PROGRAMA #####
 
 PROG_VERS = '0.70'
@@ -11,10 +6,10 @@ PROG_VERS = '0.70'
 
 ### Lista de CHOICES para seleccion de ordenacion en el select_pacientes_form ###
 selOrder = [
-    ('A', 'Apellidos (por defecto)'),
-    ('N', 'Nombre'),
-    ('D', 'DNI'),
-    ('P', 'Paciente ID')
+    ('fam', 'Apellidos (por defecto)'),
+    ('nam', 'Nombre'),
+    ('num', 'DNI'),
+    ('idp', 'Paciente ID')
 ]
 
 ### Lista de CHOICES para seleccion de sexo en gestion_pacientes/models.py ###

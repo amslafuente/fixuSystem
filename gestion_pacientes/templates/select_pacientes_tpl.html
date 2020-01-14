@@ -22,19 +22,25 @@
                 {% include 'errors_pacientes.html' %}
 
                 <tr>
-                    <td class="tbl-td">DNI:</td>
+                    <td class="tbl-td-centro grid-smalltxt grid-info2-color" colspan="2">
+                        Introduzca los criterios de búsqueda.<br/>
+                        Se incluirán los registros que CONTENGAN la expresión introducida.
+                    </td>
+                </tr> 
+                <tr>
+                    <td class="tbl-td-der">DNI:</td>
                     <td>{{ form.dni.as_widget }}</td>
                 </tr>
                 <tr>
-                    <td class="tbl-td">Nombre:</td>
+                    <td class="tbl-td-der">Nombre:</td>
                     <td>{{ form.name.as_widget }}</td>
                 </tr>
                 <tr>
-                    <td class="tbl-td">Apellidos:</td>
+                    <td class="tbl-td-der">Apellidos:</td>
                     <td>{{ form.familyname.as_widget }}</td>
                 </tr>
                 <tr>
-                    <td class="tb-td">Ordenar por:</td>
+                    <td class="tbl-td-der">Ordenar por:</td>
                     <td>{{ form.orderby.as_widget }}</td>
                 </tr>
 

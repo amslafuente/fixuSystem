@@ -3,12 +3,11 @@ from django.http import request, HttpResponseRedirect
 from .forms import select_pacientes_form, create_edit_pacientes_form, select_edit_pacientes_form
 from .models import Paciente
 from django.views import View
-from datetime import datetime
+import datetime
 from django.views.generic import TemplateView, CreateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView, DeleteView
-import datetime
 from django.conf import settings
 import os
 from pathlib import Path
@@ -17,6 +16,7 @@ from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from fixuSystem.progfuncts import calculate_age
+from fixuSystem.progvars import selOrder
 
 
 
@@ -42,7 +42,6 @@ class id_pacientes_view(DetailView):
     def get_context_data(self, **kwargs):
 
         ctx = super().get_context_data(**kwargs)
-
         # Obtiene la edad a partir de la fecha de nacimiento
         bd = getattr(ctx['pacientes'], 'birthdate')
         # Calcula la diferencia entre bd y el dia de hoy
@@ -85,7 +84,6 @@ class create_pacientes_view(CreateView):
         # el DNI para identificarlo mejor, respetando la ruta "pacientes/<nombre>.<ext>"
         # Quedaría "pacientes/<dni>.<ext>"
         try:
-            # Recupera el paciente grabado
             paciente = Paciente.objects.get(idPaciente__exact = paciente.idPaciente)
             # Si se introduce un nombre de archivo
             split_name = str(paciente.picturefile)
@@ -98,7 +96,6 @@ class create_pacientes_view(CreateView):
                     os.remove(new_name)
                 # Sustituye al picture file original por el nuevo
                 paciente.picturefile = new_name
-                # Limpia y guarda el registro
                 paciente.save()
                 # Cambia el nombre del archivo en el disco
                 os.rename(str(settings.MEDIA_ROOT + '/' + split_name), str(settings.MEDIA_ROOT +'/' + new_name))   
@@ -121,8 +118,7 @@ class edit_pacientes_view(UpdateView):
 
         context = super().get_context_data(**kwargs)
         # Coge el registro de ese paciente
-        context["idPaciente"] = self.kwargs['idPaciente']
-        
+        context["idPaciente"] = self.kwargs['idPaciente']        
         return context
 
     # Actualiza el campo modifiedby y la foto
@@ -136,20 +132,14 @@ class edit_pacientes_view(UpdateView):
             paciente.modifiedby = str(self.request.user)
         else:
             paciente.modifiedby = 'unix:' + str(self.request.META['USERNAME'])
-        # Limpia y guarda el registro
         paciente.save()
 
         # Si se actualiza la foto se renombra an DNI y se borra la antigua
         if 'picturefile' in form.changed_data:
-            picture_changed = True
-        else:
-            picture_changed = False
-        if picture_changed:
             try:
-                # Recupera el paciente grabado
-                inter_paciente = Paciente.objects.get(pk = paciente.idPaciente)
+                paciente = Paciente.objects.get(idPaciente__exact = paciente.idPaciente)
                 # Si se introduce un nombre de archivo
-                split_name = str(inter_paciente.picturefile)
+                split_name = str(paciente.picturefile)
                 if split_name != '':
                     # Trocea el nombre de la ruta por "/" y "."
                     # La parte del DNI es todo mayusculas
@@ -158,13 +148,11 @@ class edit_pacientes_view(UpdateView):
                     if Path(new_name).is_file():
                         os.remove(new_name)
                     # Sustituye al picture file original por el nuevo
-                    inter_paciente.picturefile = new_name
-                    # Limpia y guarda el registro
-                    inter_paciente.save()
+                    paciente.picturefile = new_name
+                    paciente.save()
                     # Cambia el nombre del archivo en el disco
                     os.rename(str(settings.MEDIA_ROOT + '/' + split_name), str(settings.MEDIA_ROOT +'/' + new_name))
             except:
-
                 messages.warning(request, 'Error procesando archivo de imagen')
 
         return HttpResponseRedirect(reverse('id-pacientes', kwargs = {'idPaciente' : paciente.idPaciente}))
@@ -177,54 +165,6 @@ class edit_pacientes_view(UpdateView):
 #                                       #
 #########################################
 
-@method_decorator(login_required, name='dispatch')
-class listado_pacientes_view(ListView):
-
-    model = Paciente
-    context_object_name = 'pacientes'
-    template_name = 'listado_pacientes_tpl.html'
-    paginate_by = 20
-
-    def get_queryset(self):
-
-        qs = super().get_queryset()
-
-        # Seleccion
-        if self.kwargs['dni'] != 'dni':
-            qs = qs.filter(dni__icontains = self.kwargs['dni'])
-        if self.kwargs['name'] != 'nombre':
-             qs = qs.filter(name__icontains = self.kwargs['name'])
-        if self.kwargs['familyname'] != 'apellidos':
-             qs = qs.filter(familyname__icontains = self.kwargs['familyname'])
-        # ORDERBY de los campos y registros
-        if self.kwargs['orderby'] == 'A':
-             qs = qs.order_by('familyname').values('idPaciente', 'dni', 'familyname', 'name')
-        elif self.kwargs['orderby'] == 'N':
-             qs = qs.order_by('name').values('idPaciente', 'dni', 'name', 'familyname')
-        elif self.kwargs['orderby'] == 'D':
-             qs = qs.order_by('dni').values('idPaciente', 'dni', 'name', 'familyname')
-        else:
-             qs = qs.order_by('idPaciente').values('idPaciente', 'dni', 'name', 'familyname')
-
-        return qs
-
-    def get_context_data(self, **kwargs):
-
-        ctx = super().get_context_data(**kwargs)
-        # Pasa la fecha de hoy para crear el enlace a las citas pendientes
-        ctx['desde_fecha'] = datetime.date.today().strftime('%d_%m_%Y')
-        # Pasa la ordenacion de la lista de pacientes
-        ctx['head_order'] = self.kwargs['orderby']
-        return ctx
-
-
-
-#########################################
-#                                       #
-#   VIEWS PARA SELECCION DE PACIENTES   #
-#                                       #
-#########################################
-
 # View para seleccionar pacientes a listar
 @method_decorator(login_required, name='dispatch')
 class select_pacientes_view(View):
@@ -232,7 +172,6 @@ class select_pacientes_view(View):
     def get(self, request):
 
         ctx = dict()
-        # Limpia el form y lo añade al contexto
         form = select_pacientes_form()
         ctx['form'] = form        
         return render(request, 'select_pacientes_tpl.html', ctx)
@@ -244,7 +183,7 @@ class select_pacientes_view(View):
 
         if form.is_valid():
             # Devuelve las partes que interesan en una string para mostrar solo esos pacientes
-            show_str = {'dni':'dni', 'name':'nombre', 'familyname':'apellidos', 'orderby':'A'}
+            show_str = {'dni': selOrder[2][0], 'name': selOrder[1][0], 'familyname': selOrder[0][0], 'orderby': selOrder[0][0]}
             if str(form.cleaned_data['dni']) != '':
                 show_str['dni'] = form.cleaned_data['dni']
             if str(form.cleaned_data['name']) != '':
@@ -259,6 +198,44 @@ class select_pacientes_view(View):
             messages.warning(request, 'El formulario contiene errores')
             return render(request, 'select_pacientes_tpl.html', ctx)
 
+@method_decorator(login_required, name='dispatch')
+class listado_pacientes_view(ListView):
+
+    model = Paciente
+    context_object_name = 'pacientes'
+    template_name = 'listado_pacientes_tpl.html'
+    paginate_by = 20
+
+    def get_queryset(self):
+
+        qs = super().get_queryset()
+        # Seleccion
+        if self.kwargs['dni'] != selOrder[2][0]:
+            qs = qs.filter(dni__icontains = self.kwargs['dni'])
+        if self.kwargs['name'] != selOrder[1][0]:
+             qs = qs.filter(name__icontains = self.kwargs['name'])
+        if self.kwargs['familyname'] != selOrder[0][0]:
+             qs = qs.filter(familyname__icontains = self.kwargs['familyname'])
+        # ORDERBY de los campos y registros
+        if self.kwargs['orderby'] == selOrder[0][0]:
+             qs = qs.order_by('familyname').values('idPaciente', 'dni', 'familyname', 'name')
+        elif self.kwargs['orderby'] == selOrder[1][0]:
+             qs = qs.order_by('name').values('idPaciente', 'dni', 'name', 'familyname')
+        elif self.kwargs['orderby'] == selOrder[2][0]:
+             qs = qs.order_by('dni').values('idPaciente', 'dni', 'name', 'familyname')
+        else:
+             qs = qs.order_by('idPaciente').values('idPaciente', 'dni', 'name', 'familyname')
+        return qs
+
+    def get_context_data(self, **kwargs):
+
+        ctx = super().get_context_data(**kwargs)
+        # Pasa la fecha de hoy para crear el enlace a las citas pendientes
+        ctx['desde_fecha'] = datetime.date.today().strftime('%d_%m_%Y')
+        # Pasa la ordenacion de la lista de pacientes
+        ctx['head_order'] = self.kwargs['orderby']
+        return ctx
+
 # View para seleccionar pacientes a editar
 @method_decorator(login_required, name='dispatch')
 class select_edit_pacientes_view(View):
@@ -266,7 +243,6 @@ class select_edit_pacientes_view(View):
     def get(self, request):
 
         ctx = dict()
-        # Limpia el form y lo añade al contexto
         form = select_edit_pacientes_form()
         ctx['form'] = form
         return render(request, 'select_edit_pacientes_tpl.html', ctx)
@@ -277,7 +253,6 @@ class select_edit_pacientes_view(View):
         form = select_edit_pacientes_form(request.POST)
 
         if form.is_valid():
-            show_str = dict()
 
             # Si devuelve un id comprueba que existe y pasa a edicion...
             if form.cleaned_data['idpac'] != '':
@@ -289,25 +264,24 @@ class select_edit_pacientes_view(View):
                     idpac = 0
                     existe_id = False
 
-                # Si existe...
+                # Si existe pasa el idPaciente...
                 if existe_id:
-                    show_str['idPaciente'] = idpac
-                    return HttpResponseRedirect(reverse('edit-pacientes', kwargs = show_str))
+                    return HttpResponseRedirect(reverse('edit-pacientes', kwargs = { 'idPaciente': idpac }))
                 # Si no existe pasa a seleccion general
                 else:
                     messages.warning(request, 'No existe esa ID - Use la búsqueda ampliada')
                     return HttpResponseRedirect(reverse('select-pacientes'))
 
-            # Si devuevle un DNI, recupera el registro y lee el id para pasarlo...
-            elif form.cleaned_data['dni'] != '':
+            # Si devuevle un DNI...
+            elif form.cleaned_data['dnipac'] != '':
                 # Filtra ese DNI
-                dnipac = form.cleaned_data['dni']
+                dnipac = form.cleaned_data['dnipac']
                 existe_dni = Paciente.objects.filter(dni__iexact = dnipac).exists()
                 
-                # Si existe...
+                # Si existe recupera el registro y pasa el idPaciente...
                 if existe_dni:
-                    show_str['idPaciente'] = dnipac
-                    return HttpResponseRedirect(reverse('edit-pacientes', kwargs = show_str))
+                    paciente = Paciente.objects.get(dni__iexact = dnipac)
+                    return HttpResponseRedirect(reverse('edit-pacientes', kwargs = { 'idPaciente': paciente.idPaciente }))
 
                 # Si no existe pasa a seleccion general
                 else:

@@ -50,6 +50,6 @@ class select_edit_pacientes_form(forms.Form):
 
     idpac = forms.CharField(label = 'id Paciente:', max_length = 10, required = False)
     idpac.widget = NumberInput(attrs={'style': 'width: 140px;', 'min': 0, 'max': 9999999999})
-    dni = forms.CharField(label = 'DNI Paciente:', max_length = 10, required = False)
-    dni.widget = TextInput(attrs={'style': 'width: 140px;', 'maxlength': 10})
+    dnipac = forms.CharField(label = 'DNI Paciente:', max_length = 10, required = False)
+    dnipac.widget = TextInput(attrs={'style': 'width: 140px;', 'maxlength': 10})
     
