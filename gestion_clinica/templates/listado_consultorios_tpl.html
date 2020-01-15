@@ -1,22 +1,10 @@
-<!-- *************************** -->
-<!--   listado_consultorios_tpl  -->
-<!-- *************************** -->
-
 {% extends 'base.html' %}
-
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
 
     {% block title %}
 
 		<title>fixuSystem - Fisioterapia  - Gestión de clínica</title>
 
     {% endblock title %}
-
-    <!-- **************** -->
-    <!--        JS        -->
-    <!-- **************** -->
 
     {% block JS %}
 
@@ -28,6 +16,10 @@
             }
             function cleanLocat() {
                 document.getElementById('id_filterlocat').value = '';
+            }
+            function cleanAll() {
+                cleanDesc();
+                cleanLocat();
             }
             // Pone el criterio de ordenacion al pinchar en la cabecera
             function setOrder (order) {
@@ -48,10 +40,6 @@
 
     {% endblock JS %}
 
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
-
     {% block content %}
 
         {% load static %}
@@ -61,7 +49,6 @@
         <!-- Tabla mostrando consultorios -->
         <table class="tbl-forms table-striped tbl-general tbl-70">
 
-            <!-- Texto con el contenido -->
 	    	<caption class="tbl-capt">Listado de consultorios/dependencias
                 {% if is_paginated %}
                     <span> - Página {{ page_obj.number }} de {{ paginator.num_pages }}</span>
@@ -72,7 +59,7 @@
             <tr>
                 <td colspan="6">
                     <div class="div-filtro-equip">
-                        <button class="btn btn-success btn-sm" style="font-size: 0.8em;">F:&nbsp;{{ filterdesc|upper }}&nbsp;{{ filterlocat|upper }}&nbsp;O:&nbsp;{{ orderby|upper }}</button>
+                        <button class="btn btn-success btn-sm" onclick="cleanAll()" style="font-size: 0.8em;">F:&nbsp;{{ filterdesc|upper }}&nbsp;{{ filterlocat|upper }}&nbsp;O:&nbsp;{{ orderby|upper }}</button>
                         <div class="div-filtro-equip-der">
                             <form method="GET">                            
                                 <button type="button" onclick="cleanDesc()" class="btn btn-info btn-sm">Identif.:</button>{{ form.filterdesc }}
@@ -85,7 +72,6 @@
                 </td>
             </tr>
             
-            <!-- Cabecera de la tabla -->
 	    	<tr>
            		<th class="tbl-th">
                     <button id="btn-officeID" onclick="setOrder('officeID')" type="button" class="btn btn-info btn-sm">Identif.</button>
@@ -101,7 +87,6 @@
                 <th class="tbl-th tbl-td-10">Acciones</th>
             </tr>
 
-            <!-- NO devuelve ningun consultorio avisa y cierra la tabla -->
             {% if not consultorios %}
 	    	    <tr>
                     <th colspan="6" class="field-errors">
@@ -109,10 +94,8 @@
                     </th>
                 </tr>
 
-            <!-- SI devuelve algun consultorio muestra y cierra la tabla -->
             {% else %}
 
-                <!-- Devuelve los consultorios en un querySet llamada consultorios -->
                 {% for consultorio in consultorios %}
                     <tr class="grid-smalltxt">
                         <td class="tbl-td-centro">{{ consultorio.officeID }}</td>
@@ -142,7 +125,6 @@
 
         </table>
 
-        <!-- Incluye PAGINADOR-->
         {% include 'paginador_consultorios.html' %}
 
     	<!-- Botones de acción -->

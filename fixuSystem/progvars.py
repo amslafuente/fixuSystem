@@ -63,3 +63,9 @@ selTipoEquip = [
     ('limp', 'Limpieza'),
     ('otros', 'Otros'),
 ]
+
+##### Choices para filtro del tidpo de control
+selCtrlEquip = [
+    ('oper', 'Operatividad'),
+    ('stck', 'Stock'),
+]

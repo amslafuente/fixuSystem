@@ -1,18 +1,10 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
 		<title>fixuSystem - Fisioterapia  - Gestión de clínica</title>
 
     {% endblock title %}
-
-    <!-- **************** -->
-    <!--        JS        -->
-    <!-- **************** -->
 
     {% block JS %}
 
@@ -20,13 +12,18 @@
 
             // Limpia campos de filtro al pulsar un boton
             function cleanType() {
-                document.getElementById('id_filter_').value = 'todos';
+                document.getElementById('id_filtertype').value = '---';
             }
-            function cleanCondit() {
-                document.getElementById('id_condition').value = '';
+            function cleanDesc() {
+                document.getElementById('id_filterdesc').value = '';
             }
             function cleanCtrl() {
-                document.getElementById('id_ctrl').value = '';
+                document.getElementById('id_filterctrl').value = '---';
+            }
+            function cleanAll() {
+                cleanType();
+                cleanDesc();
+                cleanCtrl();
             }
             // Pone el criterio de ordenacion al pinchar en la cabecera
             function setOrder (order) {
@@ -49,21 +46,15 @@
 
     {% endblock JS %}
 
-
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
-
     {% block content %}
 
         {% load static %}
 
         <section class="sect-home-page-menu">
 
-        <!-- Tabla mostrando consultorios -->
+        <!-- Tabla mostrando equipamientos -->
         <table class="tbl-forms table-striped tbl-general tbl-100">
 
-            <!-- Texto con el contenido -->
 	    	<caption class="tbl-capt">Listado de equipamiento/material
                 {% if is_paginated %}
                     <span> - Página {{ page_obj.number }} de {{ paginator.num_pages }}</span>
@@ -74,22 +65,19 @@
             <tr>
                 <td colspan="11">
                     <div class="div-filtro-equip">
-                        <button class="btn btn-success btn-sm" style="font-size: 0.8em;">F:&nbsp;{{ filter|upper }}&nbsp;{{ condition|upper }}&nbsp;{{ ctrl|upper }}&nbsp;O:&nbsp;{{ orderby|upper }}</button>   
+                        <button class="btn btn-success btn-sm" onclick="cleanAll()" style="font-size: 0.8em;">F:&nbsp;{{ filtertype|upper }}&nbsp;{{ filterdesc|upper }}&nbsp;{{ filterctrl|upper }}&nbsp;O:&nbsp;{{ orderby|upper }}</button>   
                         <div class="div-filtro-equip-der">
                             <form method="GET">                            
-                                <button type="button" onclick="cleanType()" class="btn btn-info btn-sm">Tipo:</button>{{ form.filter_ }}
-                                <button type="button" onclick="cleanCondit()" class="btn btn-info btn-sm">Descrip.:</button>{{ form.condition }}
-                                <button type="button" onclick="cleanCtrl()" class="btn btn-info btn-sm">Control:</button>{{ form.ctrl }}
+                                <button type="button" onclick="cleanType()" class="btn btn-info btn-sm">Tipo:</button>{{ form.filtertype }}
+                                <button type="button" onclick="cleanDesc()" class="btn btn-info btn-sm">Descrip.:</button>{{ form.filterdesc }}
+                                <button type="button" onclick="cleanCtrl()" class="btn btn-info btn-sm">Control:</button>{{ form.filterctrl }}
                                 <input type="hidden" name="orderby" id="id_orderby" value="">
                                 <input class="btn btn-danger btn-sm" type="submit" value="Filtrar">
                             </form>
                         </div>
                     </div>
                 </td>
-          </tr>
-
-            <!-- Cabecera de la tabla -->
-            <!-- Con cada form pasa la ordenacion y todos los parametros de filtro -->
+            </tr>
 
 	    	<tr>
                 <th class="tbl-th-izq">
@@ -112,7 +100,6 @@
                 <th class="tbl-th tbl-td-10" colspan="3">Acciones</th>
             </tr>
 
-            <!-- NO devuelve ningun equipamiento avisa y cierra la tabla -->
             {% if not equipamientos %}
 	    	    <tr>
                     <th colspan="11" class="field-errors">
@@ -120,10 +107,8 @@
                     </th>
                 </tr>
 
-            <!-- SI devuelve algun equipamiento muestra y cierra la tabla -->
             {% else %}
 
-                <!-- Devuelve los equipamientos en un querySet llamada equipamientos -->
                 {% for equipamiento in equipamientos %}
                		<tr class="grid-smalltxt">
                         <td class="tbl-td">{{ equipamiento.equipType }}</td>   
@@ -165,7 +150,6 @@
 
         </table>
 
-        <!-- Incluye PAGINADOR-->
         {% include 'paginador_equipamiento.html' %}
 
     	<!-- Botones de acción -->

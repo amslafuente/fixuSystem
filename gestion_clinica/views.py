@@ -16,11 +16,11 @@ from .forms import init_edit_info_clinica_form, create_edit_consultorios_form, c
 from .forms import customConsultorioForm, customEquipamientoForm, customProveedorForm
 from .forms import select_profesionales_form, create_edit_profesionales_form
 from .forms import create_edit_proveedores_form
+from fixuSystem.progvars import selCtrlEquip, selTipoEquip, selOrder
 import os
 from pathlib import Path
 from django.conf import settings
 from django.forms import forms, fields, widgets
-from fixuSystem.progvars import selTipoEquip
 from django.db.models import Q
 
 
@@ -203,20 +203,23 @@ class listado_consultorios_view(ListView):
     
         qs = super().get_queryset()
         # Extrae registros del GET o los pone por defecto
-        kwarg_filterdesc = (self.request.GET.get('filterdesc') or '').lower()
-        kwarg_filterlocat = (self.request.GET.get('filterlocat') or '').lower()
-        kwarg_orderby = (self.request.GET.get('orderby') or '')
+        filterdesc = (self.request.GET.get('filterdesc') or '')
+        filterlocat = (self.request.GET.get('filterlocat') or '')
+        orderby = (self.request.GET.get('orderby') or '')
+
        # Fullname
-        if kwarg_filterdesc == '':
-            qs = Consultorio.objects.all().order_by('officeID')
+        if filterdesc == '':
+            qs = Consultorio.objects.all()
         else:
-            qs = Consultorio.objects.filter(officeID__icontains = kwarg_filterdesc).order_by('officeID')
+            qs = Consultorio.objects.filter(officeID__icontains = filterdesc)
         # Location
-        if kwarg_filterlocat != '':
-            qs = qs.filter(officeLocation__icontains = kwarg_filterlocat)
+        if filterlocat != '':
+            qs = qs.filter(officeLocation__icontains = filterlocat)
         # OrderBy ASC
-        if kwarg_orderby != '':
-            qs = qs.order_by(kwarg_orderby)
+        if orderby != '':
+            qs = qs.order_by(orderby)
+        else:
+            qs = qs.order_by('officeID')
         return qs
 
     def get_context_data(self, **kwargs):
@@ -225,10 +228,24 @@ class listado_consultorios_view(ListView):
         # Form al contexto
         filterform = customConsultorioForm(self.request.GET) or customConsultorioForm()
         ctx['form'] = filterform
-        # Obtiene el filtro y condicion actual del GET   
-        ctx['filterdesc'] = (self.request.GET.get('filterdesc') or '').lower()
-        ctx['filterlocat'] = (self.request.GET.get('filterlocat') or '').lower()
-        ctx['orderby'] = (self.request.GET.get('orderby') or '')
+
+        # Obtiene el filtro y condicion actual del GET para pasarlo al contexto de modo legible
+        filterdesc = (self.request.GET.get('filterdesc') or '')
+        ctx['filterdesc'] = filterdesc
+
+        filterlocat = (self.request.GET.get('filterlocat') or '')
+        ctx['filterlocat'] = filterlocat
+
+        orderby = (self.request.GET.get('orderby') or '')
+        ctx['orderby_'] = orderby
+        if orderby == 'officeID':
+            orderby = 'IDENTIF.'
+        elif orderby == 'officeLocation':
+            orderby = 'SITUAC.'
+        elif orderby == 'officeIsavail':
+            orderby = 'DISPON.'
+        ctx['orderby'] = orderby
+
         return ctx
 
 @method_decorator(login_required, name='dispatch')
@@ -245,7 +262,8 @@ class create_consultorios_view(CreateView):
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) and (not request.user.is_staff):
             return HttpResponseRedirect(reverse('error-privilegios-clinica'))
-        return super().get(request)
+        else:
+            return super().get(request)
 
     def form_valid(self, form):
 
@@ -273,7 +291,8 @@ class edit_consultorios_view(UpdateView):
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) or (not request.user.is_staff):
             return HttpResponseRedirect(reverse('error-privilegios-clinica'))
-        return super().get(request)
+        else:
+            return super().get(request)
 
 @method_decorator(login_required, name='dispatch')
 class delete_consultorios_view(DeleteView):
@@ -290,7 +309,8 @@ class delete_consultorios_view(DeleteView):
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) or (not request.user.is_staff):
             return HttpResponseRedirect(reverse('error-privilegios-clinica'))
-        return super().get(request)
+        else:
+            return super().get(request)
 
     def get_queryset(self):
 
@@ -332,27 +352,33 @@ class listado_equipamiento_view(ListView):
 
         qs = super().get_queryset()
         # Extrae registros del GET o los pone por defecto
-        kwarg_filter = (self.request.GET.get('filter_') or 'todos').lower()
-        kwarg_condition = (self.request.GET.get('condition') or '').lower()
-        kwarg_ctrl = (self.request.GET.get('ctrl') or '').lower()
-        kwarg_orderby = (self.request.GET.get('orderby') or '')
+        filtertype = (self.request.GET.get('filtertype') or '')
+        if filtertype == '---':
+            filtertype = ''
+        filterdesc = (self.request.GET.get('filterdesc') or '')
+        filterctrl = (self.request.GET.get('filterctrl') or '')
+        if filterctrl == '---':
+            filterctrl = ''        
+        orderby = (self.request.GET.get('orderby') or '')
 
-       # Filter_
-        if kwarg_filter == 'todos':
-            qs = Equipamiento.objects.all().order_by('equipDesc')
+       # Tipo
+        if filtertype == '':
+            qs = Equipamiento.objects.all()
         else:
-            qs = Equipamiento.objects.filter(equipType__icontains = kwarg_filter).order_by('equipDesc')
-        # Condit
-        if kwarg_condition != '':
-            qs = qs.filter(equipDesc__icontains = kwarg_condition)
+            qs = Equipamiento.objects.filter(equipType__icontains = filtertype)
+        # Desc
+        if filterdesc != '':
+            qs = qs.filter(equipDesc__icontains = filterdesc)
         # Ctrl
-        if kwarg_ctrl == 'stock':
-            qs = qs.filter(stockwarning = True)
-        elif kwarg_ctrl == 'oper':
+        if filterctrl == selCtrlEquip[0][0]:
             qs = qs.filter(stockwarning = False)
+        elif filterctrl == selCtrlEquip[1][0]:
+            qs = qs.filter(stockwarning = True)
         # OrderBy ASC
-        if kwarg_orderby != '':
-            qs = qs.order_by(kwarg_orderby)
+        if orderby != '':
+            qs = qs.order_by(orderby)
+        else:
+            qs = qs.order_by('equipDesc')
         return qs
 
     def get_context_data(self, **kwargs):
@@ -361,11 +387,35 @@ class listado_equipamiento_view(ListView):
         # Form de filtro al contexto
         filterform = customEquipamientoForm(self.request.GET) or customEquipamientoForm()
         ctx['form'] = filterform
-        # Obtiene el filtro y condicion actual del GET   
-        ctx['filter'] = (self.request.GET.get('filter_') or 'todos').lower()
-        ctx['condition'] = (self.request.GET.get('condition') or '').lower()
-        ctx['ctrl'] = (self.request.GET.get('ctrl') or '').lower()
-        ctx['orderby'] = (self.request.GET.get('orderby') or '')
+
+        # Obtiene el filtro y condicion actual del GET para pasarlo al contexto de modo legible
+        filtertype = (self.request.GET.get('filtertype') or '')
+        if filtertype == '---':
+            filtertype = ''
+        ctx['filtertype'] = filtertype
+
+        filterdesc = (self.request.GET.get('filterdesc') or '')
+        ctx['filterdesc'] = filterdesc
+
+        filterctrl = (self.request.GET.get('filterctrl') or '')
+        if filterctrl == '---':
+            filterctrl = ''
+        ctx['filterctrl'] = filterctrl
+        
+        orderby = (self.request.GET.get('orderby') or '')
+        ctx['orderby_'] = orderby
+        if orderby == "equipType":
+            orderby = 'TIPO'
+        elif orderby == 'equipID':
+            orderby = 'IDENT.'
+        elif orderby == 'equipDesc':
+            orderby = 'DESCR.'
+        elif orderby == 'equipIsavail':
+            orderby = 'OPERAT.'
+        elif orderby == 'stockratio':
+            orderby = 'STOCK'
+        ctx['orderby'] = orderby
+        
         return ctx
 
 @method_decorator(login_required, name='dispatch')
@@ -424,7 +474,8 @@ class edit_equipamiento_view(UpdateView):
         # Si el usuario no es o staff no permite acceder a los datos de la clinica
         if (not request.user.is_superuser) or (not request.user.is_staff):
             return HttpResponseRedirect(reverse('error-privilegios-clinica'))
-        return super().get(request)
+        else:
+            return super().get(request)
 
     def form_valid(self, form):
 
@@ -503,21 +554,23 @@ class listado_proveedores_view(ListView):
 
         qs = super().get_queryset()
         # Extrae registros del GET o los pone por defecto
-        kwarg_filtername = (self.request.GET.get('filtername') or '').lower()
-        kwarg_filterarea = (self.request.GET.get('filterarea') or '').lower()
-        kwarg_orderby = (self.request.GET.get('orderby') or '')
+        filtername = (self.request.GET.get('filtername') or '')
+        filterarea = (self.request.GET.get('filterarea') or '')
+        orderby = (self.request.GET.get('orderby') or '')
 
        # Fullname
-        if kwarg_filtername == '':
-            qs = Proveedor.objects.all().order_by('fullname')
+        if filtername == '':
+            qs = Proveedor.objects.all()
         else:
-            qs = Proveedor.objects.filter(fullname__icontains = kwarg_filtername).order_by('fullname')
+            qs = Proveedor.objects.filter(fullname__icontains = filtername)
         # Area
-        if kwarg_filterarea != '':
-            qs = qs.filter(area__icontains = kwarg_filterarea)
+        if filterarea != '':
+            qs = qs.filter(area__icontains = filterarea)
          # OrderBy
-        if kwarg_orderby != '':
-            qs = qs.order_by(kwarg_orderby)
+        if orderby != '':
+            qs = qs.order_by(orderby)
+        else:
+            qs = qs.order_by('fullname')
         return qs
 
     def get_context_data(self, **kwargs):
@@ -526,10 +579,22 @@ class listado_proveedores_view(ListView):
         # Pasa el form y el contexto
         filterform = customProveedorForm(self.request.GET) or customProveedorForm()
         ctx['form'] = filterform
-        # Obtiene el filtro y condicion actual del GET   
-        ctx['filtername'] = (self.request.GET.get('filtername') or '').lower()
-        ctx['filterarea'] = (self.request.GET.get('filterarea') or '').lower()
-        ctx['orderby'] = (self.request.GET.get('orderby') or '')
+        
+        # Obtiene el filtro y condicion actual del GET para pasarlo al contexto de modo legible
+        filtername = (self.request.GET.get('filtername') or '')
+        ctx['filtername'] = filtername
+        
+        filterarea = (self.request.GET.get('filterarea') or '')
+        ctx['filterarea'] = filterarea
+        
+        orderby = (self.request.GET.get('orderby') or '')
+        ctx['orderby_'] = orderby
+        if orderby == 'fullname':
+            orderby = 'EMPRESA'
+        elif orderby == 'area':
+            orderby = 'AREA'
+        ctx['orderby'] = orderby
+        
         return ctx
 
 @method_decorator(login_required, name='dispatch')
@@ -651,7 +716,6 @@ class select_profesionales_view(View):
     def post(self, request):
 
         ctx = dict()
-        # Rellena el form con el POST y añade al contexto
         form = select_profesionales_form(request.POST)
 
         # El form SI es validado
@@ -846,7 +910,6 @@ class complete_profesionales_view(View):
             return HttpResponseRedirect(reverse('error-privilegios-profesionales'))
 
         ctx = dict()        
-        # Pasa el form POST y FILES
         form = create_edit_profesionales_form(request.POST, request.FILES)
 
         # Valida el form
@@ -993,7 +1056,12 @@ class edit_profesionales_view(UpdateView):
 
 
 
-##### CAMBIO DE CLAVE PROFESIONALES #####
+
+#################################################
+#                                               #
+#        CAMBIO DE CLAVE DE PROFESIONALES       #
+#                                               #
+#################################################
 
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm

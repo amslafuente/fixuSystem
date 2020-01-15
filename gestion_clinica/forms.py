@@ -1,8 +1,10 @@
 from django import forms
 from django.forms import ModelForm, Textarea, TextInput, NumberInput, Select, EmailInput, HiddenInput, CheckboxInput
-from fixuSystem.progvars import selTipoEquip
+from fixuSystem.progvars import selTipoEquip, selCtrlEquip
 from .models import Clinica, Consultorio, Equipamiento, Proveedor, Profesional
 from django.conf import settings
+
+
 
 #################################
 #                               #
@@ -30,6 +32,8 @@ class init_edit_info_clinica_form(ModelForm):
             'email': EmailInput(attrs={'style': 'width: 200px'}),
             'notes': Textarea(attrs={'cols': 70, 'rows': 3})
             }
+
+
 
 #################################
 #                               #
@@ -60,6 +64,8 @@ class customConsultorioForm(forms.Form):
     filterlocat = forms.CharField(label = 'LOCAL', required = False, max_length = 10)
     filterlocat.widget = forms.widgets.TextInput(attrs={'style': 'width: 100px'})
 
+
+
 #################################
 #                               #
 #     FORMS DE EQUIPAMIENTO     #
@@ -83,7 +89,7 @@ class create_edit_equipamiento_form(ModelForm):
             'stocklimit': NumberInput(attrs={'style': 'width: 85px', 'min': 0, 'max': 99999}),
             'stockavail': NumberInput(attrs={'style': 'width: 85px', 'min': 0, 'max': 99999}),
             'notes': Textarea(attrs={'cols': 56, 'rows': 3})
-            }
+        }
 
 # Widget de filtrado de tipo de equipamiento
 class customEquipamientoWidget(forms.widgets.Select):
@@ -91,18 +97,28 @@ class customEquipamientoWidget(forms.widgets.Select):
     def __init__(self, *args, **kwargs) :
         super().__init__(*args, **kwargs)
         list_choices = list()
-        list_choices.append(('todos', 'Todos'))
+        list_choices.append(('---', '---'))
         list_choices.extend(selTipoEquip)
         self.choices = list_choices
 
-# Form de filtro para equipamiento
+# Widget de filtrado de control de equipamiento
+class customCtrlEquipamientoWidget(forms.widgets.Select):
+
+    def __init__(self, *args, **kwargs) :
+        super().__init__(*args, **kwargs)
+        list_choices = list()
+        list_choices.append(('---', '---'))
+        list_choices.extend(selCtrlEquip)
+        self.choices = list_choices
+
+# Form de filtro para control de equipamiento
 class customEquipamientoForm(forms.Form):
 
-    filter_ = forms.CharField(label = 'Filtro', widget = customEquipamientoWidget())
-    condition = forms.CharField(label = 'Condición', required = False, max_length = 10)
-    condition.widget = forms.widgets.TextInput(attrs={'style': 'width: 80px'})
-    ctrl = forms.CharField(label = 'Ctrl', required = False, max_length = 10)
-    ctrl.widget = forms.widgets.Select(attrs={'style': 'width: 80px'}, choices=[('', ''), ('oper', 'Oper'), ('stock', 'Stock')])
+    filtertype = forms.CharField(label = 'Tipo', widget = customEquipamientoWidget())
+    filterdesc = forms.CharField(label = 'Descripción', required = False, max_length = 10)
+    filterdesc.widget = forms.widgets.TextInput(attrs={'style': 'width: 80px'})
+    filterctrl = forms.CharField(label = 'Ctrl', widget = customCtrlEquipamientoWidget())
+
 
 
 #################################
@@ -132,7 +148,7 @@ class create_edit_proveedores_form(ModelForm):
             'phoneSAT': NumberInput(attrs={'style': 'width: 120px', 'min': 0, 'max': 999999999}),
             'emailSAT': EmailInput(attrs={'style': 'width: 180px'}),
             'notas': Textarea(attrs={'cols': 76, 'rows': 2})
-            }
+        }
 
 # Form de filtro para proveedor
 class customProveedorForm(forms.Form):
@@ -143,21 +159,13 @@ class customProveedorForm(forms.Form):
     filterarea.widget = forms.widgets.TextInput(attrs={'style': 'width: 100px'})
 
 
+
 #################################
 #                               #
 #     FORMS DE PROFESIONALES    #
 #                               #
 #################################
 
-# Selección de profesionales
-class select_profesionales_form(forms.Form):
-
-    # Campos del formulario
-    fullname = forms.CharField(label = 'Nombre:', max_length = 10, required = False)
-    position = forms.CharField(label = 'Cargo:', max_length = 10, required = False)
-    department = forms.CharField(label = 'Departamento:',  max_length = 10, required = False)
-
-# Form para editar profesionales (mezcla User y Profesional)
 class create_edit_profesionales_form(ModelForm):
 
     user_login = forms.CharField(label = 'Usuario:', max_length = 150, required = True)
@@ -188,3 +196,10 @@ class create_edit_profesionales_form(ModelForm):
             'email': EmailInput(attrs={'style': 'width: 175px'}),
             'notes': Textarea(attrs={'cols': 60, 'rows': 3})
         }
+
+# Selección de profesionales
+class select_profesionales_form(forms.Form):
+
+    fullname = forms.CharField(label = 'Nombre:', max_length = 10, required = False)
+    position = forms.CharField(label = 'Cargo:', max_length = 10, required = False)
+    department = forms.CharField(label = 'Departamento:',  max_length = 10, required = False)

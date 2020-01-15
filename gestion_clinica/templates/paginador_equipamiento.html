@@ -8,7 +8,7 @@
         <!-- PAGINA PREVIA -->
         {% if page_obj.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&filter={{ filter }}&condition={{ condition }}&ctrl={{ ctrl }}&orderby={{ orderby }}">Prev.</a>
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&filtertype={{ filtertype }}&filterdesc={{ filterdesc }}&filterctrl={{ filterctrl }}&orderby={{ orderby_ }}">Prev.</a>
             </li>
         {% else %}
             <li class="page-item">
@@ -22,7 +22,7 @@
                 <span class="page-link">{{ i }}</span>
             {% else %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ i }}&filter={{ filter }}&condition={{ condition }}&ctrl={{ ctrl }}&orderby={{ orderby }}">{{ i }}</a>
+                    <a class="page-link" href="?page={{ i }}&filtertype={{ filtertype }}&filterdesc={{ filterdesc }}&filterctrl={{ filterctrl }}&orderby={{ orderby_ }}">{{ i }}</a>
                 </li>
             {% endif %}
         {% endfor %}
@@ -30,7 +30,7 @@
         <!-- PAGINA SIGUIENTE -->
         {% if page_obj.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}&filter={{ filter }}&condition={{ condition }}&ctrl={{ ctrl }}&orderby={{ orderby }}">Sig.</a>
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}&filtertype={{ filtertype }}&filterdesc={{ filterdesc }}&filterctrl={{ filterctrl }}&orderby={{ orderby_ }}">Sig.</a>
             </li>
         {% else %}
             <li class="page-item">
