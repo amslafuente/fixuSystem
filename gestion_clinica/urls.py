@@ -1,11 +1,15 @@
-
-
 from django.urls import path
 from gestion_clinica import views
 
+
+
 urlpatterns = [
 
-    ##### URLS de gestion_clinica #####
+#########################################
+#                                       #
+#        URLS DE GESTION_CLINICA        #
+#                                       #
+#########################################
 
     ##### Clinica #####
 

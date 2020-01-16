@@ -3,7 +3,17 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+
+
 urlpatterns = [
+
+#########################################
+#                                       #
+#           URLS DE fixuSystem          #
+#                                       #
+#########################################
+
+    # Admin site
     path('fixuSystem/admin/', admin.site.urls, name="admin"),
 
     # URLs de home_page y menus
@@ -21,9 +31,8 @@ urlpatterns = [
     # URLs de gestion_consultas
     path('fixuSystem/consultas/', include('gestion_consultas.urls')),
 
-    # URLs de gestion_clinca
+    # URLs de gestion_clinica
     path('fixuSystem/clinica/', include('gestion_clinica.urls')),
-
 ]
 
 if settings.DEBUG:

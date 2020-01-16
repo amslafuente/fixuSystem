@@ -52,8 +52,12 @@
 
         <section class="sect-home-page-menu">
 
-        <!-- Tabla mostrando equipamientos -->
-        <table class="tbl-forms table-striped tbl-general tbl-100">
+    	<!-- Botones de acción -->
+        <div class="div-botones">
+            <a href="{% url 'create-equipamiento' %}"><input type="button" class="btn btn-info" value="Nuevo equipamiento"></a>
+        </div>
+
+        <table class="tbl-forms table-striped tbl-general tbl-85">
 
 	    	<caption class="tbl-capt">Listado de equipamiento/material
                 {% if is_paginated %}
@@ -154,7 +158,6 @@
 
     	<!-- Botones de acción -->
         <div class="div-botones">
-            <a href="{% url 'create-equipamiento' %}"><input type="button" class="btn btn-info" value="Nuevo equipamiento"></a>
 		    <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
         </div>
 

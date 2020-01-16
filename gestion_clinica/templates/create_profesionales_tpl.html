@@ -1,19 +1,11 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
     	<title>fixuSystem - Fisioterapia - Gestión de clínica</title>
 
     {% endblock title %}
     
-    <!-- **************** -->
-    <!--         JS       -->
-    <!-- **************** -->
-
     {% block JS %}
 
         <script type="text/javascript">
@@ -33,95 +25,85 @@
 
     {% endblock JS %}
 
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
-
     {% block content %}
 
         {% load static %}
 
-		<!-- Menú principal con imágenes -->
         <section class="sect-home-page-menu">
 
-            <!-- Formularion de nuevo equipamiento -->
 	        <form method="POST" enctype="multipart/form-data">
 
     	    	{% csrf_token %}
 
-             	<!-- Tabla del profesional -->
                 <table class="tbl-forms table-striped tbl-general tbl-50">
 
-                    <!-- Texto con el contenido -->
                     <caption class="tbl-capt">Nuevo/a profesional</caption>
 
-                    <!-- Errores en el form -->
                     {% include 'errors_profesionales.html' %}
 
-                    <!-- Datos de acceso a django -->
 		   	        <tr>
 	    		        <th class="tbl-th" colspan="6">Usuario/a y clave de acceso al sistema</th>
                     </tr>
                     <tr>
-        			    <td class="tbl-td-der">Usuario/a:</td><td colspan="4">{{ form.user_login.as_widget }}</td>
-        			    <td>{{ form.user_issuperuser.as_widget }} Superusuario/a</td>                    
+        			    <td class="tbl-td-der">{{ form.user_login.label }}</td><td colspan="4">{{ form.user_login.as_widget }}</td>
+        			    <td>{{ form.user_issuperuser.as_widget }} {{ form.user_issuperuser.label }}</td>                    
                     <tr>
-                        <td class="tbl-td-der">Clave:</td><td colspan="4">{{ form.user_password.as_widget }}</td>
+                        <td class="tbl-td-der">{{ form.user_password.label }}</td><td colspan="4">{{ form.user_password.as_widget }}</td>
                         <td>{{ form.user_isstaff.as_widget }} Administrador/a</td>
                     </tr>
                     <tr>
                         <td class="tbl-td-der">Repetir clave:</td><td colspan="4"><input type="password" onblur="compare_Psswd()" name="password_rep" style="width: 300px" required id="id_password_rep"></td>
-                        <td>{{ form.user_isactive.as_widget }} Activo/a</td>                        
+                        <td>{{ form.user_isactive.as_widget }} {{ form.user_isactive.label }}</td>                        
                     </tr>
                     <tr>
                         <td  class="tbl-td-centro grid-smalltxt grid-info2-color" colspan="6">
                             Ser Superusuario/a implica ser también Administrador/a.<br/>
-                            Desactive "Superusuario/a" para dar solo privilegios de Administrador/a.                            
+                            Desactive "Superusuario/a" para dar solo privilegios de Administrador/a.<br/>
+                            AVISO: LOS ROLES DE ACCESO SOLO SON EDITABLES POR LOS SUPERUSUARIOS/AS.                                                        
                         </td>
                     </tr>
-                    <!-- Datos personales -->
                     <tr>
 	    		        <th class="tbl-th" colspan="6">Datos personales</th>
                     </tr>
                     <tr>
-                        <td class="tbl-td-der">Nombre:</td><td colspan="2">{{ form.fullname.as_widget }}</td>
-                        <td class="tbl-td-der">DNI:</td><td colspan="2">{{ form.dni.as_widget }}</td>
+                        <td class="tbl-td-der">{{ form.fullname.label }}</td><td colspan="2">{{ form.fullname.as_widget }}</td>
+                        <td class="tbl-td-der">{{ form.dni.label }}</td><td colspan="2">{{ form.dni.as_widget }}</td>
                     </tr>
                     <tr>
 	    		        <th class="tbl-th" colspan="6">Datos profesionales</th>
                     </tr>
 		   	        <tr>
-                        <td class="tbl-td-der">Colegiado/a:</td><td colspan="2">{{ form.numcolegiado.as_widget }}</td>
-                        <td class="tbl-td-der">NIF:</td><td colspan="2">{{ form.nif.as_widget }}</td> 
+                        <td class="tbl-td-der">{{ form.numcolegiado.label }}</td><td colspan="2">{{ form.numcolegiado.as_widget }}</td>
+                        <td class="tbl-td-der">{{ form.nif.label }}</td><td colspan="2">{{ form.nif.as_widget }}</td> 
                     </tr>
                     <tr>
-                        <td class="tbl-td-der">Cargo:</td><td colspan="2">{{ form.position.as_widget }}</td>
-                        <td class="tbl-td-der">Departamento:</td><td colspan="2">{{ form.department.as_widget }}</td> 
+                        <td class="tbl-td-der">{{ form.position.label }}</td><td colspan="2">{{ form.position.as_widget }}</td>
+                        <td class="tbl-td-der">{{ form.department.label }}</td><td colspan="2">{{ form.department.as_widget }}</td> 
                     </tr>
                     <tr>
-                        <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;{{ form.currentavail.as_widget }} De alta</td>
-                        <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;{{ form.currentstaff.as_widget }} Empleado/a</td> 
+                        <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;{{ form.currentavail.as_widget }} {{ form.currentavail.label }}</td>
+                        <td colspan="3">&nbsp;&nbsp;&nbsp;&nbsp;{{ form.currentstaff.as_widget }} {{ form.currentstaff.label }}</td> 
                     </tr>
                     <tr>
 	    		        <th class="tbl-th" colspan="6">Datos de contacto</th>
                     </tr>
                     <tr>
-                        <td class="tbl-td-der">Dirección:</td><td colspan="5">{{ form.fulladdress.as_widget }}</td>
+                        <td class="tbl-td-der">{{ form.fulladdress.label }}</td><td colspan="5">{{ form.fulladdress.as_widget }}</td>
                     </tr>
                     <tr>
-                        <td class="tbl-td-der">C.Postal:</td><td colspan="2">{{ form.postcode.as_widget }}</td>
-                        <td class="tbl-td-der">Localidad:</td><td colspan="2">{{ form.city.as_widget }}</td> 
+                        <td class="tbl-td-der">{{ form.postcode.label }}</td><td colspan="2">{{ form.postcode.as_widget }}</td>
+                        <td class="tbl-td-der">{{ form.city.label }}</td><td colspan="2">{{ form.city.as_widget }}</td> 
                     </tr>
                     <tr>
-                        <td class="tbl-td-der">Provincia:</td><td colspan="2">{{ form.province.as_widget }}</td>
-                        <td class="tbl-td-der">País:</td><td colspan="2">{{ form.country.as_widget }}</td> 
+                        <td class="tbl-td-der">{{ form.province.label }}</td><td colspan="2">{{ form.province.as_widget }}</td>
+                        <td class="tbl-td-der">{{ form.country.label }}</td><td colspan="2">{{ form.country.as_widget }}</td> 
                     </tr>
                     <tr>
-                        <td class="tbl-td-der">Tel.1:</td><td colspan="2">{{ form.phone1.as_widget }}</td>
-                        <td class="tbl-td-der">Email:</td><td colspan="2">{{ form.email.as_widget }}</td>
+                        <td class="tbl-td-der">{{ form.phone1.label }}</td><td colspan="2">{{ form.phone1.as_widget }}</td>
+                        <td class="tbl-td-der">{{ form.email.label }}</td><td colspan="2">{{ form.email.as_widget }}</td>
                     </tr>
                     <tr>
-                        <td class="tbl-td-der">Tel.2:</td><td colspan="5">{{ form.phone2.as_widget }}</td>
+                        <td class="tbl-td-der">{{ form.phone2.label }}</td><td colspan="5">{{ form.phone2.as_widget }}</td>
                     </tr>
                     <tr>
 	    		        <th class="tbl-th" colspan="6">Fotografía</th>

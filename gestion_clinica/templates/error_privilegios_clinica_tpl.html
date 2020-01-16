@@ -1,12 +1,4 @@
-<!-- ************************* -->
-<!--   init_error_usuario_tpl  -->
-<!-- ************************* -->
-
 {% extends 'base.html' %}
-
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
 
     {% block title %}
 
@@ -14,24 +6,20 @@
 
     {% endblock title %}
 
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
-
     {% block content %}
 
         {% load static %}
 
-		<!-- Menú principal con imágenes -->
         <section class="sect-home-page-menu">
 
-           	<!-- Informa de que no se pueden crear datos -->
             <table class="tbl-forms table-striped tbl-general tbl-40">
-                <!-- Texto con el contenido -->
+
                 <caption class="tbl-capt">ERROR DE PRIVILEGIOS</caption>
+
                 <tr>
     	        	<td class="tbl-td-centro">Este usuario no puede modificar datos de la clinica.</td>
     		    </tr>
+
             </table>
 
 		    <!-- Botones de acción -->

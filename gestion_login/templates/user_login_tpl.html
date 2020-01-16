@@ -1,12 +1,4 @@
-<!-- *********************** -->
-<!--   select_pacientes_tpl  -->
-<!-- *********************** -->
-
 {% extends 'base.html' %}
-
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
 
     {% block title %}
 
@@ -14,34 +6,26 @@
 
     {% endblock title %}
 
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
-
     {% block content %}
 
         <section class="sect-home-page-menu">
 
         {% load static %}
 
-	    <!-- Formulario de entrada de criterios -->
         <form method="POST">
 
 		    {% csrf_token %}
 
             <table class="tbl-forms table-striped tbl-general tbl-30">
 
-                <!-- Texto con el contenido -->
         	    <caption class="tbl-capt">IDENTIFICACION DE USUARIO/A</caption>
 
-                <!-- Si hay mensajes pendientes -->
                 {% for message in messages %}
                     <th colspan="2" style="text-align: center; font-family: serif; font-variant: small-caps; padding: 5px; color: white; background-color: rgb(224, 89, 36);">
                         {{ message }}
                     </th>
                 {% endfor %}
 
-                <!-- Campos para el contenido -->
                 <tr>
                     <td class="tbl-td-der">{{ form.username.label }}</td>
                     <td>{{ form.username.as_widget }}</td>
@@ -51,15 +35,16 @@
                     <td>{{ form.password.as_widget }}</td>
                 </tr>
 
-                </table>
+            </table>
 
-                <!-- Botones -->
-                <div class="div-botones">
-				    <input type="submit" class="btn btn-info" value="Enviar">
-                    <!-- Pasa el contexto "next" -->
-                    <input type="hidden" name="next" value="{{ next }}">
-				    <a href="{% url 'home-page' %}"><input type="button" class="btn btn-info" value="Cancelar"></a>
-                </div>
+            <!-- Botones -->
+            <div class="div-botones">
+			    <input type="submit" class="btn btn-info" value="Enviar">
+                <!-- Pasa el contexto "next" -->
+                <input type="hidden" name="next" value="{{ next }}">
+				<a href="{% url 'home-page' %}"><input type="button" class="btn btn-info" value="Cancelar"></a>
+            </div>
+            
 	    </form>
 
         </section>

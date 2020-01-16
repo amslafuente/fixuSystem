@@ -274,7 +274,7 @@ class create_consultorios_view(CreateView):
         else:
             consultorio.modifiedby = 'unix:' + str(self.request.META['USERNAME'])
         consultorio.save()
-        return HttpResponseRedirect(reverse('listado-consultorios'))
+        return HttpResponseRedirect(reverse('id-consultorios', args=[consultorio.idConsultorio]))
 
 @method_decorator(login_required, name='dispatch')
 class edit_consultorios_view(UpdateView):
@@ -785,8 +785,6 @@ class id_profesionales_view(DetailView):
         qs = Profesional.objects.select_related('oto_Profesional').filter(oto_Profesional__exact = self.kwargs['id'])
         return qs
 
-##### CREA Y EDITA PROFESIONALES #####
-
 @method_decorator(login_required, name='dispatch')
 class create_profesionales_view(View):
 
@@ -916,14 +914,18 @@ class complete_profesionales_view(View):
         if form.is_valid():
             # Extrae el User
             user = User.objects.get(id__exact = self.kwargs['id'])
-            # Cambia los is_...
-            user.is_active = form.cleaned_data['user_isactive']
-            user.is_superuser = form.cleaned_data['user_issuperuser']
-            if user.is_superuser:
-                user.is_staff = True
-            else:
-                user_isstaff = form.cleaned_data['user_isstaff']
-            # Cambia el email_...
+            
+            # Si el usuario es Superusuario permite cambiar los is_...
+            # Si no es superusuario no permite cambiar esos campos de privilegios
+            if (request.user.is_superuser):            
+                user.is_active = form.cleaned_data['user_isactive']
+                user.is_superuser = form.cleaned_data['user_issuperuser']
+                if user.is_superuser:
+                    user.is_staff = True
+                else:
+                    user_isstaff = form.cleaned_data['user_isstaff']
+            
+            # El email si permite cambiarlo al propio usuario
             user.email = form.cleaned_data['email']
             user.save()
 
@@ -1044,12 +1046,18 @@ class edit_profesionales_view(UpdateView):
 
         # Actualiza el user.is_... y el user.email
         user = User.objects.get(id__exact = request.POST.get('user_id'))
-        user.is_active = bool(request.POST.get('user_isactive')) 
-        user.is_superuser = bool(request.POST.get('user_issuperuser'))
-        if user.is_superuser:
-            user.is_staff = True
-        else:
-            user.is_staff = bool(request.POST.get('user_isstaff'))
+
+        # Si el usuario es Superusuario permite cambiar los is_...
+        # Si no es superusuario no permite cambiar esos campos de privilegios
+        if (request.user.is_superuser):            
+            user.is_active = bool(request.POST.get('user_isactive')) 
+            user.is_superuser = bool(request.POST.get('user_issuperuser'))
+            if user.is_superuser:
+                user.is_staff = True
+            else:
+                user.is_staff = bool(request.POST.get('user_isstaff'))
+        
+        # El email si permite cambiarlo al propio usuario# 
         user.email = request.POST.get('email')
         user.save()
         return super().post(request, *args, **kwargs)
@@ -1092,12 +1100,15 @@ class id_clave_profesionales_view(View):
         # Recupera el form, pero... OJO al usuario
         # Este el el usuario cambiado, que puede ser diferente de request.user
         user_ = User.objects.get(id__exact = self.kwargs['id'])
-        form = PasswordChangeForm(user_, request.POST) # Ese user NO es el correcto, hay que cogerlo de self.kwargs['id'])
+        form = PasswordChangeForm(user_, request.POST) # Ese user hay que cogerlo de self.kwargs['id'])
         ctx['form'] = form
         
         if form.is_valid():
             user_ = form.save()
-            update_session_auth_hash(request, user_)  # Importante!
+            # Si el password es cambiado por el propio usuario, actualiza el hash
+            # Si es cambiado por el superusuario no es necesario porque el usuario en cuestión no está logeado
+            if (request.user.id == user_.id):
+                update_session_auth_hash(request, user_)  # Importante!
             return HttpResponseRedirect(reverse('id-profesionales', kwargs = {'id': self.kwargs['id']}))
         else:
             messages.warning(request, 'Errores en el formulario')

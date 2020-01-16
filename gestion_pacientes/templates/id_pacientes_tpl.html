@@ -17,7 +17,6 @@
                 <caption class="tbl-capt">Paciente : {{ pacientes.name }} {{ pacientes.familyname }} </caption>
 
                 <tr>
-
                     <td class="tbl-td-80">
                         <table class="tbl-in-tbl">
          		            <tr>
@@ -44,7 +43,6 @@
 	               	            <td>{{ pacientes.dni }}</td>
                                 <td>{{ pacientes.sex }}</td>
                	            </tr>
-
                         </table>
                     </td>
                     {% if pacientes.picturefile.url != '' %}
@@ -60,72 +58,70 @@
 
                 <caption class="tbl-capt">Domicilio</caption>
     
-       		        <tr>
-        	    	    <td class="tbl-td-25">Dirección:</td>
-                        <td colspan="3">{{ pacientes.address }}</td>
-                    </tr>
-                    <tr>
-                    	<td>C.Postal:</td>
-                        <td>{{pacientes.postcode}}</td>
-                    	<td>Localidad:</td>
-                        <td>{{ pacientes.city }}</td>
-                    </tr>
-                    <tr>
-		    	        <td>Provincia:</td>
-                        <td>{{ pacientes.province }}</td>
-        		    	<td>País:</td>
-                        <td>{{ pacientes.country }}</td>
-            		</tr>
+       		    <tr>
+        	    	<td class="tbl-td-25">Dirección:</td>
+                    <td colspan="3">{{ pacientes.address }}</td>
+                </tr>
+                <tr>
+                 	<td>C.Postal:</td>
+                    <td>{{pacientes.postcode}}</td>
+                 	<td>Localidad:</td>
+                    <td>{{ pacientes.city }}</td>
+                </tr>
+                <tr>
+		    	    <td>Provincia:</td>
+                    <td>{{ pacientes.province }}</td>
+        		 	<td>País:</td>
+                    <td>{{ pacientes.country }}</td>
+            	</tr>
         
-        	    </table>
+        	</table>
 
-	            <table class="tbl-forms table-striped tbl-general tbl-60">
+	        <table class="tbl-forms table-striped tbl-general tbl-60">
 
-                    <caption class="tbl-capt">Datos de contacto</caption>
+                <caption class="tbl-capt">Datos de contacto</caption>
 
-                    <tr>
-        		    	<td class="tbl-td-25">E-mail:</td>
-                        <td>{{ pacientes.email }}</td>
-	            		<td>Notificar citas / Vía:</td>
-                        {% if pacientes.notifyappoint %}
-                            <td class="avail">{{ pacientes.notifyappoint|yesno:'Si,No,Indet.' }} / {{ pacientes.notifyvia }}</td>
-                        {% else %}
-                            <td class="not-avail">{{ pacientes.notifyappoint|yesno:'Si,No,Indet.' }}</td>
-                        {% endif %}                                               
-                    </tr>
-                    <tr>
-    	    	    	<td>Teléfono 1:</td>
-                        <td>{{ pacientes.phone1|default_if_none:'Indet.' }}</td>
-    	    	    	<td>Teléfono 2:</td>
-                        <td>{{ pacientes.phone2|default_if_none:'Indet.' }}</td>
-                    </tr>
-                    <tr>
-    			    </tr>
+                <tr>
+      		    	<td class="tbl-td-25">E-mail:</td>
+                    <td>{{ pacientes.email }}</td>
+           		    <td>Notificar citas / Vía:</td>
+                    {% if pacientes.notifyappoint %}
+                        <td class="avail">{{ pacientes.notifyappoint|yesno:'Si,No,Indet.' }} / {{ pacientes.notifyvia }}</td>
+                    {% else %}
+                        <td class="not-avail">{{ pacientes.notifyappoint|yesno:'Si,No,Indet.' }}</td>
+                    {% endif %}                                               
+                </tr>
+                <tr>
+    	    	    <td>Teléfono 1:</td>
+                    <td>{{ pacientes.phone1|default_if_none:'Indet.' }}</td>
+    	    	    <td>Teléfono 2:</td>
+                    <td>{{ pacientes.phone2|default_if_none:'Indet.' }}</td>
+                </tr>
 
-		        </table>
+		    </table>
 
-	            <table class="tbl-forms table-striped tbl-general tbl-60">
+	        <table class="tbl-forms table-striped tbl-general tbl-60">
 
-                    <caption class="tbl-capt">Otros datos</caption>
+                <caption class="tbl-capt">Otros datos</caption>
 
-                	<tr>
-	    	        	<td class="tbl-td-25">Ocupación</td>
-	        		    <td>{{ pacientes.job }}</td>
-                    </tr>
-                    <tr>
-    	    	    	<td>Notas</td>
-	    	    	    <td>{{ pacientes.notes }}</td>
-                    </tr>
+              	<tr>
+	    	       	<td class="tbl-td-25">Ocupación</td>
+	        	    <td>{{ pacientes.job }}</td>
+                </tr>
+                <tr>
+    	        	<td>Notas</td>
+	    	   	    <td>{{ pacientes.notes }}</td>
+                </tr>
 
-        	    </table>
+      	    </table>
 
- 		        <!-- Botones de acción -->
-                <div class="div-botones">
-                    <a href="{% url 'edit-pacientes' pacientes.idPaciente %}"><input type="button" class="btn btn-info" value="Editar"></a>
-                    <a href="{% url 'citas-paciente-desdefecha' pacientes.idPaciente desde_fecha %}"><input type="button" class="btn btn-info" value="Citas"></a>
-                    <a href="{% url 'menu-pacientes' %}"><input type="button" class="btn btn-info" value="Consultas"></a>
-                    <a href="{% url 'menu-pacientes' %}"><input type="button" class="btn btn-info" value="Menu de pacientes"></a>
-                </div>
+	        <!-- Botones de acción -->
+            <div class="div-botones">
+                <a href="{% url 'edit-pacientes' pacientes.idPaciente %}"><input type="button" class="btn btn-info" value="Editar"></a>
+                <a href="{% url 'citas-paciente-desdefecha' pacientes.idPaciente desde_fecha %}"><input type="button" class="btn btn-info" value="Citas"></a>
+                <a href="{% url 'menu-pacientes' %}"><input type="button" class="btn btn-info" value="Consultas"></a>
+                <a href="{% url 'menu-pacientes' %}"><input type="button" class="btn btn-info" value="Menu de pacientes"></a>
+            </div>
 
         </section>
 
