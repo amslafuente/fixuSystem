@@ -1,18 +1,10 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
 		<title>fixuSystem - Fisioterapia  - Gestión de citas</title>
 
     {% endblock title %}
-
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
 
     {% block content %}
 
@@ -20,17 +12,13 @@
 
         {% load static %}
 
-        <!-- Tabla mostrando pacientes -->
         <table class="tbl-forms table-striped tbl-general tbl-85">
 
-            <!-- Texto con el contenido -->
 	    	<caption class="tbl-capt">Paciente: {{ paciente }} - Listado completo de citas
                 {% if is_paginated %}
                     <span> - Página {{ page_obj.number }}</span>
                 {% endif %}
             </caption>
-
-            <!-- Cabecera de la tabla -->
 	    	<tr>
         		<th class="tbl-th">Día</th>
         		<th class="tbl-th">Hora</th>
@@ -41,7 +29,6 @@
                 <th class="tbl-th" colspan="2">Acciones</th>
             </tr>
 
-            <!-- NO devuelve ningun paciente avisa y cierra la tabla -->
             {% if not citas %}
 	    	    <tr>
                     <th colspan="8" class="field-errors">
@@ -52,17 +39,13 @@
             <!-- SI devuelve alguna cita muestra y cierra la tabla -->
             {% else %}
 
-                <!-- Fecha de hoy -->
                 {% now 'd_m_Y' as hoy %}
-                <!-- Devuelve las citas en un querySet llamado cita_list (nombre del modelo_list -->
                 {% for cita in citas %}
                		<tr>
 		    	        <td class="tbl-td-centro">{{ cita.appdate|date:'d/M/Y' }}
                         <td class="tbl-td-centro">{{ cita.apptime|date:'H:i' }}</td>
                         <td>{{ cita.fk_Profesional|default_if_none:'Indet.' }}</td>
                         <td class="tbl-td-centro">{{ cita.fk_Consultorio|default_if_none:'Indet.' }}</td>
-
-                        <!-- Notas -->
                         <td>{{ cita.notes }}</td>
 
                         <!-- Estatus -->
@@ -111,7 +94,6 @@
 
         </table>
 
-        <!-- Incluye PAGINADOR-->
         {% include 'paginador_citas.html' %}
 
     	<!-- Botones de acción -->

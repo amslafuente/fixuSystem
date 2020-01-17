@@ -1,41 +1,27 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
 		<title>fixuSystem - Fisioterapia  - Gestión de citas</title>
 
     {% endblock title %}
 
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
-
     {% block content %}
 
         {% load static %}
 
-		<!-- Tabka principal con imágenes -->
         <section class="sect-home-page-menu">
 
-            <!-- Formularion de nueva cita -->
 	        <form method="POST">
 
     	    	{% csrf_token %}
 
-             	<!-- Campos de  citas -->
                 <table class="tbl-forms table-striped tbl-general tbl-30">
 
-                    <!-- Texto con el contenido -->
                     <caption class="tbl-capt">Nueva cita</caption>
 
-                    <!-- Errores en el form -->
                     {% include 'errors_citas.html' %}
 
-                    <!-- Datos -->
 		   	        <tr>
 	    		        <th class="tbl-th-dark" colspan="2">Datos preseleccionados</th>
                     </tr>

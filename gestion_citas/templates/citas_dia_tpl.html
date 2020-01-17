@@ -1,18 +1,10 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
 		<title>fixuSystem - Fisioterapia  - Gestión de citas</title>
 
     {% endblock title %}
-
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
 
     {% block content %}
 
@@ -20,10 +12,8 @@
 
         {% load static %}
 
-        <!-- Tabla mostrando citas -->
         <table class="tbl-forms table-striped tbl-general tbl-85">
 
-            <!-- Titulo de la tabla -->
 	    	<caption class="tbl-capt">
                 <div class="div-contexto-centro">
                     <span>Citas para el</span>
@@ -46,7 +36,6 @@
                 {% endif %}
             </caption>
 
-            <!-- Cabecera de la tabla -->
 	    	<tr>
                 <th class="tbl-th">Hora</th>
                 <th class="tbl-th-izq">Paciente</th>
@@ -57,7 +46,6 @@
                 <th class="tbl-th" colspan="2">Acciones</th>
             </tr>
 
-            <!-- NO devuelve ningun paciente avisa y cierra la tabla -->
             {% if not citas %}
 	    	    <tr>
                     <th colspan="9" class="field-errors">
@@ -68,7 +56,6 @@
             <!-- SI devuelve alguna cita muestra y cierra la tabla -->
             {% else %}
 
-                <!-- Devuelve las citas en un querySet llamado cita_list (nombre del modelo_list -->
                 {% for cita in citas %}
                		<tr>
 		       		    <td class="tbl-td-centro">{{ cita.apptime|date:'H:i' }}</td>
@@ -123,7 +110,6 @@
 
         </table>
 
-        <!-- Incluye PAGINADOR-->
         {% include 'paginador.html' %}
 
     	<!-- Botones de acción -->

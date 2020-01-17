@@ -2,6 +2,7 @@ from django.shortcuts import render, reverse
 from django.http import request, HttpResponseRedirect
 from .forms import select_pacientes_form, create_edit_pacientes_form, select_edit_pacientes_form
 from .models import Paciente
+from gestion_consultas.models import Antecedente
 from django.views import View
 import datetime
 from django.views.generic import TemplateView, CreateView
@@ -80,6 +81,20 @@ class create_pacientes_view(CreateView):
             paciente.modifiedby = 'unix:' + str(self.request.META['USERNAME'])
         paciente.save()
 
+        # Crea automaticamente la ficha de Antecedente en la app gestion_consulta
+        try:
+            antecedente = Antecedente()
+            antecedente.oto_Paciente = paciente
+            # Campos de control
+            if str(self.request.user) != 'AmonymousUser':
+                antecedente.modifiedby = str(self.request.user)
+            else:
+                antecedente.modifiedby = 'unix:' + str(self.request.META['USERNAME'])
+            antecedente.save()
+        except Exception as e:
+            messages.warning(self.request, 'Error creando ficha de antecedentes')
+            messages.warning(self.request, e)    
+
         # Si se ha subido una foto, al ultimo paciente  añadido le pone
         # el DNI para identificarlo mejor, respetando la ruta "pacientes/<nombre>.<ext>"
         # Quedaría "pacientes/<dni>.<ext>"
@@ -99,8 +114,9 @@ class create_pacientes_view(CreateView):
                 paciente.save()
                 # Cambia el nombre del archivo en el disco
                 os.rename(str(settings.MEDIA_ROOT + '/' + split_name), str(settings.MEDIA_ROOT +'/' + new_name))   
-        except:
+        except Exception as e:
             messages.warning(request, 'Error procesando archivo de imagen')
+            messages.warning(request, e)
         
         return HttpResponseRedirect(reverse('id-pacientes', kwargs={'idPaciente': paciente.idPaciente}))
 
@@ -127,7 +143,7 @@ class edit_pacientes_view(UpdateView):
         # Pone los registros de control que faltan en una instancia "manejable": paciente
         # Commit = False: evita que se guarde ya en la base de datos
         paciente = form.save(commit = False)
-        #Campos de control
+        # Campos de control
         if str(self.request.user) != 'AmonymousUser':
             paciente.modifiedby = str(self.request.user)
         else:
@@ -152,8 +168,9 @@ class edit_pacientes_view(UpdateView):
                     paciente.save()
                     # Cambia el nombre del archivo en el disco
                     os.rename(str(settings.MEDIA_ROOT + '/' + split_name), str(settings.MEDIA_ROOT +'/' + new_name))
-            except:
+            except Exception as e:
                 messages.warning(request, 'Error procesando archivo de imagen')
+                messages.warning(request, e)
 
         return HttpResponseRedirect(reverse('id-pacientes', kwargs = {'idPaciente' : paciente.idPaciente}))
 

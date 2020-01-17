@@ -1,24 +1,15 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
 		<title>fixuSystem - Fisioterapia  - Gestión de citas</title>
 
     {% endblock title %}
 
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
-
     {% block content %}
 
         {% load static %}
 
-		<!-- Taba principal con imágenes -->
         <section class="sect-home-page-menu">
 
             <!-- Comprueba si la cita ya ha pasado  de fecha -->
@@ -26,7 +17,6 @@
 
                 <table class="tbl-forms table-striped tbl-general tbl-30">
 
-                    <!-- Texto con el contenido -->
                     <caption class="tbl-capt">Cancelación de cita</caption>
                     <tr>
                         <td>Paciente:</td><td>{{citas.fk_Paciente }}</td>
@@ -48,24 +38,20 @@
                     <a href="{{ next|safe }}"><input type="button" class="btn btn-info" value="Volver"></a>
                     <a href="{% url 'menu-citas' %}"><input type="button" class="btn btn-info" value="Menú de citas"></a>
                 </div>
-
+            
+                <!-- Formularion de cancelar cita -->
             {% else %}
 
-                <!-- Formularion de canelar cita -->
 	            <form method="POST">
 
     	        	{% csrf_token %}
 
-                	<!-- Campos de  citas -->
                     <table class="tbl-general tbl-forms tbl-30 table-striped">
 
-                        <!-- Texto con el contenido -->
                         <caption class="tbl-capt">Confirme la cancelación de la cita</caption>
 
-                        <!-- Errores en el form -->
                         {% include 'errors_citas.html' %}
 
-                        <!-- Datos -->
                         {% if citas %}
                             <tr>
                                <td>Id Cita:</td><td>{{citas.idCita }}</td>

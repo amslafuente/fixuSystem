@@ -110,8 +110,9 @@ class init_clinica_view(View):
                     clinica.save()
                     # Cambia el nombre del archivo en el disco
                     os.rename(str(settings.MEDIA_ROOT + '/' + split_name), str(settings.MEDIA_ROOT +'/' + new_name))
-            except:
+            except Exception as e:
                 messages.warning(request, 'Error procesando archivo de imagen')
+                messages.warning(request, e)
             return HttpResponseRedirect(reverse('info-clinica'))
         # Si el form no es valido recarga con errores
         else:
@@ -166,8 +167,9 @@ class edit_info_clinica_view(UpdateView):
                     clinica.save()
                     # Cambia el nombre del archivo en el disco
                     os.rename(str(settings.MEDIA_ROOT + '/' + split_name), str(settings.MEDIA_ROOT +'/' + new_name))
-            except:
+            except Exception as e:
                 messages.warning(request, 'Error procesando archivo de imagen')
+                messages.warning(request, e)
         return HttpResponseRedirect(reverse('info-clinica'))
 
 
@@ -861,8 +863,9 @@ class create_profesionales_view(View):
                     profesional.save()
                     # Cambia el nombre del archivo en el disco
                     os.rename(str(settings.MEDIA_ROOT + '/' + split_name), str(settings.MEDIA_ROOT +'/' + new_name))   
-            except:
+            except Exception as e:
                 messages.warning(request, 'Error procesando archivo de imagen')
+                messages.warning(request, e)
                 return render(request, 'create_profesionales_tpl.html', ctx)    
             return HttpResponseRedirect(reverse('id-profesionales', kwargs = {'id': user.id}))
         else:
@@ -980,8 +983,9 @@ class complete_profesionales_view(View):
                     inter_profesional.save()
                     # Cambia el nombre del archivo en el disco
                     os.rename(str(settings.MEDIA_ROOT + '/' + split_name), str(settings.MEDIA_ROOT +'/' + new_name))
-            except:
+            except Exception as e:
                 messages.warning(request, 'Error procesando archivo de imagen')
+                messages.warning(request, e)
             return HttpResponseRedirect(reverse('id-profesionales', kwargs={'id': user.id}))
 
         else:

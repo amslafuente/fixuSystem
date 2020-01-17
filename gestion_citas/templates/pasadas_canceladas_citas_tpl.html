@@ -1,29 +1,19 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
 		<title>fixuSystem - Fisioterapia  - Gestión de citas</title>
 
     {% endblock title %}
 
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
-
     {% block content %}
 
         {% load static %}
 
-		<!-- Taba principal con imágenes -->
         <section class="sect-home-page-menu">
         
             <table class="tbl-forms table-striped tbl-general tbl-40">
 
-                <!-- Texto con el contenido -->
                 <caption class="tbl-capt">Procesamiento de citas</caption>
                 
                 {% if numregs > 0 %}

@@ -1,10 +1,18 @@
 {% extends 'base.html' %}
 
+    <!-- **************** -->
+    <!-- Título de página -->
+    <!-- **************** -->
+
     {% block title %}
 
 		<title>fixuSystem - Fisioterapia  - Gestión de citas</title>
 
     {% endblock title %}
+
+    <!-- **************** -->
+    <!-- Centro de página -->
+    <!-- **************** -->
 
     {% block content %}
 
@@ -12,8 +20,10 @@
 
         {% load static %}
 
+        <!-- Tabla mostrando pacientes -->
         <table class="tbl-forms table-striped tbl-general tbl-100">
 
+            <!-- Titulo de la tabla -->
 	    	<caption class="tbl-capt">
                 <div class="div-contexto-centro">
                     <span>Citas para el</span>
@@ -31,6 +41,7 @@
                 </div>
             </caption>
 
+            <!-- Cabecera de la tabla -->
 	    	<tr>
                 <th class="tbl-th tbl-td-10">Franja</th>
                 <th class="tbl-th-izq tbl-td-20">Paciente</th>
@@ -41,15 +52,13 @@
                 <th class="tbl-th tbl-td-15">Estado</th>
                 <th class="tbl-th">Acciones</th>
             </tr>
-            
             <!-- Si se pasa un paciente lo coloca en la cabecera -->
             {% if idPaciente != 0 %}
                 <tr>
                     <td class="grid-info-color tr-time-color tbl-td-centro" colspan="9"> Paciente: {{ paciente }}</td>
                 </tr>
             {% endif %}
-
-            <!-- Indica que hay que pulsar para crear nuevas citas -->
+            <!-- Indica que hay que ulsar para crear nuevas citas -->
             <tr>
                 <td class="grid-info2-color tr-time-color tbl-td-centro" colspan="9">Pulse sobre las franjas horarias para crear nuevas citas</td>
             </tr>

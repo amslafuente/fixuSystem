@@ -124,6 +124,38 @@ class citas_dia_grid_view(ListView):
         ctx['rejilla'] = app_timegrid(citas, kwarg_date)        
         return ctx
 
+# Citas para una semana concreto en formato CALENDARIO
+@method_decorator(login_required, name='dispatch')
+class citas_semana_view(ListView):
+
+    model = Cita
+    context_object_name = 'citas'
+    template_name = 'citas_semana_grid_tpl.html'
+
+    def get_queryset(self):
+
+        # Obtiene la semana actual
+        # isocalendar = tuple (year, week, weekday) que paso a lista
+        fecha = list(datetime.date.today().isocalendar())
+        fecha = 'Y' + str(fecha[0]) + '_W' + str(fecha[1]) + '_D1'
+        weekstart = datetime.datetime.strptime(fecha, "Y%Y_W%W_D%w")
+
+
+        return super().get_queryset()
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #########################################################
@@ -241,61 +273,41 @@ class id_citas_view(DetailView):
 @method_decorator(login_required, name='dispatch')
 class create_citas_view(View):
 
-    # POST de creacion de cita
-    def post(self, request, date, hour):
-
-        ctx = dict()
-
-        # Rellena el form con el POST y la añade  al contexto
-        form = create_citas_form(request.POST)
-
-        # El form SI es validado
-        if form.is_valid():
-
-            # Commit = False: evita que se guarde ya en la base de datos
-            cita = form.save(commit = False)
-
-            # Los campos firstupdated y lastupdated se añaden solos
-
-            # Se pone modifiedby
-            if str(request.user) != 'AmonymousUser':
-                cita.modifiedby = str(request.user)
-            else:
-                cita.modifiedby = 'unix:' + str(request.META['USERNAME'])
-
-            # Limpia y guarda el registro
-            cita.save()
-
-            # Devuelve a las pagina de citas del dia elegido
-            ctx['idPaciente'] = 0
-            ctx['date'] = date
-            
-            return HttpResponseRedirect(reverse('citas-dia', kwargs = ctx))
-            
-        # Si no es válido muestra los errores
-        else:
-
-            # Mensaje de error en contexto y recarga la pagina
-            messages.warning(request, 'El formulario contiene errores')
-            
-            ctx['form'] = form
-
-            return render(request, 'create_citas_tpl.html', ctx)
-    
-    # GET
     def get(self, request, **kwargs):
 
-        # Reinicia contexto y datos iniciales
         ctx = initial_data = dict()
-
         # Rellena el form con datos de inicio pinchados en el grid y pasados en el URL
         initial_data['appdate'] = datetime.datetime.strptime(self.kwargs['date'], '%d_%m_%Y').date()
         initial_data['apptime'] = datetime.datetime.strptime(self.kwargs['hour'], '%H_%M').time()
         form = create_citas_form(initial = initial_data)
         ctx['form'] = form
-
         return render(request, 'create_citas_tpl.html', ctx)
 
+    def post(self, request, date, hour):
+
+        ctx = dict()
+        form = create_citas_form(request.POST)
+
+        if form.is_valid():
+            # Commit = False: evita que se guarde ya en la base de datos
+            cita = form.save(commit = False)
+            # Campos de control
+            if str(request.user) != 'AmonymousUser':
+                cita.modifiedby = str(request.user)
+            else:
+                cita.modifiedby = 'unix:' + str(request.META['USERNAME'])
+            cita.save()
+            # Devuelve a las pagina de citas del dia elegido
+            ctx['idPaciente'] = 0
+            ctx['date'] = date
+            return HttpResponseRedirect(reverse('citas-dia', kwargs = ctx))
+            
+        # Si no es válido muestra los errores
+        else:
+            messages.warning(request, 'El formulario contiene errores')
+            ctx['form'] = form
+            return render(request, 'create_citas_tpl.html', ctx)
+    
 ######  CREA CITA DESDE EL GRID, CON PACIENTE CONCRETO, FECHA Y HORA PRESELECIONADAS #######
 
 @method_decorator(login_required, name='dispatch')
@@ -964,11 +976,14 @@ class PDF_citas_view(View):
 #####################################################################################
 
 @method_decorator(login_required, name='dispatch')
-class citas_semana_view(View):
+class citas_semanales_view(View):
     pass
 
 @method_decorator(login_required, name='dispatch')
 class citas_mes_view(View):
     pass
 
+@method_decorator(login_required, name='dispatch')
+class citas_mensuales_view(View):
+    pass
 

@@ -2,10 +2,14 @@ import datetime
 from dateutil.relativedelta import relativedelta
 from fixuSystem.progvars import HORA_COMIENZO, HORA_FINAL, DURACION_CONSULTA
 
-########## VARIABLES Y FUNCIONES GLOBALES PARA USAR ##########
 
-##### Funcion para extrar valores del dia pasado, el anterior y el siguiente, para pasar al contexto
+#########################################
+#                                       #
+#     VARIABLES Y FUNCIONES DE CITAS    #
+#                                       #
+#########################################
 
+# Funcion para extrar valores del dia pasado, el anterior y el siguiente, para pasar al contexto
 def contexto_dias(dia):
 
     ctx_dias = dict()
@@ -56,8 +60,7 @@ def contexto_dias(dia):
     # Devuelve un dict de fechas
     return ctx_dias
 
-########## FUNCION PARA ELABORAR EL GRID DE CITAS POR FRANJA HORARIA ##########
-
+# Funcion para elaborar el grid de citas por franja horaria
 def app_timegrid(citas, dia):
 
     # "citas" pasa cono una lista de tuplas con todas las citas
@@ -113,3 +116,19 @@ def app_timegrid(citas, dia):
     resp['franjas_horarias'] = franjas_horarias
     resp['datos_citas'] = datos_citas
     return resp
+
+# Funcion para elaborar el grid de citas por semana y franja horaria
+def app_weektimegrid(citas, dia):
+
+    # "citas" pasa cono una lista de tuplas con todas las citas
+    # "dia" pasa como un objeto datetime.datetime.date
+
+    pass
+
+# Funcion para elaborar el grid de citas por mes y franja horaria
+def app_monthtimegrid(citas, dia):
+
+    # "citas" pasa cono una lista de tuplas con todas las citas
+    # "dia" pasa como un objeto datetime.datetime.date
+
+    pass

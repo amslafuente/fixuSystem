@@ -15,7 +15,9 @@
             <table class="tbl-forms table-striped tbl-general tbl-60">
 
                 <caption class="tbl-capt">Paciente : {{ pacientes.name }} {{ pacientes.familyname }} </caption>
-
+                
+                {% include 'errors_pacientes.html' %}
+                
                 <tr>
 
                     <td class="tbl-td-80">

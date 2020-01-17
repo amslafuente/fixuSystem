@@ -1,24 +1,15 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
 		<title>fixuSystem - Fisioterapia  - Gestión de citas</title>
 
     {% endblock title %}
 
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
-
     {% block content %}
 
         {% load static %}
 
-		<!-- Tabla principal -->
         <section class="sect-home-page-menu">
 
            <!-- Comprueba si la cita ya ha pasado  de fecha -->
@@ -26,7 +17,6 @@
 
                 <table class="tbl-forms table-striped tbl-general tbl-30">
 
-                    <!-- Texto con el contenido -->
                     <caption class="tbl-capt">Modificación de cita</caption>
 
                     <tr>
@@ -50,23 +40,19 @@
                     <a href="{% url 'menu-citas' %}"><input type="button" class="btn btn-info" value="Menú de citas"></a>
                 </div>
 
+            <!-- Formularion de modificar cita -->
             {% else %}
                 
-            <!-- Formularion de modificar cita -->
 	            <form method="POST">
 
                     {% csrf_token %}
                
-                    <!-- Campos de  citas -->
                     <table class="tbl-forms table-striped tbl-general tbl-30">
 
-                        <!-- Texto con el contenido -->
                         <caption class="tbl-capt">Editar notas de la cita</caption>
         
-                        <!-- Errores en el form -->
                         {% include 'errors_citas.html' %}
         
-                        <!-- Datos -->
                         <tr>
                             <th class="tbl-th" colspan="2">
                                 Solo es posible modificar las notas.

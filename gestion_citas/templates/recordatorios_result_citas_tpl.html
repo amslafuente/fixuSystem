@@ -1,28 +1,19 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
 		<title>fixuSystem - Fisioterapia  - Gestión de citas</title>
 
     {% endblock title %}
 
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
-
     {% block content %}
 
         {% load static %}
 
-		<!-- Taba principal con imágenes -->
         <section class="sect-home-page-menu">
         
             <table class="tbl-forms table-striped tbl-general tbl-85">
-                <!-- Texto con el contenido -->
+
                 <caption class="tbl-capt">Resultados de las notificaciones por email</caption>
  
                 <tr>
@@ -35,6 +26,8 @@
                             <span>Ninguna cita a notificar</span>
                         </th>
                     </tr>
+
+                <!-- Notificaciones de email -->
                 {% else %}
                     <tr>
                         <td class="tbl-td-centro" colspan="2">Procesadas: {{ emailcount }} / Enviadas: {{ emailsent }} / Errores: {{ emailunsent }}</td>
@@ -46,7 +39,7 @@
                                 Estas citas aparecerán en la lista de notificaciones telefónicas.
                             </th>
                         </tr>
-                        <tr>
+                        <tr>            <!-- Notificaciones de telefono -->
                             <th class="tbl-th-izq">Email no entregado</th>
                             <th class="tbl-th-izq">Mensaje de error</th>
                         </tr>
@@ -70,7 +63,6 @@
             
                 <table class="tbl-forms table-striped tbl-general tbl-85"> 
 
-                    <!-- Texto con el contenido -->
                     <caption class="tbl-capt">Notificaciones a hacer por teléfono</caption>
                
                     <tr>

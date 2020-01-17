@@ -59,6 +59,7 @@ class Clinica(models.Model):
 
 class Profesional(models.Model):
 
+    # OneToOne al usuario
     oto_Profesional = models.OneToOneField(User, related_name = 'profesionales', on_delete = models.PROTECT, primary_key = True)
     
     dni = models.CharField("DNI", max_length = 9, unique = True)                                 
