@@ -46,7 +46,11 @@
 
         <section class="sect-home-page-menu">
 
-        <!-- Tabla mostrando consultorios -->
+    	<!-- Botones de acción -->
+        <div class="div-botones">
+            <a href="{% url 'create-consultorios' %}"><input type="button" class="btn btn-info" value="Nuevo consultorio"></a>
+        </div>
+
         <table class="tbl-forms table-striped tbl-general tbl-70">
 
 	    	<caption class="tbl-capt">Listado de consultorios/dependencias
@@ -129,7 +133,6 @@
 
     	<!-- Botones de acción -->
         <div class="div-botones">
-            <a href="{% url 'create-consultorios' %}"><input type="button" class="btn btn-info" value="Nuevo consultorio"></a>
 		    <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
         </div>
 

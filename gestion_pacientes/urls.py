@@ -1,13 +1,15 @@
 from django.urls import path
 from gestion_pacientes import views
 
+
+
+urlpatterns = [
+
 #########################################
 #                                       #
 #           URLS DE PACIENTES           #
 #                                       #
 #########################################
-
-urlpatterns = [
 
     # Nuevo paciente
     path('nuevo/', views.create_pacientes_view.as_view(), name = 'create-pacientes'),

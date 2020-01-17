@@ -1,45 +1,31 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
     	<title>fixuSystem - Fisioterapia - Gestión de clínica</title>
 
     {% endblock title %}
 
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
-
     {% block content %}
 
         {% load static %}
 
-		<!-- Menú principal con imágenes -->
         <section class="sect-home-page-menu">
             
-            <!-- Formularion de nuevo equipamiento -->
 	        <form method="POST">
             
                 {% csrf_token %}                 
                 
-                <!-- Tabla del profesional -->
                 <table class="tbl-forms table-striped tbl-general tbl-50">
 
-                    <!-- Texto con el contenido -->
                     <caption class="tbl-capt">Modificar clave de usuario/a</caption>
 
-                        <!-- Cabecera -->
                         <tr>
                             <th class="tbl-th" colspan="2">
                                 Usuario/a: {{ form.user.username }} (ID: {{ form.user.id }})
                             </th>
                         </tr>
                         
-                        <!-- Campos del formulario -->                       
                         {% for field in form %}
                         <tr>
                             <td class="tbl-td">{{ field.label_tag }}</td>
@@ -47,7 +33,6 @@
                         </tr>
                         {% endfor %}
 
-                        <!-- Si hay mensajes pendientes -->
                         {% for message in messages %}
                         <tr>
                             <th colspan="2" class ="field-errors">

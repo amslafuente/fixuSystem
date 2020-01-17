@@ -1,12 +1,4 @@
-<!-- ************************* -->
-<!--   init_error_usuario_tpl  -->
-<!-- ************************* -->
-
 {% extends 'base.html' %}
-
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
 
     {% block title %}
 
@@ -14,31 +6,28 @@
 
     {% endblock title %}
 
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
-
     {% block content %}
 
         {% load static %}
 
-		<!-- Menú principal con imágenes -->
         <section class="sect-home-page-menu">
 
-           	<!-- Informa de que no se pueden crear datos -->
             <table class="tbl-forms table-striped tbl-general tbl-50">
-                <!-- Texto con el contenido -->
+
                 <caption class="tbl-capt">ERROR DE USUARIO</caption>
-                
-                <!-- Si hay mensajes pendientes -->
-                <!-- Este bucle borra los messages pendientes para que no aparezcan más tarde -->
+
                 {% for message in messages %}
-                <tr><td class="tbl-td-centro">Usuario ROOT</td></tr>
+                    <!--- Bucle vacio para limpiar los mensajes y evitar que saklgan ek tablas posteriores -->
                 {% endfor %}
+
+                <tr>
+                    <td class="tbl-td-centro">Usuario ROOT</td>
+                </tr>
 
                 <tr>
     	        	<td class="tbl-td-centro">ROOT no es un usuario de fixuSystem.<br/>Este usuario solo es accesible desde la aplicación de administración.</td>
     		    </tr>
+
             </table>
 
 		    <!-- Botones de acción -->

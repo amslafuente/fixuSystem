@@ -168,13 +168,13 @@ class customProveedorForm(forms.Form):
 
 class create_edit_profesionales_form(ModelForm):
 
-    user_login = forms.CharField(label = 'Usuario:', max_length = 150, required = True)
+    user_login = forms.CharField(label = 'Usuario/a', max_length = 150, required = True)
     user_login.widget = forms.widgets.TextInput(attrs={'style':'width: 300px'})
-    user_password = forms.CharField(label = 'Password:', max_length = 150, required = True)
+    user_password = forms.CharField(label = 'Clave', max_length = 150, required = True)
     user_password.widget = forms.widgets.PasswordInput(attrs={'style':'width: 300px'})
-    user_isactive = forms.BooleanField(label='Activo:', required = False, initial = True)    
-    user_issuperuser = forms.BooleanField(label='Es superusuario:', required = False)    
-    user_isstaff = forms.BooleanField(label='Es staff:', required = False)
+    user_isactive = forms.BooleanField(label='Activo/a', required = False, initial = True)    
+    user_issuperuser = forms.BooleanField(label='Superusuario/a', required = False)    
+    user_isstaff = forms.BooleanField(label='Administrador/a', required = False)
 
     class Meta:
         model = Profesional
@@ -186,7 +186,7 @@ class create_edit_profesionales_form(ModelForm):
             'nif': TextInput(attrs={'style': 'width: 175px'}),
             'position': TextInput(attrs={'style': 'width: 175px'}),
             'department': TextInput(attrs={'style': 'width: 175px'}),
-            'fulladdress': TextInput(attrs={'style': 'width: 504px'}),
+            'fulladdress': TextInput(attrs={'style': 'width: 510px'}),
             'postcode': NumberInput(attrs={'style': 'width: 175px', 'min': 0, 'max': 99999}),
             'city': TextInput(attrs={'style': 'width: 175px'}),
             'province': TextInput(attrs={'style': 'width: 175px'}),
@@ -194,12 +194,12 @@ class create_edit_profesionales_form(ModelForm):
             'phone1': NumberInput(attrs={'style': 'width: 120px', 'min': 0, 'max': 999999999}),
             'phone2': NumberInput(attrs={'style': 'width: 120px', 'min': 0, 'max': 999999999}),
             'email': EmailInput(attrs={'style': 'width: 175px'}),
-            'notes': Textarea(attrs={'cols': 60, 'rows': 3})
+            'notes': Textarea(attrs={'cols': 62, 'rows': 3})
         }
 
 # Selección de profesionales
 class select_profesionales_form(forms.Form):
 
-    fullname = forms.CharField(label = 'Nombre:', max_length = 10, required = False)
-    position = forms.CharField(label = 'Cargo:', max_length = 10, required = False)
-    department = forms.CharField(label = 'Departamento:',  max_length = 10, required = False)
+    fullname = forms.CharField(label = 'Nombre', max_length = 10, required = False)
+    position = forms.CharField(label = 'Cargo', max_length = 10, required = False)
+    department = forms.CharField(label = 'Departamento',  max_length = 10, required = False)

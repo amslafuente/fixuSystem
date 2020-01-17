@@ -45,8 +45,12 @@
 
         <section class="sect-home-page-menu">
 
-        <!-- Tabla mostrando proveedores -->
-        <table class="tbl-forms table-striped tbl-general tbl-100">
+    	<!-- Botones de acción -->
+        <div class="div-botones">
+            <a href="{% url 'create-proveedores' %}"><input type="button" class="btn btn-info" value="Nuevo proveedor"></a>
+        </div>
+
+        <table class="tbl-forms table-striped tbl-general tbl-85">
 
 	    	<caption class="tbl-capt">Listado de proveedores
                 {% if is_paginated %}
@@ -78,9 +82,9 @@
                 <th class="tbl-th-izq">
                     <button id="btn-area" onclick="setOrder('area')" type="button" class="btn btn-info btn-sm">Area</button>
                 </th> 
-                <th class="tbl-th tbl-td-10">Fabr.</th> 
-                <th class="tbl-th tbl-td-10">Prov.</th>
-                <th class="tbl-th tbl-td-10">SAT</th>
+                <th class="tbl-th">Fabr.</th> 
+                <th class="tbl-th">Prov.</th>
+                <th class="tbl-th">SAT</th>
                 <th class="tbl-th-izq tbl-td-20">Notas</th> 
                 <th class="tbl-th tbl-td-10" colspan="3">Acciones</th>
             </tr>
@@ -116,9 +120,8 @@
 
         {% include 'paginador_proveedores.html' %}
 
-    	<!-- Botones de acción -->
+       	<!-- Botones de acción -->
         <div class="div-botones">
-            <a href="{% url 'create-proveedores' %}"><input type="button" class="btn btn-info" value="Nuevo proveedor"></a>
 		    <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
         </div>
 

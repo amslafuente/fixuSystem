@@ -1,12 +1,4 @@
-<!-- *********************** -->
-<!--     user_logout_tpl     -->
-<!-- *********************** -->
-
 {% extends 'base.html' %}
-
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
 
     {% block title %}
 
@@ -14,45 +6,40 @@
 
     {% endblock title %}
 
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
-
     {% block content %}
 
         <section class="sect-home-page-menu">
 
         {% load static %}
+        
+        <form method="POST">
+		    
+            {% csrf_token %}
+        
+            <table class="tbl-forms table-striped tbl-general tbl-30">
 
-	    <!-- Formulario de entrada de criterios -->
+            	<caption class="tbl-capt">CONFIRME DESCONEXION</caption>
 
-        <table class="tbl-forms table-striped tbl-general tbl-30">
+                <tr>
+                    {% for message in messages %}
+                        <th style="text-align: center; font-family: serif; font-variant: small-caps; padding: 5px; color: white; background-color: rgb(224, 89, 36);">
+                            {{ message }}
+                        </th>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>
+                        <!-- Botones -->
+                        <div class="div-botones">
+    			            <input type="submit" class="btn btn-danger" value="Desconectar">&nbsp;&nbsp;&nbsp;&nbsp;
+	    			        <a href="{% url 'home-page' %}"><input type="button" class="btn btn-info" value="Cancelar"></a>
+                        </div>
+                    </td>
+                </tr>            
 
-            <!-- Texto con el contenido -->
-        	<caption class="tbl-capt">CONFIRME DESCONEXION</caption>
+            </table>
 
-            <!-- Si hay mensajes pendientes -->
-            {% for message in messages %}
-                <th colspan="2" style="text-align: center; font-family: serif; font-variant: small-caps; padding: 5px; color: white; background-color: rgb(224, 89, 36);">
-                    {{ message }}
-                </th>
-            {% endfor %}
-
-            <tr>
-                <td>
-                    <!-- Botones -->
-                    <div class="div-botones">
-
-                        <form method="POST">
-		                    {% csrf_token %}
-				            <input type="submit" class="btn btn-info" value="Desconectar">
-				            <a href="{% url 'home-page' %}"><input type="button" class="btn btn-info" value="Cancelar"></a>
-	                    </form>
-                    </div>
-                </td>
-            </tr>
-
-        </table>
+        </form>
 
         </section>
 

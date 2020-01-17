@@ -1,18 +1,10 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
 		<title>fixuSystem - Fisioterapia  - Gestión de clínica</title>
 
     {% endblock title %}
-
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
 
     {% block content %}
 
@@ -20,20 +12,16 @@
 
         {% load static %}
 
-	    <!-- Formulario de entrada de criterios -->
         <form method="POST">
 
             {% csrf_token %}
 
             <table class="tbl-forms table-striped tbl-general tbl-35">
 
-                <!-- Texto con el contenido -->
         	    <caption class="tbl-capt">Selección de profesionales</caption>
 
-                <!-- Errores en el form -->
                 {% include 'errors_profesionales.html' %}
 
-                <!-- Campos para el contenido -->
                 <tr>
                     <td class="tbl-td">Nombre:</td>
                     <td>{{ form.fullname.as_widget }}</td>

@@ -1,18 +1,10 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
 		<title>fixuSystem - Fisioterapia  - Gestión de clínica</title>
 
     {% endblock title %}
-
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
 
     {% block content %}
 
@@ -20,17 +12,19 @@
 
         <section class="sect-home-page-menu">
 
-        <!-- Tabla mostrando profesionals -->
+    	<!-- Botones de acción -->
+        <div class="div-botones">
+            <a href="{% url 'create-profesionales' %}"><input type="button" class="btn btn-info" value="Nuevo profesional"></a>
+        </div>
+
         <table class="tbl-forms table-striped tbl-general tbl-70">
 
-            <!-- Texto con el contenido -->
 	    	<caption class="tbl-capt">Listado de usuarios/as y profesionales
                 {% if is_paginated %}
                     <span> - Página {{ page_obj.number }} de {{ paginator.num_pages }}</span>
                 {% endif %}
             </caption>
 
-            <!-- Cabecera de la tabla -->
 	    	<tr>
                 <th class="tbl-th-izq">Usuario</th>
 		        <th class="tbl-th-izq tbl-td-30">Nombre</th>
@@ -41,7 +35,6 @@
                 <th class="tbl-th tbl-td-10" colspan="2">Acciones</th>    
             </tr>
 
-            <!-- NO devuelve ningun profesional avisa y cierra la tabla -->
             {% if not profesionales %}
 	    	    <tr>
                     <th colspan="8" class="field-errors">
@@ -49,10 +42,8 @@
                     </th>
                 </tr>
 
-            <!-- SI devuelve algun profesional muestra y cierra la tabla -->
             {% else %}
 
-                <!-- Devuelve los profesionals en un querySet llamada profesionals -->
                 {% for profesional in profesionales %}
                		<tr class="grid-smalltxt">
                         <td>{{ profesional.username }}</td>
@@ -65,7 +56,8 @@
                             <td class="tbl-td-centro">{{ profesional.profesionales.currentavail|yesno:'Si,No,Indet.' }}</td>
                             <td class="tbl-td-centro">{{ profesional.profesionales.currentstaff|yesno:'Si,No,Indet.' }}</td>  
                         {% endif %}
-                            <!-- Enlaces a abrir, edit y crear cita -->
+                        
+                        <!-- Enlaces a abrir, edit y crear cita -->
                         <td>
                             <div class="div-fechas">
                                 {% if not profesional.profesionales.fullname %}
@@ -83,14 +75,13 @@
 
         </table>
 
-        <!-- Incluye PAGINADOR-->
         {% include 'paginador.html' %}
 
     	<!-- Botones de acción -->
         <div class="div-botones">
-            <a href="{% url 'create-profesionales' %}"><input type="button" class="btn btn-info" value="Nuevo profesional"></a>
 		    <a href="{% url 'menu-clinica' %}"><input type="button" class="btn btn-info" value="Menu de clínica"></a>
         </div>
+
 
         </section>
 
