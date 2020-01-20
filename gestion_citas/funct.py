@@ -1,8 +1,8 @@
 import datetime
 import locale
-from django.conf import settings
 from dateutil.relativedelta import relativedelta
 from fixuSystem.progvars import START_TIME, END_TIME, TIME_SPAN
+
 
 
 #########################################
@@ -99,7 +99,7 @@ def app_timegrid(citas, dia):
             datetime_cita = datetime.datetime.combine(cita_row[2], cita_row[3])
 
             # Comprueba si ese dia y hora están en la franja horaria actual
-            if (datetime_cita >= timegrid_ctrl) and (datetime_cita < (timegrid_ctrl + datetime.timedelta(minutes = DURACION_CONSULTA))):
+            if (datetime_cita >= timegrid_ctrl) and (datetime_cita < (timegrid_ctrl + datetime.timedelta(minutes = TIME_SPAN))):
                 # Si está, puebla el bloque de TD con esa cita y suma el contador de citas en cada TR
                 # cita_row.1/cita.2: Paciente
                 # cita_row.2/cita.3: Citado por
@@ -130,7 +130,7 @@ def app_weektimegrid(citas, rango_semana):
     locale.setlocale(locale.LC_ALL,'es_ES')
 
     # Date and time appointment distribution
-    
+
     # Dia de comienzo, puntero de control y final de las consultas
     daygrid_start = daygrid_ctrl = rango_semana[0]
     daygrid_end = rango_semana[1]
@@ -138,7 +138,8 @@ def app_weektimegrid(citas, rango_semana):
     # Hora de comienzo de las consultas, puntero de control de hora y hora final
     timegrid_start = timegrid_ctrl = datetime.datetime.strptime(START_TIME, '%H:%M')
     timegrid_end = datetime.datetime.strptime(END_TIME, '%H:%M')
-
+    timegrid_ctrl2 = timegrid_ctrl + datetime.timedelta(minutes = TIME_SPAN)
+    
     # Variable que construye el body
     franjas_horarias = list()
     datos_citas = list()
@@ -153,7 +154,7 @@ def app_weektimegrid(citas, rango_semana):
     """
 
     tbl_body = tbl_row = ''
-    
+
     while timegrid_ctrl.time() <= timegrid_end.time():
 
         tbl_row = tbl_row + '<tr>\r<td class=\"tbl-td-centro\">' + timegrid_ctrl.strftime('%H:%M') + '</td>'
@@ -161,33 +162,33 @@ def app_weektimegrid(citas, rango_semana):
         daygrid_ctrl = rango_semana[0]
         while daygrid_ctrl <= daygrid_end:
 
-            tbl_row = tbl_row + '<td class=\"tbl-td-centro grid-smalltxt\">'
+            tbl_row = tbl_row + '<td class=\"grid-smalltxt\">'
 
             if citas:
                 for cita in citas:
-                    pass
-            
+                    # Si la cita es de hoy y de esa franja...
+                    if (cita[2] == daygrid_ctrl) and (cita[3] >= timegrid_ctrl.time() and cita[3] < timegrid_ctrl2.time()):
+                        tbl_row = tbl_row + '- ' + str(cita[1]) + ' (' + cita[3].strftime('%H:%M') + ')' + ' (' +  str(cita[4])[0].upper() + ')<br/>'
+
             tbl_row = tbl_row + '<a href=\"/fixuSystem/citas/nueva/' + daygrid_ctrl.strftime('%d_%m_%Y') + '/' + timegrid_ctrl.strftime('%H_%M') + '/\">'
-            tbl_row = tbl_row + 'Nueva cita'
+            tbl_row = tbl_row + '...'
             tbl_row = tbl_row + '</a>'            
             tbl_row = tbl_row + '</td>'
             daygrid_ctrl = daygrid_ctrl + datetime.timedelta(days = 1)
         
         tbl_row = tbl_row + '</tr>\r'
         timegrid_ctrl = timegrid_ctrl + datetime.timedelta(minutes = TIME_SPAN)
-
-    
+        timegrid_ctrl2 = timegrid_ctrl + datetime.timedelta(minutes = TIME_SPAN)
+  
     
     # Blend into week grid    
     tbl_header = '<tr>\r<th class="tbl-th">Franja horaria</th>\r'
     for i in range(0,7):
         weekday_ = rango_semana[0] + datetime.timedelta(days = i)
-        tbl_header = tbl_header + '<th class="tbl-th">' + weekday_.strftime('%A') + '<br/>' + weekday_.strftime('%d/%b/%y')+ '</th>\r'
+        tbl_header = tbl_header + '<th class="tbl-th tbl-td-12">' + weekday_.strftime('%A') + '<br/>' + weekday_.strftime('%d/%b/%y')+ '</th>\r'
     tbl_header = tbl_header + '</tr>\r'
 
     tbl_body = tbl_row
-
-
 
     resp['weekgrid'] = tbl_header + tbl_body
     
