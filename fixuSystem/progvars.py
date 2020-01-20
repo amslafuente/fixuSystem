@@ -31,13 +31,13 @@ modeVia = [
 ##### CONFIG: VARIABLES DE LA APP GESTION_CITAS #####
 
 # Hora de comienzo de las consultas en formato string: HH:MM
-HORA_COMIENZO = '13:00'
+START_TIME = '13:00'
 
 # Hora de finalización de las consultas en formato string: HH:MM
-HORA_FINAL = '19:30'
+END_TIME = '19:30'
 
 # Duración en MINUTOS aproximada de cada ventana de consulta int: N
-DURACION_CONSULTA = 30
+TIME_SPAN = 30
 
 # Notificar citas con ESTOS dias de antelación int: N
 NOTIFICAR_CON = 3

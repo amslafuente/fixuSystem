@@ -293,6 +293,7 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
 }
 
 /*---------- BARRA DE PROGRESO ----------*/
+
 .stock-bar {
     margin: auto;
     width: 80px;

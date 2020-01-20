@@ -1,6 +1,8 @@
 import datetime
+import locale
+from django.conf import settings
 from dateutil.relativedelta import relativedelta
-from fixuSystem.progvars import HORA_COMIENZO, HORA_FINAL, DURACION_CONSULTA
+from fixuSystem.progvars import START_TIME, END_TIME, TIME_SPAN
 
 
 #########################################
@@ -70,11 +72,11 @@ def app_timegrid(citas, dia):
     timegrid_day = dia.strftime('%d/%B/%Y')
     timegrid_day_url = dia.strftime('%d_%m_%Y')
 
-    # Hora de comienzo de las consultas. timegrid_ctrl es la ora que se desplaza con timedelta
-    timegrid_start = timegrid_ctrl = datetime.datetime.strptime(timegrid_day + ' ' + HORA_COMIENZO, '%d/%B/%Y %H:%M')
+    # Hora de comienzo de las consultas. timegrid_ctrl es el puntero de control de la hora que se desplaza con timedelta
+    timegrid_start = timegrid_ctrl = datetime.datetime.strptime(timegrid_day + ' ' + START_TIME, '%d/%B/%Y %H:%M')
 
     # Hora final de las consultas
-    timegrid_end = datetime.datetime.strptime(timegrid_day + ' ' + HORA_FINAL, '%d/%B/%Y %H:%M')
+    timegrid_end = datetime.datetime.strptime(timegrid_day + ' ' + END_TIME, '%d/%B/%Y %H:%M')
 
     # Variable que construye el body
     franjas_horarias = list()
@@ -109,7 +111,7 @@ def app_timegrid(citas, dia):
                 datos_citas.append(cada_cita)
 
         # Siguiente franja horaria
-        timegrid_ctrl = timegrid_ctrl + datetime.timedelta(minutes = DURACION_CONSULTA)
+        timegrid_ctrl = timegrid_ctrl + datetime.timedelta(minutes = TIME_SPAN)
 
     # Devuelve rejilla
     resp = dict()
@@ -118,12 +120,89 @@ def app_timegrid(citas, dia):
     return resp
 
 # Funcion para elaborar el grid de citas por semana y franja horaria
-def app_weektimegrid(citas, dia):
+def app_weektimegrid(citas, rango_semana):
 
     # "citas" pasa cono una lista de tuplas con todas las citas
-    # "dia" pasa como un objeto datetime.datetime.date
+    # "rango_semana" pasa com tupla con fecha inicial y fecha final
 
-    pass
+    resp = dict()
+    # Set locale
+    locale.setlocale(locale.LC_ALL,'es_ES')
+
+    # Date and time appointment distribution
+    
+    # Dia de comienzo, puntero de control y final de las consultas
+    daygrid_start = daygrid_ctrl = rango_semana[0]
+    daygrid_end = rango_semana[1]
+
+    # Hora de comienzo de las consultas, puntero de control de hora y hora final
+    timegrid_start = timegrid_ctrl = datetime.datetime.strptime(START_TIME, '%H:%M')
+    timegrid_end = datetime.datetime.strptime(END_TIME, '%H:%M')
+
+    # Variable que construye el body
+    franjas_horarias = list()
+    datos_citas = list()
+
+    """
+    for i in franjas horarias
+        crea un <tr>
+        for j in dias de la semana
+            compara cada cita con cada dias de las semana en cada franja horaria
+            si existe construye el <td>
+            si no existe construye un <td> vacio
+    """
+
+    tbl_body = tbl_row = ''
+    
+    while timegrid_ctrl.time() <= timegrid_end.time():
+
+        tbl_row = tbl_row + '<tr>\r<td class=\"tbl-td-centro\">' + timegrid_ctrl.strftime('%H:%M') + '</td>'
+        
+        daygrid_ctrl = rango_semana[0]
+        while daygrid_ctrl <= daygrid_end:
+
+            tbl_row = tbl_row + '<td class=\"tbl-td-centro grid-smalltxt\">'
+
+            if citas:
+                for cita in citas:
+                    pass
+            
+            tbl_row = tbl_row + '<a href=\"/fixuSystem/citas/nueva/' + daygrid_ctrl.strftime('%d_%m_%Y') + '/' + timegrid_ctrl.strftime('%H_%M') + '/\">'
+            tbl_row = tbl_row + 'Nueva cita'
+            tbl_row = tbl_row + '</a>'            
+            tbl_row = tbl_row + '</td>'
+            daygrid_ctrl = daygrid_ctrl + datetime.timedelta(days = 1)
+        
+        tbl_row = tbl_row + '</tr>\r'
+        timegrid_ctrl = timegrid_ctrl + datetime.timedelta(minutes = TIME_SPAN)
+
+    
+    
+    # Blend into week grid    
+    tbl_header = '<tr>\r<th class="tbl-th">Franja horaria</th>\r'
+    for i in range(0,7):
+        weekday_ = rango_semana[0] + datetime.timedelta(days = i)
+        tbl_header = tbl_header + '<th class="tbl-th">' + weekday_.strftime('%A') + '<br/>' + weekday_.strftime('%d/%b/%y')+ '</th>\r'
+    tbl_header = tbl_header + '</tr>\r'
+
+    tbl_body = tbl_row
+
+
+
+    resp['weekgrid'] = tbl_header + tbl_body
+    
+    # Reset locale
+    locale.resetlocale(category=locale.LC_ALL)
+    return resp
+
+
+# Funcion para devolver el rango de fechas de una semana completa
+def get_weekrange(day_): # "day" es un datetime.date
+
+    weektoday = day_.isocalendar() # isocalendar(year, week, weekday)
+    weekstart = day_ - datetime.timedelta(days = weektoday[2] - 1)
+    weekend = day_ + datetime.timedelta(days = 7 - weektoday[2])
+    return (weekstart, weekend)
 
 # Funcion para elaborar el grid de citas por mes y franja horaria
 def app_monthtimegrid(citas, dia):

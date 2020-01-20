@@ -12,7 +12,7 @@ from django.views.generic.list import ListView
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views import View
-from .funct import contexto_dias, app_timegrid
+from .funct import contexto_dias, get_weekrange, app_timegrid, app_weektimegrid
 from .forms import create_citas_form, create_citas_paciente_form, edit_citas_form
 from .forms import customNotifDias_form, setnotified_citas_form
 from django.contrib import messages
@@ -132,23 +132,46 @@ class citas_semana_view(ListView):
     context_object_name = 'citas'
     template_name = 'citas_semana_grid_tpl.html'
 
-    def get_queryset(self):
+    def get_context_data(self, *, object_list=None, **kwargs):
 
-        # Obtiene la semana actual
-        # isocalendar = tuple (year, week, weekday) que paso a lista
-        fecha = list(datetime.date.today().isocalendar())
-        fecha = 'Y' + str(fecha[0]) + '_W' + str(fecha[1]) + '_D1'
-        weekstart = datetime.datetime.strptime(fecha, "Y%Y_W%W_D%w")
+        ctx = super().get_context_data(**kwargs)
+        # Query de las citas en la fecha pasada en los kwargs o de hoy si no se pasa fecha
+        try:
+            kwarg_date = datetime.datetime.strptime(self.kwargs['date'], '%d_%m_%Y').date()
+        except:
+            kwarg_date = datetime.date.today()
+        # Paciente pasado en los kwargs
+        try:
+            kwarg_idpaciente = self.kwargs['idPaciente']
+        except:
+            kwarg_idpaciente = 0
 
+        # SI SE PASA UN idPaciente (idPaciente > 0), extrae el paciente concreto y lo pasa al contexto
+        if (kwarg_idpaciente > 0):
+            qs_paciente = Paciente.objects.get(idPaciente__iexact = kwarg_idpaciente)
+            ctx['paciente'] = qs_paciente
+            ctx['idPaciente'] = qs_paciente.idPaciente
+        else:
+            ctx['idPaciente'] = 0
+ 
+        # Obtiene la semana actual y a partir de ese dato el rango de fechas de la semana
+        week_range = get_weekrange(kwarg_date)
+        # Recupera las citas en ese rango de fechas
+        qs = Cita.objects.filter(appdate__gte = week_range[0], appdate__lte = week_range[1]).order_by('appdate', 'apptime', 'fk_Consultorio')
 
-        return super().get_queryset()
-    
+        # Pasa las citas a un array (cada fila es una tupla con campos abreviados de una cita)
+        citas = list()
+        for cita in qs:
+            cita_row = (cita.idCita, cita.fk_Paciente, cita.appdate, cita.apptime, cita.status)
+            citas.append(cita_row)
 
-
-
-
-
-
+        # Contexto que genera las fechas actuales, anteriores y siguentes
+        ctx['ctx_dias'] = contexto_dias(kwarg_date)
+        ctx['ctx_fromweekday'] = week_range[0]
+        ctx['ctx_toweekday'] = week_range[1]
+        # Contexto con las citas. app_timegrid construye la matriz de horas y citas para la rejilla.
+        ctx['grid'] = app_weektimegrid(citas, week_range)        
+        return ctx
 
 
 
