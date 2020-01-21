@@ -162,14 +162,13 @@ def app_weektimegrid(citas, rango_semana):
         daygrid_ctrl = rango_semana[0]
         while daygrid_ctrl <= daygrid_end:
 
-            tbl_row = tbl_row + '<td class=\"grid-smalltxt\">'
+            tbl_row = tbl_row + '<td class=\"tbl-td-centro grid-smallertxt\">'
 
             if citas:
                 for cita in citas:
                     # Si la cita es de hoy y de esa franja...
-                    if (cita[2] == daygrid_ctrl) and (cita[3] >= timegrid_ctrl.time() and cita[3] < timegrid_ctrl2.time()):
-                        tbl_row = tbl_row + '<a class=\"grid-smallertxt\" href=\"/fixuSystem/citas/nueva/' + daygrid_ctrl.strftime('%d_%m_%Y') + '/' + timegrid_ctrl.strftime('%H_%M') + '/\">[...]</a>&nbsp;'
-                        tbl_row = tbl_row + str(cita[1]) + ' (' + cita[3].strftime('%H:%M') + ')' + ' (' +  str(cita[4])[0].upper() + ')<br/>'
+                    if (cita[3] == daygrid_ctrl) and (cita[4] >= timegrid_ctrl.time() and cita[4] < timegrid_ctrl2.time()):
+                        tbl_row = tbl_row + cita[4].strftime('%H:%M') + '. ' + str(cita[1]) + ' (' +  cita[5] + ')<br/>'
             
             # Pone puntos para crear cita
             tbl_row = tbl_row + '<a class=\"grid-smallertxt\" href=\"/fixuSystem/citas/nueva/' + daygrid_ctrl.strftime('%d_%m_%Y') + '/' + timegrid_ctrl.strftime('%H_%M') + '/\">[...]</a>'

@@ -38,6 +38,7 @@ humanize==0.5.1
 icalendar==4.0.3
 idna==2.8
 initial-setup==0.3.76
+isoweek==1.3.3
 kiwisolver==1.1.0
 langtable==0.0.50
 libcomps==0.1.14

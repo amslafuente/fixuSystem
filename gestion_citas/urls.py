@@ -25,10 +25,8 @@ urlpatterns = [
     path('dia/r/<int:idPaciente>/<str:date>/', views.citas_dia_grid_view.as_view(), name = "citas-dia-grid"),
 
     # Vista semanal y mensual de las citas
-    path('semana/', views.citas_semana_view.as_view(), name = "citas-semana"),
-    path('semanal/<int:year>/<int:week>/', views.citas_semanales_view.as_view(), name = "citas-semanales"),
-    path('mes/', views.citas_mes_view.as_view(), name = "citas-mes"),
-    path('mensuales/<int:year>/<int:month>/', views.citas_mensuales_view.as_view(), name = "citas-mensuales"),
+    path('semana/<int:year>/<int:week>/', views.citas_semana_view.as_view(), name = "citas-semana"),
+    path('mes/<int:year>/<int:month>/', views.citas_mes_view.as_view(), name = "citas-mes"),
 
     # Presentación de citas desde la app de pacientes
 

@@ -12,18 +12,18 @@
 
         {% load static %}
 
+        {{ kwargdate }}
+
         <table class="tbl-forms table-striped tbl-general tbl-100">
 
 	    	<caption class="tbl-capt">
                 <div class="div-contexto-centro">
-                    <span>Citas para la semana del</span>
+                    <span>Citas para la semana:<br/>{{ fromweekday|date:"l, d/F/Y" }} al {{ toweekday|date:"l, d/F/Y" }}</span>
                 </div>
                 <div class="div-fechas">
-                    <a class="link-red" href="{% url 'citas-semana' %}">Semana ant.</a>
-
-                    <span>{{ ctx_fromweekday|date:"l, d/F/Y" }} al {{ ctx_toweekday|date:"l, d/F/Y" }}</span>
-
-                    <a class="link-red" href="{% url 'citas-semana' %}">Semana sig.</a>
+                    <a class="link-yellow" href="{% url 'citas-semana' prevyear prevweek %}">Semana ant.</a>
+                    <a class="link-yellow" href="{% url 'citas-semana' curryear currweek %}">Semana actual</a>
+                    <a class="link-yellow" href="{% url 'citas-semana' nextyear nextweek %}">Semana sig.</a>
                 </div>
             </caption>
 

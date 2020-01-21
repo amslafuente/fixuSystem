@@ -19,15 +19,15 @@
                     <span>Citas para el</span>
                 </div>
                 <div class="div-fechas">
-                    <a class="link-red" href="{% url 'citas-dia' idPaciente ctx_dias.month_back_url %}">Mes ant.</a>
-                    <a class="link-red" href="{% url 'citas-dia' idPaciente ctx_dias.week_back_url %}">Semana ant.</a>
-                    <a class="link-red" href="{% url 'citas-dia' idPaciente ctx_dias.yesterday_url %}">Día ant.</a>
+                    <a class="link-yellow" href="{% url 'citas-dia' idPaciente ctx_dias.month_back_url %}">Mes ant.</a>
+                    <a class="link-yellow" href="{% url 'citas-dia' idPaciente ctx_dias.week_back_url %}">Semana ant.</a>
+                    <a class="link-yellow" href="{% url 'citas-dia' idPaciente ctx_dias.yesterday_url %}">Día ant.</a>
 
                     <span>{{ ctx_dias.current_date|date:"l, d/F/Y" }}</span>
 
-                    <a class="link-red" href="{% url 'citas-dia' idPaciente ctx_dias.tomorrow_url %}">Día sig.</a>
-                    <a class="link-red" href="{% url 'citas-dia' idPaciente ctx_dias.week_forw_url %}">Semana sig.</a>
-                    <a class="link-red" href="{% url 'citas-dia' idPaciente ctx_dias.month_forw_url %}">Mes sig.</a>
+                    <a class="link-yellow" href="{% url 'citas-dia' idPaciente ctx_dias.tomorrow_url %}">Día sig.</a>
+                    <a class="link-yellow" href="{% url 'citas-dia' idPaciente ctx_dias.week_forw_url %}">Semana sig.</a>
+                    <a class="link-yellow" href="{% url 'citas-dia' idPaciente ctx_dias.month_forw_url %}">Mes sig.</a>
                 </div>
                 {% if is_paginated %}
                     <div class="div-contexto-centro">

@@ -132,46 +132,48 @@ class citas_semana_view(ListView):
     context_object_name = 'citas'
     template_name = 'citas_semana_grid_tpl.html'
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs):
 
         ctx = super().get_context_data(**kwargs)
-        # Query de las citas en la fecha pasada en los kwargs o de hoy si no se pasa fecha
+        # Obtiene la semana a partir de kwargs o usa la fecha de hoy y calcula el rango de fechas
         try:
-            kwarg_date = datetime.datetime.strptime(self.kwargs['date'], '%d_%m_%Y').date()
+            kwyearweek = str(self.kwargs['year']) + '-' + str(self.kwargs['week']) + '-1'
+            kwarg_date = datetime.datetime.strptime(kwyearweek, '%G-%V-%u').date()
         except:
             kwarg_date = datetime.date.today()
-        # Paciente pasado en los kwargs
-        try:
-            kwarg_idpaciente = self.kwargs['idPaciente']
-        except:
-            kwarg_idpaciente = 0
-
-        # SI SE PASA UN idPaciente (idPaciente > 0), extrae el paciente concreto y lo pasa al contexto
-        if (kwarg_idpaciente > 0):
-            qs_paciente = Paciente.objects.get(idPaciente__iexact = kwarg_idpaciente)
-            ctx['paciente'] = qs_paciente
-            ctx['idPaciente'] = qs_paciente.idPaciente
-        else:
-            ctx['idPaciente'] = 0
- 
-        # Obtiene la semana actual y a partir de ese dato el rango de fechas de la semana
         week_range = get_weekrange(kwarg_date)
+
         # Recupera las citas en ese rango de fechas
-        qs = Cita.objects.filter(appdate__gte = week_range[0], appdate__lte = week_range[1]).order_by('appdate', 'apptime', 'fk_Consultorio')
+        qs = Cita.objects.filter(appdate__gte = week_range[0], appdate__lte = week_range[1]).order_by('appdate', 'apptime')
 
         # Pasa las citas a un array (cada fila es una tupla con campos abreviados de una cita)
         citas = list()
         for cita in qs:
-            cita_row = (cita.idCita, cita.fk_Paciente, cita.appdate, cita.apptime, cita.status)
+            cita_row = (cita.idCita, cita.fk_Paciente, cita.fk_Paciente.idPaciente, cita.appdate, cita.apptime, cita.status)
             citas.append(cita_row)
 
-        # Contexto que genera las fechas actuales, anteriores y siguentes
-        ctx['ctx_dias'] = contexto_dias(kwarg_date)
-        ctx['ctx_fromweekday'] = week_range[0]
-        ctx['ctx_toweekday'] = week_range[1]
+        # Contexto que genera las fechas actuales, anteriores y siguientes
+        ctx['fromweekday'] = week_range[0]
+        ctx['toweekday'] = week_range[1]
+        prev_week = week_range[0] - datetime.timedelta(days = 7)
+        prev_isocalendar = prev_week.isocalendar()
+        next_week = week_range[0] + datetime.timedelta(days = 7)
+        next_isocalendar = next_week.isocalendar()
+        ctx['curryear'] = datetime.date.today().isocalendar()[0]
+        ctx['currweek'] = datetime.date.today().isocalendar()[1]
+        ctx['prevyear'] = prev_isocalendar[0]
+        ctx['prevweek'] = prev_isocalendar[1]
+        ctx['nextyear'] = next_isocalendar[0]
+        ctx['nextweek'] = next_isocalendar[1]
+
         # Contexto con las citas. app_timegrid construye la matriz de horas y citas para la rejilla.
         ctx['grid'] = app_weektimegrid(citas, week_range)        
         return ctx
+
+@method_decorator(login_required, name='dispatch')
+class citas_mes_view(ListView):
+    pass
+
 
 
 
@@ -995,18 +997,3 @@ class PDF_citas_view(View):
 
     def get(self, request):
         return html2pdf(request)
-
-#####################################################################################
-
-@method_decorator(login_required, name='dispatch')
-class citas_semanales_view(View):
-    pass
-
-@method_decorator(login_required, name='dispatch')
-class citas_mes_view(View):
-    pass
-
-@method_decorator(login_required, name='dispatch')
-class citas_mensuales_view(View):
-    pass
-
