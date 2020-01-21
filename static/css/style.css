@@ -268,6 +268,14 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
     padding-left: 10px;
 }
 
+.grid-smallertxt { /*--- Texto pequeño para el grid ---*/
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 0.7em;
+    font-variant: normal;
+    font-weight: bold;
+    padding-left: 10px;
+}
+
 /*---------- BOTONES ----------*/
 
 .div-botones { /*--- Div de botones a pie de tabla alineado al centro ---*/

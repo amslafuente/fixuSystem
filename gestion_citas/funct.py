@@ -153,11 +153,11 @@ def app_weektimegrid(citas, rango_semana):
             si no existe construye un <td> vacio
     """
 
+    # Construye el body 
     tbl_body = tbl_row = ''
-
     while timegrid_ctrl.time() <= timegrid_end.time():
-
-        tbl_row = tbl_row + '<tr>\r<td class=\"tbl-td-centro\">' + timegrid_ctrl.strftime('%H:%M') + '</td>'
+       
+        tbl_row = tbl_row + '<tr class=\"tr-time-color\">\r<th class=\"tbl-td-centro grid-time-color\">' + timegrid_ctrl.strftime('%H:%M') + '</th>'
         
         daygrid_ctrl = rango_semana[0]
         while daygrid_ctrl <= daygrid_end:
@@ -168,32 +168,33 @@ def app_weektimegrid(citas, rango_semana):
                 for cita in citas:
                     # Si la cita es de hoy y de esa franja...
                     if (cita[2] == daygrid_ctrl) and (cita[3] >= timegrid_ctrl.time() and cita[3] < timegrid_ctrl2.time()):
-                        tbl_row = tbl_row + '- ' + str(cita[1]) + ' (' + cita[3].strftime('%H:%M') + ')' + ' (' +  str(cita[4])[0].upper() + ')<br/>'
-
-            tbl_row = tbl_row + '<a href=\"/fixuSystem/citas/nueva/' + daygrid_ctrl.strftime('%d_%m_%Y') + '/' + timegrid_ctrl.strftime('%H_%M') + '/\">'
-            tbl_row = tbl_row + '...'
-            tbl_row = tbl_row + '</a>'            
+                        tbl_row = tbl_row + '<a class=\"grid-smallertxt\" href=\"/fixuSystem/citas/nueva/' + daygrid_ctrl.strftime('%d_%m_%Y') + '/' + timegrid_ctrl.strftime('%H_%M') + '/\">[...]</a>&nbsp;'
+                        tbl_row = tbl_row + str(cita[1]) + ' (' + cita[3].strftime('%H:%M') + ')' + ' (' +  str(cita[4])[0].upper() + ')<br/>'
+            
+            # Pone puntos para crear cita
+            tbl_row = tbl_row + '<a class=\"grid-smallertxt\" href=\"/fixuSystem/citas/nueva/' + daygrid_ctrl.strftime('%d_%m_%Y') + '/' + timegrid_ctrl.strftime('%H_%M') + '/\">[...]</a>'
             tbl_row = tbl_row + '</td>'
             daygrid_ctrl = daygrid_ctrl + datetime.timedelta(days = 1)
         
         tbl_row = tbl_row + '</tr>\r'
         timegrid_ctrl = timegrid_ctrl + datetime.timedelta(minutes = TIME_SPAN)
         timegrid_ctrl2 = timegrid_ctrl + datetime.timedelta(minutes = TIME_SPAN)
-  
     
-    # Blend into week grid    
-    tbl_header = '<tr>\r<th class="tbl-th">Franja horaria</th>\r'
+    tbl_body = tbl_row
+    
+    # Construye header    
+    tbl_header = '<tr>\r<th class=\"tbl-th\">Franja horaria</th>\r'
     for i in range(0,7):
         weekday_ = rango_semana[0] + datetime.timedelta(days = i)
-        tbl_header = tbl_header + '<th class="tbl-th tbl-td-12">' + weekday_.strftime('%A') + '<br/>' + weekday_.strftime('%d/%b/%y')+ '</th>\r'
+        tbl_header = tbl_header + '<th class=\"tbl-th tbl-td-12\">' + weekday_.strftime('%A') + '<br/>' + weekday_.strftime('%d/%b/%y')+ '</th>\r'
+    tbl_header = tbl_header + '<tr><td class=\"grid-info2-color tr-time-color tbl-td-centro\" colspan=\"8\">Pulse sobre los puntos de las celdas para crear nuevas citas</td>'
     tbl_header = tbl_header + '</tr>\r'
-
-    tbl_body = tbl_row
-
-    resp['weekgrid'] = tbl_header + tbl_body
     
+    resp['weekgrid'] = tbl_header + tbl_body
+
     # Reset locale
-    locale.resetlocale(category=locale.LC_ALL)
+    locale.resetlocale(category = locale.LC_ALL)
+
     return resp
 
 
