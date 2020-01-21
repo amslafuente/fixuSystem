@@ -162,13 +162,13 @@ def app_weektimegrid(citas, rango_semana):
         daygrid_ctrl = rango_semana[0]
         while daygrid_ctrl <= daygrid_end:
 
-            tbl_row = tbl_row + '<td class=\"tbl-td-centro grid-smallertxt\">'
+            tbl_row = tbl_row + '<td class=\"grid-smallertxt\">'
 
             if citas:
                 for cita in citas:
                     # Si la cita es de hoy y de esa franja...
-                    if (cita[3] == daygrid_ctrl) and (cita[4] >= timegrid_ctrl.time() and cita[4] < timegrid_ctrl2.time()):
-                        tbl_row = tbl_row + cita[4].strftime('%H:%M') + '. ' + str(cita[1]) + ' (' +  cita[5] + ')<br/>'
+                    if (cita[2] == daygrid_ctrl) and (cita[3] >= timegrid_ctrl.time() and cita[3] < timegrid_ctrl2.time()):
+                        tbl_row = tbl_row + cita[3].strftime('%H:%M') + '. ' + str(cita[1]) + ' (' +  cita[4] + ')<br/>'
             
             # Pone puntos para crear cita
             tbl_row = tbl_row + '<a class=\"grid-smallertxt\" href=\"/fixuSystem/citas/nueva/' + daygrid_ctrl.strftime('%d_%m_%Y') + '/' + timegrid_ctrl.strftime('%H_%M') + '/\">[...]</a>'
@@ -185,7 +185,14 @@ def app_weektimegrid(citas, rango_semana):
     tbl_header = '<tr>\r<th class=\"tbl-th\">Franja horaria</th>\r'
     for i in range(0,7):
         weekday_ = rango_semana[0] + datetime.timedelta(days = i)
-        tbl_header = tbl_header + '<th class=\"tbl-th tbl-td-12\">' + weekday_.strftime('%A') + '<br/>' + weekday_.strftime('%d/%b/%y')+ '</th>\r'
+
+        # Si es hoy lo pone en rojo
+        if weekday_ == datetime.date.today():
+            tbl_header = tbl_header + '<th class=\"tbl-th-dark tbl-td-12\">' + weekday_.strftime('%A') + '<br/>' + weekday_.strftime('%d/%b/%y')+ '</th>\r'            
+        else:
+            tbl_header = tbl_header + '<th class=\"tbl-th tbl-td-12\">' + weekday_.strftime('%A') + '<br/>' + weekday_.strftime('%d/%b/%y')+ '</th>\r'
+      
+    
     tbl_header = tbl_header + '<tr><td class=\"grid-info2-color tr-time-color tbl-td-centro\" colspan=\"8\">Pulse sobre los puntos de las celdas para crear nuevas citas</td>'
     tbl_header = tbl_header + '</tr>\r'
     
@@ -196,7 +203,6 @@ def app_weektimegrid(citas, rango_semana):
 
     return resp
 
-
 # Funcion para devolver el rango de fechas de una semana completa
 def get_weekrange(day_): # "day" es un datetime.date
 
@@ -204,11 +210,4 @@ def get_weekrange(day_): # "day" es un datetime.date
     weekstart = day_ - datetime.timedelta(days = weektoday[2] - 1)
     weekend = day_ + datetime.timedelta(days = 7 - weektoday[2])
     return (weekstart, weekend)
-
-# Funcion para elaborar el grid de citas por mes y franja horaria
-def app_monthtimegrid(citas, dia):
-
-    # "citas" pasa cono una lista de tuplas con todas las citas
-    # "dia" pasa como un objeto datetime.datetime.date
-
-    pass
+    

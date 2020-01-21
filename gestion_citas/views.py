@@ -135,7 +135,7 @@ class citas_semana_view(ListView):
     def get_context_data(self, **kwargs):
 
         ctx = super().get_context_data(**kwargs)
-        # Obtiene la semana a partir de kwargs o usa la fecha de hoy y calcula el rango de fechas
+        # Obtiene isocalendar a partir de kwargs o usa la fecha de hoy y calcula el rango de fechas
         try:
             kwyearweek = str(self.kwargs['year']) + '-' + str(self.kwargs['week']) + '-1'
             kwarg_date = datetime.datetime.strptime(kwyearweek, '%G-%V-%u').date()
@@ -149,7 +149,7 @@ class citas_semana_view(ListView):
         # Pasa las citas a un array (cada fila es una tupla con campos abreviados de una cita)
         citas = list()
         for cita in qs:
-            cita_row = (cita.idCita, cita.fk_Paciente, cita.fk_Paciente.idPaciente, cita.appdate, cita.apptime, cita.status)
+            cita_row = (cita.idCita, cita.fk_Paciente, cita.appdate, cita.apptime, cita.status)
             citas.append(cita_row)
 
         # Contexto que genera las fechas actuales, anteriores y siguientes
@@ -169,17 +169,6 @@ class citas_semana_view(ListView):
         # Contexto con las citas. app_timegrid construye la matriz de horas y citas para la rejilla.
         ctx['grid'] = app_weektimegrid(citas, week_range)        
         return ctx
-
-@method_decorator(login_required, name='dispatch')
-class citas_mes_view(ListView):
-    pass
-
-
-
-
-
-
-
 
 
 

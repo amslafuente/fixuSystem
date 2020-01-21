@@ -76,6 +76,7 @@ body { /*-- COlor de fondo --*/
 .link-brown { /* --- Color de los enlaces de cancelar ---*/
     color: rgb(104, 38, 0);
 }
+
 addr { /* --- Estilo de addr del pie de pagina ---*/
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-variant: small;
@@ -170,7 +171,6 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
     color: yellow;
     padding: 10px;
     background-color: grey;
-
 }
 
 .div-cuerpo-menu {
@@ -179,7 +179,6 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
     align-content: center;
     font-variant: small-caps;
     color: yellow;
-
 }
 
 /*---------- REJILLA DE HORARIOS ----------*/
@@ -361,6 +360,7 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
     border-top-width: 1px;
     border-bottom-style: solid;
     border-bottom-width: 1px;
+    border-color:grey;
     padding: 8px;
     background-color:rgb(230, 219, 209);
 }
@@ -372,6 +372,7 @@ addr { /* --- Estilo de addr del pie de pagina ---*/
     border-top-width: 1px;
     border-bottom-style: solid;
     border-bottom-width: 1px;
+    border-color:grey;
     padding: 8px;
     color: white;
     background-color:rgb(82, 82, 82);
