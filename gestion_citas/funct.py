@@ -119,11 +119,170 @@ def app_timegrid(citas, dia):
     resp['datos_citas'] = datos_citas
     return resp
 
+# Funcion para elaborar el grid de citas por franja horaria
+def app_daytimegrid(citas, dia, paciente):
+
+    # "citas" pasa cono una lista de tuplas con todas las citas
+    # "dia" pasa como datetime.date
+
+    resp = dict()
+    # Set locale
+    locale.setlocale(locale.LC_ALL,'es_ES')
+
+    # Time appointment distribution
+
+    # Hora de comienzo de las consultas, puntero de control de hora y hora final
+    timegrid_start = timegrid_ctrl = datetime.datetime.strptime(START_TIME, '%H:%M')
+    timegrid_end = datetime.datetime.strptime(END_TIME, '%H:%M')
+    timegrid_ctrl2 = timegrid_ctrl + datetime.timedelta(minutes = TIME_SPAN)
+ 
+    # Construye el body 
+    tbl_body = tbl_row = ''
+
+    """
+    for i in franjas horarias
+        crea un <tr>
+            compara cada cita con de ese dia en cada franja horaria
+            si existe construye el <td>
+            si no existe construye un <td> vacio
+    """
+
+    while timegrid_ctrl.time() <= timegrid_end.time():
+           
+        tbl_row = tbl_row + '<tr class=\"tr-time-color\">\r'
+        tbl_row = tbl_row + '<th class=\"tbl-td-centro grid-time-color\">'
+
+        # Si se pasa un paciente lo incluye para crear citas
+        if paciente[0] > 0:
+            tbl_row = tbl_row + '<a href=\"/fixuSystem/citas/nueva/' + str(paciente[0]) + '/' + dia.strftime('%d_%m_%Y') + '/' + timegrid_ctrl.strftime('%H_%M') + '/\">' + timegrid_ctrl.strftime('%H:%M') + '</a>'
+        else:
+            tbl_row = tbl_row + '<a href=\"/fixuSystem/citas/nueva/' + dia.strftime('%d_%m_%Y') + '/' + timegrid_ctrl.strftime('%H_%M') + '/\">' + timegrid_ctrl.strftime('%H:%M') + '</a>'
+        
+        tbl_row = tbl_row + '</th>\r'
+
+        if citas:
+            # Pacientes
+            tbl_row = tbl_row + '<td class=\"grid-smalltxt\">'
+            for cita in citas:
+                # Si la cita es de hoy y de esa franja...
+                    if (cita[3] >= timegrid_ctrl.time() and cita[3] < timegrid_ctrl2.time()):
+                        if cita[6] == 'Cancelada':
+                            tbl_row = tbl_row + '<span class=\"grid-tachado\">'
+                        else:
+                            tbl_row = tbl_row + '<span>'
+                        tbl_row = tbl_row + str(cita[1]) + '</span><br/>'
+            tbl_row = tbl_row + '</td>'            
+            # Citado por
+            tbl_row = tbl_row + '<td class=\"grid-smalltxt\">'
+            for cita in citas:
+                # Si la cita es de hoy y de esa franja...
+                    if (cita[3] >= timegrid_ctrl.time() and cita[3] < timegrid_ctrl2.time()):
+                        if cita[6] == 'Cancelada':
+                            tbl_row = tbl_row + '<span class=\"grid-tachado\">'
+                        else:
+                            tbl_row = tbl_row + '<span>'
+                        if not cita[4]:
+                            tbl_row = tbl_row + 'Indet.</span><br/>'
+                        else:
+                            tbl_row = tbl_row + str(cita[4]) + '</span><br/>'
+            tbl_row = tbl_row + '</td>'            
+            # Consultorio
+            tbl_row = tbl_row + '<td class=\"tbl-td-centro grid-smalltxt\">'
+            for cita in citas:
+                # Si la cita es de hoy y de esa franja...
+                    if (cita[3] >= timegrid_ctrl.time() and cita[3] < timegrid_ctrl2.time()):
+                        if cita[6] == 'Cancelada':
+                            tbl_row = tbl_row + '<span class=\"grid-tachado\">'
+                        else:
+                            tbl_row = tbl_row + '<span>'
+                        if not cita[5]:
+                            tbl_row = tbl_row + 'Indet.</span><br/>'
+                        else:
+                            tbl_row = tbl_row + str(cita[5]) + '</span><br/>'
+            tbl_row = tbl_row + '</td>'            
+            # Hora real
+            tbl_row = tbl_row + '<td class=\"tbl-td-centro grid-smalltxt\">'
+            for cita in citas:
+                # Si la cita es de hoy y de esa franja...
+                    if (cita[3] >= timegrid_ctrl.time() and cita[3] < timegrid_ctrl2.time()):
+                        if cita[6] == 'Cancelada':
+                            tbl_row = tbl_row + '<span class=\"grid-tachado\">'
+                        else:
+                            tbl_row = tbl_row + '<span>'
+                        tbl_row = tbl_row + cita[3].strftime('%H:%M') + '</span><br/>'
+            tbl_row = tbl_row + '</td>'            
+            # Notas
+            tbl_row = tbl_row + '<td class=\"tbl-td-20 grid-smalltxt\">'
+            for cita in citas:
+                # Si la cita es de hoy y de esa franja...
+                    if (cita[3] >= timegrid_ctrl.time() and cita[3] < timegrid_ctrl2.time()):
+                        if cita[6] == 'Cancelada':
+                            tbl_row = tbl_row + '<span class=\"grid-tachado\">'
+                        else:
+                            tbl_row = tbl_row + '<span>'
+                        tbl_row = tbl_row + cita[7] + '</span><br/>'
+            tbl_row = tbl_row + '</td>'            
+            # Estado
+            tbl_row = tbl_row + '<td class=\"tbl-td-centro grid-smalltxt\">'
+            for cita in citas:
+                # Si la cita es de hoy y de esa franja...
+                    if (cita[3] >= timegrid_ctrl.time() and cita[3] < timegrid_ctrl2.time()):
+                        if cita[6] == 'Cancelada':
+                            tbl_row= tbl_row + '<span class=\"grid-rojo\">'
+                        elif cita[6] == 'Acude':
+                            tbl_row = tbl_row + '<span class=\"grid-azul\">'
+                        elif cita[6] == 'Pendiente':
+                            tbl_row = tbl_row + '<span class=\"grid-naranja\">'
+                        else:
+                            tbl_row = tbl_row + '<span class=\"grid-verde\">'
+                        tbl_row = tbl_row + cita[6] + '</span><br/>'
+            tbl_row = tbl_row + '</td>\r'
+            # Acciones
+            tbl_row = tbl_row + '<td class=\"tbl-td-centro grid-smalltxt\">'
+            for cita in citas:
+                # Si la cita es de hoy y de esa franja...
+                    if (cita[3] >= timegrid_ctrl.time() and cita[3] < timegrid_ctrl2.time()):
+                        if (cita[6] != "Cancelada" and cita[6] != "Pasa a consulta"):
+                            tbl_row = tbl_row + '<a class="link-cancelar" href=\"/fixuSystem/citas/cancelar/' + str(cita[0]) + '\">Cancelar cita</a><br/>'
+                        else:
+                            tbl_row = tbl_row + '<span>&nbsp;</span><br/>'
+            tbl_row = tbl_row + '</td>\r'
+        
+        tbl_row = tbl_row + '</tr>\r'            
+        timegrid_ctrl = timegrid_ctrl + datetime.timedelta(minutes = TIME_SPAN)
+        timegrid_ctrl2 = timegrid_ctrl + datetime.timedelta(minutes = TIME_SPAN)
+    
+    tbl_body = tbl_row
+
+    # Construye header    
+    tbl_header = '<tr>\r'
+    tbl_header = tbl_header + '<th class=\"tbl-th\">Franja horaria</th>\r'
+    tbl_header = tbl_header + '<th class="tbl-th-izq tbl-td-20">Paciente</th>\r'
+    tbl_header = tbl_header + '<th class="tbl-th-izq tbl-td-15">Citado/a por</th>\r'
+    tbl_header = tbl_header + '<th class="tbl-th">Consult.</th>\r'
+    tbl_header = tbl_header + '<th class="tbl-th">Hora</th>\r'
+    tbl_header = tbl_header + '<th class="tbl-th-izq">Notas</th>\r'
+    tbl_header = tbl_header + '<th class="tbl-th tbl-td-15">Estado</th>\r'
+    tbl_header = tbl_header + '<th class="tbl-th">Acciones</th>\r'
+    tbl_header = tbl_header + '</tr>\r'
+    # Si se pasa un paciente lo coloca en la cabecera
+    if paciente[0] > 0:
+        tbl_header = tbl_header + '<tr>\r<td class="grid-info-color tr-time-color tbl-td-centro" colspan="8"> Paciente: ' + paciente[1] + '</td>\r</tr>\r'
+    # Pulsacion para nuevas citas
+    tbl_header = tbl_header + '<tr>\r<td class=\"grid-info2-color tr-time-color tbl-td-centro\" colspan=\"8\">Pulse sobre las franjas horarias para crear nuevas citas</td>\r</tr>\r'
+
+    resp['daygrid'] = tbl_header + tbl_body
+
+    # Reset locale
+    locale.resetlocale(category = locale.LC_ALL)
+
+    return resp
+
 # Funcion para elaborar el grid de citas por semana y franja horaria
 def app_weektimegrid(citas, rango_semana):
 
     # "citas" pasa cono una lista de tuplas con todas las citas
-    # "rango_semana" pasa com tupla con fecha inicial y fecha final
+    # "rango_semana" pasa como tupla con fecha inicial y fecha final
 
     resp = dict()
     # Set locale
@@ -140,10 +299,6 @@ def app_weektimegrid(citas, rango_semana):
     timegrid_end = datetime.datetime.strptime(END_TIME, '%H:%M')
     timegrid_ctrl2 = timegrid_ctrl + datetime.timedelta(minutes = TIME_SPAN)
     
-    # Variable que construye el body
-    franjas_horarias = list()
-    datos_citas = list()
-
     """
     for i in franjas horarias
         crea un <tr>
@@ -157,7 +312,8 @@ def app_weektimegrid(citas, rango_semana):
     tbl_body = tbl_row = ''
     while timegrid_ctrl.time() <= timegrid_end.time():
        
-        tbl_row = tbl_row + '<tr class=\"tr-time-color\">\r<th class=\"tbl-td-centro grid-time-color\">' + timegrid_ctrl.strftime('%H:%M') + '</th>'
+        tbl_row = tbl_row + '<tr class=\"tr-time-color\">\r'
+        tbl_row = tbl_row + '<th class=\"tbl-td-centro grid-time-color\">' + timegrid_ctrl.strftime('%H:%M') + '</th>\r'
         
         daygrid_ctrl = rango_semana[0]
         while daygrid_ctrl <= daygrid_end:
@@ -172,8 +328,8 @@ def app_weektimegrid(citas, rango_semana):
             
             # Pone puntos para crear cita
             tbl_row = tbl_row + '<a class=\"grid-smallertxt\" href=\"/fixuSystem/citas/nueva/' + daygrid_ctrl.strftime('%d_%m_%Y') + '/' + timegrid_ctrl.strftime('%H_%M') + '/\">[...]</a>'
-            tbl_row = tbl_row + '</td>'
-            daygrid_ctrl = daygrid_ctrl + datetime.timedelta(days = 1)
+            tbl_row = tbl_row + '</td>\r'
+            daygrid_ctrl = daygrid_ctrl + datetime.timedelta(days = 1)        
         
         tbl_row = tbl_row + '</tr>\r'
         timegrid_ctrl = timegrid_ctrl + datetime.timedelta(minutes = TIME_SPAN)
@@ -182,19 +338,17 @@ def app_weektimegrid(citas, rango_semana):
     tbl_body = tbl_row
     
     # Construye header    
-    tbl_header = '<tr>\r<th class=\"tbl-th\">Franja horaria</th>\r'
+    tbl_header = '<tr>\r'
+    tbl_header = tbl_header + '<th class=\"tbl-th\">Franja<br/>horaria</th>\r'
     for i in range(0,7):
         weekday_ = rango_semana[0] + datetime.timedelta(days = i)
-
         # Si es hoy lo pone en rojo
         if weekday_ == datetime.date.today():
             tbl_header = tbl_header + '<th class=\"tbl-th-dark tbl-td-12\">' + weekday_.strftime('%A') + '<br/>' + weekday_.strftime('%d/%b/%y')+ '</th>\r'            
         else:
             tbl_header = tbl_header + '<th class=\"tbl-th tbl-td-12\">' + weekday_.strftime('%A') + '<br/>' + weekday_.strftime('%d/%b/%y')+ '</th>\r'
-      
-    
-    tbl_header = tbl_header + '<tr><td class=\"grid-info2-color tr-time-color tbl-td-centro\" colspan=\"8\">Pulse sobre los puntos de las celdas para crear nuevas citas</td>'
     tbl_header = tbl_header + '</tr>\r'
+    tbl_header = tbl_header + '<tr>\r<td class=\"grid-info2-color tr-time-color tbl-td-centro\" colspan=\"8\">Pulse sobre los puntos de las celdas para crear nuevas citas</td>\r</tr>\r'
     
     resp['weekgrid'] = tbl_header + tbl_body
 

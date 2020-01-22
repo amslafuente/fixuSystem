@@ -19,170 +19,25 @@
                     <span>Citas para el</span>
                 </div>
                 <div class="div-fechas">
-                    <a class="link-yellow" href="{% url 'citas-dia-grid' idPaciente ctx_dias.month_back_url %}">Mes ant.</a>
-                    <a class="link-yellow" href="{% url 'citas-dia-grid' idPaciente ctx_dias.week_back_url %}">Semana ant.</a>
-                    <a class="link-yellow" href="{% url 'citas-dia-grid' idPaciente ctx_dias.yesterday_url %}">Día ant.</a>
+                    <a class="link-yellow" href="{% url 'citas-dia-grid' id_Paciente ctx_date.month_back_url %}">Mes ant.</a>
+                    <a class="link-yellow" href="{% url 'citas-dia-grid' id_Paciente ctx_date.week_back_url %}">Semana ant.</a>
+                    <a class="link-yellow" href="{% url 'citas-dia-grid' id_Paciente ctx_date.yesterday_url %}">Día ant.</a>
 
-                    <span>{{ ctx_dias.current_date|date:"l, d/F/Y" }}</span>
+                    <span>{{ ctx_date.current_date|date:"l, d/F/Y" }}</span>
 
-                    <a class="link-yellow" href="{% url 'citas-dia-grid' idPaciente ctx_dias.tomorrow_url %}">Día sig.</a>
-                    <a class="link-yellow" href="{% url 'citas-dia-grid' idPaciente ctx_dias.week_forw_url %}">Semana sig.</a>
-                    <a class="link-yellow" href="{% url 'citas-dia-grid' idPaciente ctx_dias.month_forw_url %}">Mes sig.</a>
+                    <a class="link-yellow" href="{% url 'citas-dia-grid' id_Paciente ctx_date.tomorrow_url %}">Día sig.</a>
+                    <a class="link-yellow" href="{% url 'citas-dia-grid' id_Paciente ctx_date.week_forw_url %}">Semana sig.</a>
+                    <a class="link-yellow" href="{% url 'citas-dia-grid' id_Paciente ctx_date.month_forw_url %}">Mes sig.</a>
                 </div>
             </caption>
 
-	    	<tr>
-                <th class="tbl-th tbl-td-10">Franja</th>
-                <th class="tbl-th-izq tbl-td-20">Paciente</th>
-                <th class="tbl-th-izq tbl-td-15">Citado/a por</th>
-                <th class="tbl-th">Consult.</th>
-                <th class="tbl-th">Hora</th>
-                <th class="tbl-th-izq">Notas</th>
-                <th class="tbl-th tbl-td-15">Estado</th>
-                <th class="tbl-th">Acciones</th>
-            </tr>
-            
-            <!-- Si se pasa un paciente lo coloca en la cabecera -->
-            {% if idPaciente != 0 %}
-                <tr>
-                    <td class="grid-info-color tr-time-color tbl-td-centro" colspan="9"> Paciente: {{ paciente }}</td>
-                </tr>
-            {% endif %}
-
-            <!-- Indica que hay que pulsar para crear nuevas citas -->
-            <tr>
-                <td class="grid-info2-color tr-time-color tbl-td-centro" colspan="9">Pulse sobre las franjas horarias para crear nuevas citas</td>
-            </tr>
-
-            <!-- Rejilla de citas -->
-            {% for franja_horaria in rejilla.franjas_horarias %}
-
-                <tr class="tr-time-color">
-                    <th class="tbl-td-centro grid-time-color">
-                        {% if idPaciente == 0 %}
-                            <a href="{% url 'create-citas' ctx_dias.current_date_url franja_horaria|date:'H_i' %}">{{ franja_horaria|date:'H:i' }}</a>
-                        {% else %}
-                            <a href="{% url 'create-citas-paciente' idPaciente ctx_dias.current_date_url franja_horaria|date:'H_i' %}">{{ franja_horaria|date:'H:i' }}</a>
-                        {% endif %}
-                    </th>
-
-                    <!-- Paciente -->
-                    <td class="grid-smalltxt">
-                    {% for cita in rejilla.datos_citas %}
-                        {% if cita.0|date:'H:i' == franja_horaria|date:'H:i' %}
-                            {% if cita.7 == "Cancelada" %}
-                                <span class = "grid-tachado">
-                            {% else %}
-                                <span>
-                            {% endif %}
-                            {{ cita.2 }}</span><br/>
-                        {% endif %}
-                    {% endfor %}
-                    </td>
-
-                    <!-- Citado por -->
-                    <td class="grid-smalltxt">
-                    {% for cita in rejilla.datos_citas %}
-                        {% if cita.0|date:'H:i' == franja_horaria|date:'H:i' %}
-                            {% if cita.7 == "Cancelada" %}
-                                <span class = "grid-tachado">
-                            {% else %}
-                                <span>
-                            {% endif %}
-                            {% if cita.3 != 'None' %}
-                                {{ cita.3|default_if_none:'Indet.' }}
-                            {% else %}
-                                Indet.
-                            {% endif %}
-                            </span><br/>
-                        {% endif %}
-                    {% endfor %}
-                    </td>
-
-                    <!-- Consultorio -->
-                    <td class="tbl-td-centro grid-smalltxt">
-                    {% for cita in rejilla.datos_citas %}
-                        {% if cita.0|date:'H:i' == franja_horaria|date:'H:i' %}
-                            {% if cita.7 == "Cancelada" %}
-                                <span class = "grid-tachado">
-                            {% else %}
-                                <span>
-                            {% endif %}
-                            {{ cita.4|default_if_none:'Indet.' }}
-                            </span><br/>
-
-                        {% endif %}
-                    {% endfor %}
-                    </td>
-
-                    <!-- Hora -->
-                    <td class="tbl-td-centro grid-smalltxt">
-                    {% for cita in rejilla.datos_citas %}
-                        {% if cita.0|date:'H:i' == franja_horaria|date:'H:i' %}
-                            {% if cita.7 == "Cancelada" %}
-                                <span class = "grid-tachado">
-                            {% else %}
-                                <span>
-                            {% endif %}
-                            {{ cita.6 }}</span><br/>
-                        {% endif %}
-                    {% endfor %}
-                    </td>
-
-                    <!-- Notas -->
-                    <td class="tbl-td-20 grid-smalltxt">
-                    {% for cita in rejilla.datos_citas %}
-                        {% if cita.0|date:'H:i' == franja_horaria|date:'H:i' %}
-                            {% if cita.7 == "Cancelada" %}
-                                <span class = "grid-tachado">
-                            {% else %}
-                                <span>
-                            {% endif %}
-                            {{ cita.8 }}</span><br/>
-                        {% endif %}
-                    {% endfor %}
-                    </td>
-
-                    <!-- Estado -->
-                    <td class="tbl-td-centro grid-smalltxt">
-                    {% for cita in rejilla.datos_citas %}
-                        {% if cita.0|date:'H:i' == franja_horaria|date:'H:i' %}
-                            {% if cita.7 == "Cancelada" %}
-                                <span class = "grid-rojo">
-                            {% elif cita.7 == "Acude"%}
-                                <span class = "grid-azul">
-                            {% elif cita.7 == "Pendiente"%}
-                                <span class = "grid-naranja">
-                            {% else %}
-                                <span class = "grid-verde">
-                            {% endif %}
-                            {{ cita.7 }}</span><br/>
-                        {% endif %}
-                    {% endfor %}
-                    </td>
-
-                    <!-- Acciones -->
-                    <td class="tbl-td-centro grid-smalltxt">
-                    {% for cita in rejilla.datos_citas %}
-                        {% if cita.0|date:'H:i' == franja_horaria|date:'H:i' %}
-                            {% if cita.7 != "Cancelada" and cita.7 != "Pasa a consulta" %}
-                                <a class="link-cancelar" href="{% url 'cancel-citas' cita.1 %}">Cancelar cita</a><br/>
-                            {% else %}
-                                <span>&nbsp;</span><br/>
-                            {% endif %}
-                        {% endif %}
-                    {% endfor %}
-                    </td>
-                </tr>
-
-            {% endfor %}
+            {{ grid.daygrid|safe }}
 
         </table>
 
     	<!-- Botones de acción -->
         <div class="div-botones">
             <a href="{% url 'citas-hoy' %}"><input type="button" class="btn btn-info" value="Citas para hoy"></a>
-            <a href="{% url 'citas-dia' idPaciente ctx_dias.current_date_url %}"><input type="button" class="btn btn-info" value="Modo lista"></a>
             <a href="{% url 'menu-citas' %}"><input type="button" class="btn btn-info" value="Menu de citas"></a>
         </div>
 

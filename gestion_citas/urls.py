@@ -23,7 +23,8 @@ urlpatterns = [
     path('dia/l/<int:idPaciente>/<str:date>/', views.citas_dia_view.as_view(), name = "citas-dia"),
     # Modo rejilla
     path('dia/r/<int:idPaciente>/<str:date>/', views.citas_dia_grid_view.as_view(), name = "citas-dia-grid"),
-
+    # Modo rejilla VIA TEMPLATE
+    # path('dia/r/<int:idPaciente>/<str:date>/', views.citas_dia_grid_view___viatemplate.as_view(), name = "citas-dia-grid"),
     # Vista semanal de las citas
     path('semana/<int:year>/<int:week>/', views.citas_semana_view.as_view(), name = "citas-semana"),
 

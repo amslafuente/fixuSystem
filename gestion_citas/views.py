@@ -12,7 +12,7 @@ from django.views.generic.list import ListView
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views import View
-from .funct import contexto_dias, get_weekrange, app_timegrid, app_weektimegrid
+from .funct import contexto_dias, get_weekrange, app_daytimegrid, app_weektimegrid
 from .forms import create_citas_form, create_citas_paciente_form, edit_citas_form
 from .forms import customNotifDias_form, setnotified_citas_form
 from django.contrib import messages
@@ -87,19 +87,19 @@ class citas_dia_view(ListView):
 
 # Citas para un dia concreto  en formato REJILLA
 @method_decorator(login_required, name='dispatch')
-class citas_dia_grid_view(ListView):
+class citas_dia_grid_view___viatemplate(ListView):
 
     model = Cita
     context_object_name = 'citas'
-    template_name = 'citas_dia_grid_tpl.html'
+    template_name = 'citas_dia_grid_tpl___viatemplate.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
 
         ctx = super().get_context_data(**kwargs)
-        # Query de las citas en la fecha pasada en los kwargs
-        kwarg_date = datetime.datetime.strptime(self.kwargs['date'], '%d_%m_%Y').date()
-        # Paciente pasado en los kwargs
+         # Paciente y fecha pasados en los kwargs
         kwarg_idpaciente = self.kwargs['idPaciente']
+        kwarg_date = datetime.datetime.strptime(self.kwargs['date'], '%d_%m_%Y').date()
+
         
         # SI SE PASA UN idPaciente (idPaciente > 0), extrae el paciente concreto y lo pasa al contexto
         if (kwarg_idpaciente > 0):
@@ -122,6 +122,46 @@ class citas_dia_grid_view(ListView):
         ctx['ctx_dias'] = contexto_dias(kwarg_date)
         # Contexto con las citas. app_timegrid construye la matriz de horas y citas para la rejilla.
         ctx['rejilla'] = app_timegrid(citas, kwarg_date)        
+        return ctx
+
+# Citas para un dia concreto  en formato REJILLA
+@method_decorator(login_required, name='dispatch')
+class citas_dia_grid_view(ListView):
+
+    model = Cita
+    context_object_name = 'citas'
+    template_name = 'citas_dia_grid_tpl.html'
+
+    def get_context_data(self, **kwargs):
+
+        ctx = super().get_context_data(**kwargs)
+        # Paciente y fecha pasados en los kwargs
+        kwarg_idpaciente = self.kwargs['idPaciente']
+        kwarg_date = datetime.datetime.strptime(self.kwargs['date'], '%d_%m_%Y').date()
+
+        # SI SE PASA UN idPaciente (idPaciente > 0), extrae el paciente concreto y lo pasa al contexto
+        if kwarg_idpaciente > 0:
+            qs_paciente = Paciente.objects.get(idPaciente__iexact = kwarg_idpaciente)
+            paciente = (kwarg_idpaciente, str(qs_paciente))
+            ctx['id_Paciente'] = kwarg_idpaciente
+        else:
+            paciente = (0, '')
+            ctx['id_Paciente'] = 0
+
+        # Extrae las citas filtradas por fecha
+        qs = Cita.objects.filter(appdate__iexact = kwarg_date).order_by('appdate', 'apptime', 'fk_Consultorio')
+        
+        # Pasa las citas a un array (cada fila es una tupla con todos los campos de una cita)
+        citas = list()
+        for cita in qs:
+            cita_row = (cita.idCita, cita.fk_Paciente, cita.appdate, cita.apptime, cita.fk_Profesional, cita.fk_Consultorio, cita.status, cita.notes)
+            citas.append(cita_row)
+
+        # Contexto que genera las fechas actuales, anteriores y siguientes
+        ctx['ctx_date'] = contexto_dias(kwarg_date)
+        # Contexto con las citas. app_daytimegrid construye la matriz de horas y citas para la rejilla.
+        ctx['grid'] = app_daytimegrid(citas, kwarg_date, paciente)
+
         return ctx
 
 # Citas para una semana concreto en formato CALENDARIO
@@ -165,9 +205,9 @@ class citas_semana_view(ListView):
         ctx['prevweek'] = prev_isocalendar[1]
         ctx['nextyear'] = next_isocalendar[0]
         ctx['nextweek'] = next_isocalendar[1]
-
         # Contexto con las citas. app_timegrid construye la matriz de horas y citas para la rejilla.
         ctx['grid'] = app_weektimegrid(citas, week_range)        
+        
         return ctx
 
 
