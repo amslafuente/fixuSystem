@@ -32,6 +32,7 @@
     	<!-- Botones de acción -->
         <div class="div-botones">
             <a href="{% url 'citas-hoy' %}"><input type="button" class="btn btn-info" value="Citas para hoy"></a>
+            <a href="{% url 'citas-dia-grid' 0 today %}"><input type="button" class="btn btn-info" value="Modo rejilla"></a>
             <a href="{% url 'menu-citas' %}"><input type="button" class="btn btn-info" value="Menu de citas"></a>
         </div>
 

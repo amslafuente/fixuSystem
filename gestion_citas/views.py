@@ -12,7 +12,7 @@ from django.views.generic.list import ListView
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 from django.views import View
-from .funct import contexto_dias, get_weekrange, app_daytimegrid, app_weektimegrid
+from .funct import contexto_dias, get_weekrange, app_daytimegrid, app_weektimegrid, html2pdf
 from .forms import create_citas_form, create_citas_paciente_form, edit_citas_form
 from .forms import customNotifDias_form, setnotified_citas_form
 from django.contrib import messages
@@ -154,6 +154,7 @@ class citas_semana_view(ListView):
             citas.append(cita_row)
 
         # Contexto que genera las fechas actuales, anteriores y siguientes
+        ctx['today'] = datetime.date.today().strftime('%d_%m_%Y') 
         ctx['fromweekday'] = week_range[0]
         ctx['toweekday'] = week_range[1]
         prev_week = week_range[0] - datetime.timedelta(days = 7)
@@ -328,60 +329,9 @@ class create_citas_view(View):
 @method_decorator(login_required, name='dispatch')
 class create_citas_paciente_view(View):
 
-    # POST de creacion de cita con paciente asociado
-    def post(self, request, idPaciente, date, hour):
-
-        ctx = dict()
-
-        # Rellena el form con el POST y la añade  al contexto
-        form = create_citas_paciente_form(request.POST)
-
-        # El form SI es validado
-        if form.is_valid():
-
-            # Commit = False: evita que se guarde ya en la base de datos
-            cita = form.save(commit = False)
-
-            # Los campos firstupdated y lastupdated se añaden solos
-
-            # Se pone el modifiedby
-            if str(request.user) != 'AmonymousUser':
-                cita.modifiedby = str(request.user)
-            else:
-                cita.modifiedby = 'unix:' + str(request.META['USERNAME'])
-
-            # Limpia y guarda el registro
-            cita.save()
-            
-            # Devuelve a las pagina de citas del dia elegido
-            ctx['idPaciente'] = idPaciente
-            ctx['date'] = date
-            
-            return HttpResponseRedirect(reverse('citas-dia', kwargs = ctx))
-
-        # Si no es válido muestra los errores
-        else:
-
-            # Recupera el paciente pasado en URL
-            qs = Paciente.objects.get(idPaciente__iexact = idPaciente)
-            # Rellena los datos del contexto necesarios
-            ctx['form'] = form
-            ctx['fk_Paciente'] = idPaciente
-            ctx['paciente'] = qs
-            ctx['date'] = date
-            ctx['hour'] = hour
-            ctx['ctx_dias'] = contexto_dias(datetime.datetime.strptime(self.kwargs['date'], '%d_%m_%Y').date())
-
-            messages.warning(request, 'El formulario contiene errores')
-
-            return render(request, 'create_citas_paciente_tpl.html', ctx)
-
-    # GET
     def get(self, request, **kwargs):
 
-        # Inicializa el contexto y datos iniciales
         ctx = initial_data = dict()
-
         # Obtiene la info del paciente, la fecha y la hora pasadas en la URL
         kwarg_idpaciente = self.kwargs['idPaciente']
         # Recupera el paciente pasado en URL
@@ -399,11 +349,46 @@ class create_citas_paciente_view(View):
         # Crea el form con los datos iniciales
         form = create_citas_paciente_form(initial = initial_data)
         ctx['form'] = form
-
         # Pasa informacion de fechas al template
         ctx['ctx_dias'] = contexto_dias(kwarg_date)
-
         return render(request, 'create_citas_paciente_tpl.html', ctx)
+
+    # POST de creacion de cita con paciente asociado
+    def post(self, request, idPaciente, date, hour):
+
+        ctx = dict()
+        # Rellena el form con el POST y la añade  al contexto
+        form = create_citas_paciente_form(request.POST)
+
+        # El form SI es validado
+        if form.is_valid():
+            # Commit = False: evita que se guarde ya en la base de datos
+            cita = form.save(commit = False)
+            # Se pone el modifiedby
+            if str(request.user) != 'AmonymousUser':
+                cita.modifiedby = str(request.user)
+            else:
+                cita.modifiedby = 'unix:' + str(request.META['USERNAME'])
+            cita.save()
+            
+            # Devuelve a las pagina de citas del dia elegido
+            ctx['idPaciente'] = idPaciente
+            ctx['date'] = date
+            return HttpResponseRedirect(reverse('citas-dia', kwargs = ctx))
+
+        # Si no es válido muestra los errores
+        else:
+            # Recupera el paciente pasado en URL
+            qs = Paciente.objects.get(idPaciente__iexact = idPaciente)
+            # Rellena los datos del contexto necesarios
+            ctx['form'] = form
+            ctx['fk_Paciente'] = idPaciente
+            ctx['paciente'] = qs
+            ctx['date'] = date
+            ctx['hour'] = hour
+            ctx['ctx_dias'] = contexto_dias(datetime.datetime.strptime(self.kwargs['date'], '%d_%m_%Y').date())
+            messages.warning(request, 'El formulario contiene errores')
+            return render(request, 'create_citas_paciente_tpl.html', ctx)
 
 
 ######  EDIT THE NOTES OF AN APPOINTMENT #######
@@ -411,45 +396,10 @@ class create_citas_paciente_view(View):
 
 @method_decorator(login_required, name='dispatch')
 class edit_citas_view(View):
-    
-    # POST que cambia las notas de la cita
-    def post(self, request, **kwargs):
 
-        ctx = dict()
-
-        # Rellena el form con el POST y la añade  al contexto
-        form = edit_citas_form(request.POST)
-        ctx['form'] = form
-
-        # El form SI es validado
-        if form.is_valid():
-
-            # Obtiene la info de la cita concreta
-            kwarg_idcita = self.kwargs['idCita'] 
-             # Recupera la cita pasada en URL
-            qs = Cita.objects.get(idCita__iexact = kwarg_idcita)
-            # Almacena las nuevas notas y guarda
-            qs.notes = form.cleaned_data['notes']
-            qs.save()
-            
-            # Regresa donde se llamó
-            kwarg_next = request.POST['next']
-            return HttpResponseRedirect(kwarg_next)
-
-        # Si el form NO es validado
-        else:
-
-            messages.warning(request, 'Error en el formulario.')
-
-            # Regresa al META Referer
-            return render(request, 'edit_citas_tpl.html', ctx)
-    
-    # GET
     def get(self, request, **kwargs):
 
-        # Inicializa el contexto y datos iniciales
         ctx = initial_data = dict()
-
         # Obtiene la info de la cita concreta
         kwarg_idcita = self.kwargs['idCita']
         # Recupera la cita pasada en URL
@@ -470,8 +420,36 @@ class edit_citas_view(View):
         cita = Cita.objects.get(idCita__iexact = kwarg_idcita)
         if cita.appdate < kwarg_today:
             ctx['old_app'] = True
-
         return render(request, 'edit_citas_tpl.html', ctx)
+
+    # POST que cambia las notas de la cita
+    def post(self, request, **kwargs):
+
+        ctx = dict()
+        # Rellena el form con el POST y la añade  al contexto
+        form = edit_citas_form(request.POST)
+        ctx['form'] = form
+
+        # El form SI es validado
+        if form.is_valid():
+            # Obtiene la info de la cita concreta
+            kwarg_idcita = self.kwargs['idCita'] 
+             # Recupera la cita pasada en URL
+            qs = Cita.objects.get(idCita__iexact = kwarg_idcita)
+            # Almacena las nuevas notas y guarda
+            qs.notes = form.cleaned_data['notes']
+            qs.save()
+            
+            # Regresa donde se llamó
+            kwarg_next = request.POST['next']
+            return HttpResponseRedirect(kwarg_next)
+
+        # Si el form NO es validado
+        else:
+            messages.warning(request, 'Error en el formulario.')
+            # Regresa al META Referer
+            return render(request, 'edit_citas_tpl.html', ctx)
+    
 
 ######  CANCELA CITA SIN BORRARLA #######
 
@@ -494,7 +472,6 @@ class cancel_citas_view(DetailView):
         cita = Cita.objects.get(idCita__iexact = kwarg_idcita)
         if cita.appdate < kwarg_today:
             ctx['old_app'] = True
-        
         return ctx
 
     # Determina la cancelación de la cita
@@ -504,7 +481,6 @@ class cancel_citas_view(DetailView):
         cita = Cita.objects.get(idCita__iexact = kwarg_idcita)
         cita.status = 'Cancelada'
         cita.save()
-
         # Regresa donde se llamó
         return HttpResponseRedirect(kwarg_next)
 
@@ -517,22 +493,18 @@ class modif_citas_view(DetailView):
     template_name = 'modif_citas_tpl.html'
     pk_url_kwarg ='idCita'
 
-    # Muestra la modificacion para confirmar
     def get_context_data(self, **kwargs):        
         ctx = super().get_context_data(**kwargs)
         ctx['status'] = self.kwargs['status']
         ctx['next'] = self.request.META.get('HTTP_REFERER', '/')
-
         # Determina si la cita ya ha pasado (no tiene sentido modificarla)
         kwarg_idcita = self.kwargs['idCita']
         kwarg_today = datetime.date.today()
         cita = Cita.objects.get(idCita__iexact = kwarg_idcita)
         if cita.appdate < kwarg_today:
             ctx['old_app'] = True
-
         return ctx
 
-    # Completa la modificacion de la cita
     def post(self, request, **kwargs):        
         kwarg_idcita = kwargs['idCita']
         kwarg_status = kwargs['status']
@@ -540,7 +512,6 @@ class modif_citas_view(DetailView):
         cita = Cita.objects.get(idCita__iexact = kwarg_idcita)
         cita.status = kwarg_status
         cita.save()
-
         # Regresa donde se llamó
         return HttpResponseRedirect(kwarg_next)
 
@@ -619,6 +590,40 @@ class procesar_citas_view(View):
 @method_decorator(login_required, name='dispatch')
 class recordatorios_citas_view(View):
 
+    def get(self, request):
+
+        ctx = dict()
+
+        # Dias de antelacion pasados en el request.GET o por defecto
+        kwarg_day = int(request.GET.get('day', default = NOTIFICAR_CON))
+        kwarg_untilday = request.GET.get('untilday', default = False)
+        if kwarg_untilday == 'on':
+            kwarg_untilday = True
+        else:
+            kwarg_untilday = False
+
+        # Pasa la form con los dias para modificar
+        form = customNotifDias_form(initial={'day': kwarg_day, 'untilday': kwarg_untilday})
+        ctx['form'] = form
+
+        # Cuenta los registros que cumplen las condiciones de ser notificados por email o telefono
+        kwarg_date = datetime.date.today()
+        kwarg_notifydate = kwarg_date + datetime.timedelta(days = kwarg_day)
+   
+        # Si se señala UNTILDAYS, se incluye en la busqueda el rango de fechas
+        # Si no se indica UNTILDAYS solo se usca una fecha concreta
+        if not kwarg_untilday:
+            numregsemail = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True).count()
+            numregstelef = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True).count()
+        else:
+            numregsemail = Cita.objects.filter(appdate__gt = kwarg_date, appdate__lte = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True).count()
+            numregstelef = Cita.objects.filter(appdate__gt = kwarg_date, appdate__lte = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True).count()
+        
+        # Pasa lo que hay a notificar 
+        ctx['numregsemail'] = numregsemail
+        ctx['numregstelef'] = numregstelef
+        return render(request, 'recordatorios_citas_tpl.html', ctx)
+
     def post(self, request):
 
         ctx = dict()
@@ -629,7 +634,6 @@ class recordatorios_citas_view(View):
 
         # SI los datos son válidos
         if form.is_valid:
-
             kwarg_day = int(request.POST['day'])
             try:
                 kwarg_untilday = request.POST['untilday']
@@ -637,11 +641,9 @@ class recordatorios_citas_view(View):
                 kwarg_untilday = False
             kwarg_date = datetime.date.today()
             kwarg_notifydate = kwarg_date + datetime.timedelta(days = kwarg_day)
-            
             ctx['notifydate'] = kwarg_notifydate
            
-            if kwarg_untilday:
-                
+            if kwarg_untilday:                
                 ctx['untilday'] = 'y anteriores'
 
             # Queries
@@ -655,7 +657,6 @@ class recordatorios_citas_view(View):
                 emailcount = Cita.objects.filter(appdate__gt = kwarg_date, appdate__lte = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True).count() 
                 qsemail = Cita.objects.filter(appdate__gt = kwarg_date, appdate__lte = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True)
                 qstelef = Cita.objects.filter(appdate__gt = kwarg_date, appdate__lte = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True)
-           
             ctx['emailcount'] = emailcount
             
             ##### Notifica por email #####
@@ -744,7 +745,6 @@ class recordatorios_citas_view(View):
                 fechacita = telef['appdate']
                 horacita = telef['apptime']
                 restelef.append((numcita, apellidos, nombre, telef1, telef2, fechacita, horacita))
-
             ctx['restelef'] = restelef
             form = setnotified_citas_form()
             ctx['form'] = form
@@ -762,54 +762,38 @@ class recordatorios_citas_view(View):
             else:
                 qsnotif.modifiedby = 'unix:' + str(request.META['USERNAME'])
             qsnotif.save()
-
             return render(request, 'recordatorios_result_citas_tpl.html', ctx)
 
         # Si no son validos
         else:
-
             messages.warning(request, 'Error en el formulario.')
-
             return render(request, 'recordatorios_citas_tpl.html', ctx)
-    
-    # GET
-    def get(self, request):
-
-        ctx = dict()
-
-        # Dias de antelacion pasados en el request.GET o por defecto
-        kwarg_day = int(request.GET.get('day', default = NOTIFICAR_CON))
-        kwarg_untilday = request.GET.get('untilday', default = False)
-        if kwarg_untilday == 'on':
-            kwarg_untilday = True
-        else:
-            kwarg_untilday = False
-
-        # Pasa la form con los dias para modificar
-        form = customNotifDias_form(initial={'day': kwarg_day, 'untilday': kwarg_untilday})
-        ctx['form'] = form
-
-        # Cuenta los registros que cumplen las condiciones de ser notificados por email o telefono
-        kwarg_date = datetime.date.today()
-        kwarg_notifydate = kwarg_date + datetime.timedelta(days = kwarg_day)
-   
-        # Si se señala UNTILDAYS, se incluye en la busqueda el rango de fechas
-        # Si no se indica UNTILDAYS solo se usca una fecha concreta
-        if not kwarg_untilday:
-            numregsemail = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True).count()
-            numregstelef = Cita.objects.filter(appdate = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True).count()
-        else:
-            numregsemail = Cita.objects.filter(appdate__gt = kwarg_date, appdate__lte = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).filter(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True).count()
-            numregstelef = Cita.objects.filter(appdate__gt = kwarg_date, appdate__lte = kwarg_notifydate).select_related('fk_Paciente').filter(fk_Paciente__notifyappoint = True).exclude(fk_Paciente__notifyvia__iexact = 'email').exclude(appnotified = True).count()
-        
-        # Pasa lo que hay a notificar 
-        ctx['numregsemail'] = numregsemail
-        ctx['numregstelef'] = numregstelef
-        
-        return render(request, 'recordatorios_citas_tpl.html', ctx)
 
 @method_decorator(login_required, name='dispatch')
 class pasadas_canceladas_citas_view(View):
+
+    def get(self, request):
+               
+        # Si no es superusuario no permite borrar citas
+        if not request.user.is_superuser:
+            return HttpResponseRedirect(reverse('error-privilegios-citas'))
+        
+        ctx = dict()
+        # Cuenta los registros que cumplen las condiciones de ser pasada, canceladas y sin consulta
+        querydelete = (Q(appdate__lt = datetime.date.today()) | Q(status__iexact = 'Cancelada'))
+        queryexclude = Q(status__iexact = 'Pasa a consulta')        
+        try:
+            numregs = Cita.objects.filter(querydelete).exclude(queryexclude).count()
+        except:
+            numregs = 0
+        
+        # Pasa al contexto
+        if numregs > 0:
+            ctx['numregs'] = numregs
+        else:
+            ctx['mensaje'] = 'No hay citas para borrar.' 
+            ctx['numregs'] = 0        
+        return render(request, 'pasadas_canceladas_citas_tpl.html', ctx)
 
     # POST para borrar citas pasadas y canceladas
     def post(self, request):
@@ -819,7 +803,6 @@ class pasadas_canceladas_citas_view(View):
             return HttpResponseRedirect(reverse('error-privilegios-citas'))
 
         ctx = dict()
-
         # Query para selecionar las que se van a borrar
         # Pasadas y canceladas...
         querydelete = (Q(appdate__lt = datetime.date.today()) | Q(status__iexact = 'Cancelada'))
@@ -848,41 +831,12 @@ class pasadas_canceladas_citas_view(View):
         if numregs > 0:
             ctx['mensaje'] = 'Error al procesar la base de datos.'
             ctx['numregs'] = numregs
-
             return render(request, 'pasadas_canceladas_citas_tpl.html', ctx)
         
         # Si no hya registros todo correcto
         else:
             ctx['mensaje'] = 'No hay más citas para borrar.'   
-
             return render(request, 'pasadas_canceladas_citas_tpl.html', ctx)
-                
-    # GET
-    def get(self, request):
-                
-        # Si no es superusuario no permite borrar citas
-        if not request.user.is_superuser:
-            return HttpResponseRedirect(reverse('error-privilegios-citas'))
-        
-        # Si es superusuario sigue
-        ctx = dict()
-        
-        # Cuenta los registros que cumplen las condiciones de ser pasada, canceladas y sin consulta
-        querydelete = (Q(appdate__lt = datetime.date.today()) | Q(status__iexact = 'Cancelada'))
-        queryexclude = Q(status__iexact = 'Pasa a consulta')        
-        try:
-            numregs = Cita.objects.filter(querydelete).exclude(queryexclude).count()
-        except:
-            numregs = 0
-        
-        # Pasa al contexto
-        if numregs > 0:
-            ctx['numregs'] = numregs
-        else:
-            ctx['mensaje'] = 'No hay citas para borrar.' 
-            ctx['numregs'] = 0        
-
-        return render(request, 'pasadas_canceladas_citas_tpl.html', ctx)
 
 # Error si el usuario NO ES SUPERUSUARIO
 @method_decorator(login_required, name='dispatch')
@@ -890,100 +844,40 @@ class error_privilegios_citas_view(TemplateView):
 
     template_name = 'error_privilegios_citas_tpl.html'
 
-#####################################################################################
-
-from weasyprint import HTML    
-from django.core.files.storage import FileSystemStorage
-from django.http import HttpResponse
-from django.template.loader import render_to_string
-
-def html2pdf(request):
-
-    # Construye la tabla HTML con los datos pasados (restelef y emails2phone)
-    
-    
-    print(request.POST.get('restelef', False))
-    print(request.POST.get('emails2phone', False))
-
-
-
-
-
-    restelef = request.POST.get('restelef', False).replace("[", "").replace("(", "").replace(")","").replace("]", "").replace("\'", "").replace("datetime.date", "").replace("datetime.time", "").split(", ")
-    emails2phone = request.POST.get('emails2phone', False).replace("[", "").replace("(", "").replace(")","").replace("]", "").replace("\'", "").replace("datetime.date", "").replace("datetime.time", "").split(", ")
-    notifydate = request.POST.get('notifydate', None)
-    untilday = request.POST.get('untilday', None)
- 
-    print(len(restelef))
-    print(restelef)
-    print(len(emails2phone))
-    print(emails2phone)
-   
-    html_table = ''
-
-    html_table = html_table + '<table class="tbl-general tbl-forms tbl-70 table-striped">' 
-    html_table = html_table + '<caption class="tbl-capt">Notificaciones a hacer por teléfono</caption>'
-    html_table = html_table + '<tr><th class="tbl-th" colspan="5">Citas para el día ' + notifydate + ' ' + untilday + '</th></tr>'
-    
-    if not restelef:
-        html_table = html_table + '<tr><th colspan="5" class="field-errors"><span>Ninguna cita a notificar</span></th></tr>'
-    else:
-        html_table = html_table + '<tr><th>Paciente</th><th>Telef.1</th><th>Telef.2</th><th class="tbl-td-centro">Fecha cita</th><th class="tbl-td-centro">Hora cita</th></tr>'
-    
-
-        for telef in range(1, len(restelef)-1):
-            print(telef)
-            html_table = html_table + '<tr><td>' + restelef[telef][0] + ', ' + restelef[telef][1] + '</td></tr>'
-    
-    
-        """
-             html_table = html_table + '<tr><td>' + restelef[telef][0] + ', ' + restelef[telef][1] + '</td><td>{{ telef.2 }}</td><td>{{ telef.3 }}</td><td class="tbl-td-centro">{{ telef.4 }}</td><td class="tbl-td-centro">{{ telef.5 }} h.</td></tr>'
-
- 
- 
-                {% if emails2phone %}
-                    <th colspan="5" class="tbl-th">
-                        <span>Notificar por teléfono por errores en el envío de email</span>
-                    </th>
-                    <tr>
-                        <th>Paciente</th>
-                        <th>Telef.1</th>
-                        <th>Telef.2</th>
-                        <th class="tbl-td-centro">Fecha cita</th>
-                        <th class="tbl-td-centro">Hora cita</th>                
-                    </tr>
-                    {% for telef in emails2phone %}
-                        <tr>
-                            <td>{{ telef.0 }}, {{ telef.1 }}</td>
-                            <td>{{ telef.2 }}</td>
-                            <td>{{ telef.3|default_if_none:'Indet.' }}</td>
-                            <td class="tbl-td-centro">{{ telef.4|date:'D, j/M/Y' }}</td>
-                            <td class="tbl-td-centro">{{ telef.5|date:'H:i' }} h.</td>
-                        </tr>
-                    {% endfor %}
-                {% endif %}
-        """
-        html_table = html_table + '</table>'
-
-    paragraphs = ['first paragraph', 'second paragraph', 'third paragraph']
-    html_string = render_to_string('recordatorios_result_citas_tpl.html', {'paragraphs': paragraphs})
-
-    #html = HTML(string=html_string)
-    html = HTML(string=html_table)
-    html.write_pdf(target='/tmp/mypdf.pdf');
-
-    fs = FileSystemStorage('/tmp')
-    with fs.open('mypdf.pdf') as pdf:
-        response = HttpResponse(pdf, content_type='application/pdf')
-        response['Content-Disposition'] = 'inline; filename="mypdf.pdf"'
-
-    return response
-
 @method_decorator(login_required, name='dispatch')
 class PDF_citas_view(View):
 
-    def post(self, request):
-        return html2pdf(request)
-
     def get(self, request):
-        return html2pdf(request)
+
+        return None
+
+    def post(self, request):
+
+        # Prepara las listas a notificar de modo legible        
+        restelef = request.POST.get('restelef', False).replace("[", "").replace("(", "").replace(")","").replace("]", "").replace("\'", "").replace("datetime.date", "").replace("datetime.time", "").split(", ")
+        emails2phone = request.POST.get('emails2phone', False).replace("[", "").replace("(", "").replace(")","").replace("]", "").replace("\'", "").replace("datetime.date", "").replace("datetime.time", "").split(", ")
+        notifydate = request.POST.get('notifydate', None)
+        untilday = request.POST.get('untilday', None)
+
+        # Crea las tuplas de restelef y emails2phone
+        try:
+            lista = list()
+            contador = 0
+            while contador < len(restelef):
+                lista.append(restelef[contador: contador + 10])
+                contador = contador + 10
+            restelef = tuple(lista)
+        except:
+            restelef = tuple()
+        try:
+            lista = list()
+            contador = 0
+            while contador < len(emails2phone):
+                lista.append(emails2phone[contador: contador + 10])
+                contador = contador + 10
+            emails2phone = tuple(lista)
+        except:
+            emails2phone = tuple()
+
+        # Pasa todo al generador de PDF
+        return html2pdf(restelef, emails2phone, notifydate, untilday)

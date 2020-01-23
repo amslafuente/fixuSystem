@@ -3,7 +3,11 @@ import locale
 from dateutil.relativedelta import relativedelta
 from fixuSystem.progvars import START_TIME, END_TIME, TIME_SPAN
 from django.shortcuts import reverse
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy    
+from weasyprint import HTML    
+from django.core.files.storage import FileSystemStorage
+from django.http import HttpResponse
+from django.template.loader import render_to_string
 
 
 
@@ -242,7 +246,7 @@ def app_weektimegrid(citas, rango_semana):
     # "citas" pasa cono una lista de tuplas con todas las citas
     # "rango_semana" pasa como tupla con fecha inicial y fecha final
 
-    resp = data = dict()
+    resp = dict()
     # Set locale
     locale.setlocale(locale.LC_ALL,'es_ES')
 
@@ -282,9 +286,14 @@ def app_weektimegrid(citas, rango_semana):
                 for cita in citas:
                     # Si la cita es de hoy y de esa franja...
                     if (cita[2] == daygrid_ctrl) and (cita[3] >= timegrid_ctrl.time() and cita[3] < timegrid_ctrl2.time()):
-                        tbl_row = tbl_row + cita[3].strftime('%H:%M') + '. ' + str(cita[1]) + ' (' +  cita[4] + ')<br/>'
+                        # Si la cita está cancelada...
+                        if cita[4] == 'Cancelada':
+                            tbl_row = tbl_row + '<span class=\"grid-tachado\">' + cita[3].strftime('%H:%M') + '. ' + str(cita[1]) + ' (' +  cita[4] + ')</span><br/>'    
+                        else:
+                            tbl_row = tbl_row + cita[3].strftime('%H:%M') + '. ' + str(cita[1]) + ' (' +  cita[4] + ')<br/>'
             
             # Pone puntos para crear cita
+            data = dict()
             data['date'] = daygrid_ctrl.strftime('%d_%m_%Y')
             data['hour'] = timegrid_ctrl.strftime('%H_%M')
             link = reverse('create-citas', kwargs = data) 
@@ -325,4 +334,51 @@ def get_weekrange(day_): # "day" es un datetime.date
     weekstart = day_ - datetime.timedelta(days = weektoday[2] - 1)
     weekend = day_ + datetime.timedelta(days = 7 - weektoday[2])
     return (weekstart, weekend)
+
+# Funcion para general un PDF de las citas a notifiar por telefono
+def html2pdf(restelef, emails2phone, notifydate, untilday):
+
+    # Construye la tabla HTML con los datos pasados (restelef y emails2phone)
+    html_table = ''
+
+    html_table = html_table + '<table class="tbl-forms table-striped tbl-general tbl-85">' 
+    html_table = html_table + '<caption class="tbl-capt">Notificaciones a hacer por teléfono</caption>'
+    html_table = html_table + '<tr><th class="tbl-th" colspan="3">Citas para el día ' + notifydate + ' ' + untilday + '</th></tr>'
+    
+    if restelef == '':
+        html_table = html_table + '<tr><th colspan="3" class="field-errors"><span>Ninguna cita a notificar</span></th></tr>'
+    else:  
+        for telef in range(len(restelef)):
+            html_table = html_table + '<tr><td colspan="3"><hr/></td></tr>'
+            html_table = html_table + '<tr><th>Paciente</th><th>Telef.1</th><th>Telef.2</th></tr>'
+            html_table = html_table + '<tr><td>' + restelef[telef][1] + ',<br/>' + restelef[telef][2] + '</td><td>' + restelef[telef][3] + '</td><td>' + restelef[telef][4] + '</td></tr>'
+            html_table = html_table + '<tr><th class="tbl-td-centro">Notificada</th><th class="tbl-td-centro">Fecha cita</th><th class="tbl-td-centro">Hora cita</th></tr>'
+            html_table = html_table + '<tr><td><div style="width: 12px; height:12px; border: 1px solid #000;">&nbsp;</div></td><td>' + restelef[telef][7] + '/' + restelef[telef][6] + '/' +restelef[telef][5] + '</td><td>' + restelef[telef][8] + ':' + restelef[telef][9]       + '</td></tr>'
+        html_table = html_table + '<tr><td colspan="3"><hr/></td></tr>'
+
+    if emails2phone != '':
+        html_table = html_table + '<tr><th colspan="3" class="field-errors"><span>Citas a notificar por teléfono por errores en el envío de email</span></th></tr>'
+        for telef in range(len(emails2phone)):
+            html_table = html_table + '<tr><td colspan="3"><hr/></td></tr>'
+            html_table = html_table + '<tr><th>Paciente</th><th>Telef.1</th><th>Telef.2</th></tr>'
+            html_table = html_table + '<tr><td>' + restelef[telef][1] + ',<br/>' + restelef[telef][2] + '</td><td>' + restelef[telef][3] + '</td><td>' + restelef[telef][4] + '</td></tr>'
+            html_table = html_table + '<tr><th class="tbl-td-centro">Notificada</th><th class="tbl-td-centro">Fecha cita</th><th class="tbl-td-centro">Hora cita</th></tr>'
+            html_table = html_table + '<tr><td><div style="width: 12px; height:12px; border: 1px solid #000;">&nbsp;</div></td><td>' + restelef[telef][7] + '/' + restelef[telef][6] + '/' +restelef[telef][5] + '</td><td>' + restelef[telef][8] + ':' + restelef[telef][9]       + '</td></tr>'
+        html_table = html_table + '<tr><td colspan="3"><hr/></td></tr>'
+
+    html_table = html_table + '</table>'
+
+    html_string = render_to_string('recordatorios_pdf_citas_tpl.html')
+
+    # html = HTML(string=html_string)
+    filename = ('Notificaciones_' + notifydate + '.pdf').replace(' de ', '_')
+    html = HTML(string = html_table)
+    html.write_pdf(target = '/tmp/' + filename);
+
+    fs = FileSystemStorage('/tmp')
+    with fs.open(filename) as pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = 'inline; filename = ' + filename
+
+    return response
     
