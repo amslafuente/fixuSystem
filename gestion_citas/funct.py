@@ -2,6 +2,8 @@ import datetime
 import locale
 from dateutil.relativedelta import relativedelta
 from fixuSystem.progvars import START_TIME, END_TIME, TIME_SPAN
+from django.shortcuts import reverse
+from django.urls import reverse_lazy
 
 
 
@@ -63,63 +65,6 @@ def contexto_dias(dia):
     return ctx_dias
 
 # Funcion para elaborar el grid de citas por franja horaria
-def app_timegrid(citas, dia):
-
-    # "citas" pasa cono una lista de tuplas con todas las citas
-    # "dia" pasa como un objeto datetime.datetime.date
-
-    # El dia pasado como parametro
-    timegrid_day = dia.strftime('%d/%B/%Y')
-    timegrid_day_url = dia.strftime('%d_%m_%Y')
-
-    # Hora de comienzo de las consultas. timegrid_ctrl es el puntero de control de la hora que se desplaza con timedelta
-    timegrid_start = timegrid_ctrl = datetime.datetime.strptime(timegrid_day + ' ' + START_TIME, '%d/%B/%Y %H:%M')
-
-    # Hora final de las consultas
-    timegrid_end = datetime.datetime.strptime(timegrid_day + ' ' + END_TIME, '%d/%B/%Y %H:%M')
-
-    # Variable que construye el body
-    franjas_horarias = list()
-    datos_citas = list()
-
-    # Pasa por todas las franjas horarias
-    while timegrid_ctrl <= timegrid_end:
-
-        # Añade la hora de la franja por la que va pasando y suma 1 al numero de franjas
-        # Formato para el grid y para la URL
-        franjas_horarias.append(timegrid_ctrl)
-
-        # Recorre la matriz de citas
-        for cita in range(0, len(citas)):
-
-            # Extrae cada fila (cada cita)
-            cita_row = citas[cita]
-
-            # Combina dia y hora de cada cita
-            datetime_cita = datetime.datetime.combine(cita_row[2], cita_row[3])
-
-            # Comprueba si ese dia y hora están en la franja horaria actual
-            if (datetime_cita >= timegrid_ctrl) and (datetime_cita < (timegrid_ctrl + datetime.timedelta(minutes = TIME_SPAN))):
-                # Si está, puebla el bloque de TD con esa cita y suma el contador de citas en cada TR
-                # cita_row.1/cita.2: Paciente
-                # cita_row.2/cita.3: Citado por
-                # cita_row.3/cita.4: Consultorio
-                # cita_row.5/cita.6: Hora cita 
-                # cita_row.7/cita.8: Notas
-                # cita_row.6/cita.7: Estado cita
-                cada_cita = (timegrid_ctrl, str(cita_row[0]), cita_row[1], str(cita_row[4]), cita_row[5], cita_row[2].strftime('%d/%m/%y'), cita_row[3].strftime('%H:%M'), cita_row[6], cita_row[7])
-                datos_citas.append(cada_cita)
-
-        # Siguiente franja horaria
-        timegrid_ctrl = timegrid_ctrl + datetime.timedelta(minutes = TIME_SPAN)
-
-    # Devuelve rejilla
-    resp = dict()
-    resp['franjas_horarias'] = franjas_horarias
-    resp['datos_citas'] = datos_citas
-    return resp
-
-# Funcion para elaborar el grid de citas por franja horaria
 def app_daytimegrid(citas, dia, paciente):
 
     # "citas" pasa cono una lista de tuplas con todas las citas
@@ -152,11 +97,21 @@ def app_daytimegrid(citas, dia, paciente):
         tbl_row = tbl_row + '<tr class=\"tr-time-color\">\r'
         tbl_row = tbl_row + '<th class=\"tbl-td-centro grid-time-color\">'
 
-        # Si se pasa un paciente lo incluye para crear citas
+        # Si se pasa un paciente lo incluye en el enlace para crear citas
         if paciente[0] > 0:
-            tbl_row = tbl_row + '<a href=\"/fixuSystem/citas/nueva/' + str(paciente[0]) + '/' + dia.strftime('%d_%m_%Y') + '/' + timegrid_ctrl.strftime('%H_%M') + '/\">' + timegrid_ctrl.strftime('%H:%M') + '</a>'
+            data = dict()
+            data['idPaciente'] = int(paciente[0])
+            data['date'] = dia.strftime('%d_%m_%Y')
+            data['hour'] = timegrid_ctrl.strftime('%H_%M') 
+            link = reverse('create-citas-paciente', kwargs = data)
+            tbl_row = tbl_row + '<a href=\"' + link + '\">' + timegrid_ctrl.strftime('%H:%M') + '</a>'
+        # Si no, solo enlace con dia y hora
         else:
-            tbl_row = tbl_row + '<a href=\"/fixuSystem/citas/nueva/' + dia.strftime('%d_%m_%Y') + '/' + timegrid_ctrl.strftime('%H_%M') + '/\">' + timegrid_ctrl.strftime('%H:%M') + '</a>'
+            data = dict()
+            data['date'] = dia.strftime('%d_%m_%Y')
+            data['hour'] = timegrid_ctrl.strftime('%H_%M') 
+            link = reverse('create-citas', kwargs = data)
+            tbl_row = tbl_row + '<a href=\"' + link + '\">' + timegrid_ctrl.strftime('%H:%M') + '</a>'
         
         tbl_row = tbl_row + '</th>\r'
 
@@ -243,7 +198,10 @@ def app_daytimegrid(citas, dia, paciente):
                 # Si la cita es de hoy y de esa franja...
                     if (cita[3] >= timegrid_ctrl.time() and cita[3] < timegrid_ctrl2.time()):
                         if (cita[6] != "Cancelada" and cita[6] != "Pasa a consulta"):
-                            tbl_row = tbl_row + '<a class="link-cancelar" href=\"/fixuSystem/citas/cancelar/' + str(cita[0]) + '\">Cancelar cita</a><br/>'
+                            data = dict()
+                            data['idCita'] = int(cita[0])
+                            link = reverse('cancel-citas', kwargs = data)
+                            tbl_row = tbl_row + '<a class=\"link-cancelar\" href=\"' + link + '\">Cancelar cita</a><br/>'
                         else:
                             tbl_row = tbl_row + '<span>&nbsp;</span><br/>'
             tbl_row = tbl_row + '</td>\r'
@@ -257,17 +215,17 @@ def app_daytimegrid(citas, dia, paciente):
     # Construye header    
     tbl_header = '<tr>\r'
     tbl_header = tbl_header + '<th class=\"tbl-th\">Franja horaria</th>\r'
-    tbl_header = tbl_header + '<th class="tbl-th-izq tbl-td-20">Paciente</th>\r'
-    tbl_header = tbl_header + '<th class="tbl-th-izq tbl-td-15">Citado/a por</th>\r'
-    tbl_header = tbl_header + '<th class="tbl-th">Consult.</th>\r'
-    tbl_header = tbl_header + '<th class="tbl-th">Hora</th>\r'
-    tbl_header = tbl_header + '<th class="tbl-th-izq">Notas</th>\r'
-    tbl_header = tbl_header + '<th class="tbl-th tbl-td-15">Estado</th>\r'
-    tbl_header = tbl_header + '<th class="tbl-th">Acciones</th>\r'
+    tbl_header = tbl_header + '<th class=\"tbl-th-izq tbl-td-20\">Paciente</th>\r'
+    tbl_header = tbl_header + '<th class=\"tbl-th-izq tbl-td-15\">Citado/a por</th>\r'
+    tbl_header = tbl_header + '<th class=\"tbl-th\">Consult.</th>\r'
+    tbl_header = tbl_header + '<th class=\"tbl-th\">Hora</th>\r'
+    tbl_header = tbl_header + '<th class=\"tbl-th-izq\">Notas</th>\r'
+    tbl_header = tbl_header + '<th class=\"tbl-th tbl-td-15\">Estado</th>\r'
+    tbl_header = tbl_header + '<th class=\"tbl-th\">Acciones</th>\r'
     tbl_header = tbl_header + '</tr>\r'
     # Si se pasa un paciente lo coloca en la cabecera
     if paciente[0] > 0:
-        tbl_header = tbl_header + '<tr>\r<td class="grid-info-color tr-time-color tbl-td-centro" colspan="8"> Paciente: ' + paciente[1] + '</td>\r</tr>\r'
+        tbl_header = tbl_header + '<tr>\r<td class=\"grid-info-color tr-time-color tbl-td-centro\" colspan=\"8\"> Paciente: ' + paciente[1] + '</td>\r</tr>\r'
     # Pulsacion para nuevas citas
     tbl_header = tbl_header + '<tr>\r<td class=\"grid-info2-color tr-time-color tbl-td-centro\" colspan=\"8\">Pulse sobre las franjas horarias para crear nuevas citas</td>\r</tr>\r'
 
@@ -284,7 +242,7 @@ def app_weektimegrid(citas, rango_semana):
     # "citas" pasa cono una lista de tuplas con todas las citas
     # "rango_semana" pasa como tupla con fecha inicial y fecha final
 
-    resp = dict()
+    resp = data = dict()
     # Set locale
     locale.setlocale(locale.LC_ALL,'es_ES')
 
@@ -327,7 +285,10 @@ def app_weektimegrid(citas, rango_semana):
                         tbl_row = tbl_row + cita[3].strftime('%H:%M') + '. ' + str(cita[1]) + ' (' +  cita[4] + ')<br/>'
             
             # Pone puntos para crear cita
-            tbl_row = tbl_row + '<a class=\"grid-smallertxt\" href=\"/fixuSystem/citas/nueva/' + daygrid_ctrl.strftime('%d_%m_%Y') + '/' + timegrid_ctrl.strftime('%H_%M') + '/\">[...]</a>'
+            data['date'] = daygrid_ctrl.strftime('%d_%m_%Y')
+            data['hour'] = timegrid_ctrl.strftime('%H_%M')
+            link = reverse('create-citas', kwargs = data) 
+            tbl_row = tbl_row + '<a class=\"grid-smallertxt\" href=\"' + link + '\">[...]</a>'
             tbl_row = tbl_row + '</td>\r'
             daygrid_ctrl = daygrid_ctrl + datetime.timedelta(days = 1)        
         
