@@ -337,7 +337,7 @@ def get_weekrange(day_): # "day" es un datetime.date
     return (weekstart, weekend)
 
 # Funcion para general un PDF de las citas a notifiar por telefono
-def html2pdf(restelef, emails2phone, notifydate, untilday):
+def html2pdf(restelef, emails2phone, notifydate, untilday, clinica):
 
     # Parte superior de la pagina
     html_top = ''
@@ -349,41 +349,46 @@ def html2pdf(restelef, emails2phone, notifydate, untilday):
     html_top = html_top + '</head>\r'
     html_top = html_top + '<body>\r'
 
-    html_top = html_top + '<div>Citas a notificar por teléfono:</div>\r'
-    html_top = html_top + '<div>(día ' + notifydate + ' ' + untilday + ')</div><br />\r'
+    # Datos de la clinica
+    html_top = html_top + '<table class=\"tbl-logo tbl-55\">\r'
+    html_top = html_top + '<tr><th style=\"padding: 5px\">' + clinica.clinicname +'</th></tr>\r'
+    html_top = html_top + '<tr><td>' + clinica.ownerfullname +'</td></tr>\r'
+    html_top = html_top + '<tr><td>' + clinica.fulladdress +'</td></tr>\r'
+    html_top = html_top + '<tr><td>' + str(clinica.postcode) + '-' + clinica.city + ' (' + clinica.province + ')</td></tr>\r'
+    html_top = html_top + '<tr><td>Teléfonos: ' + str(clinica.phone1) + ' / ' + str(clinica.phone2) + '</td></tr>\r'
+    html_top = html_top + '<tr><td>Email: ' + clinica.email + '</td></tr>\r'
+    html_top = html_top + '<tr><td><hr /></td></tr>\r'
+    html_top = html_top + '</table><br />\r'
 
     # Construye la tabla HTML con los datos pasados (restelef y emails2phone)
     html_table = ''
-    html_table = html_table + '<table class=\"tbl-general tbl-60\">\r' 
-    
+
+    # restelef
+    html_table = html_table + '<table class=\"tbl-general tbl-55\">\r' 
+    html_table = html_table + '<tr class=\"tr-top\"><th colspan=\"3\">Citas a notificar por teléfono (' + notifydate + ' ' + untilday + '):</th></tr>\r'
     if not restelef:
-        html_table = html_table + '<tr><th colspan=\"3\">Ninguna cita pendiente de notificar por teléfono</th></tr>\r'
+        html_table = html_table + '<tr><th colspan=\"3\">Ninguna cita pendiente de notificar.</th></tr>\r'
     else:
         for i in range(len(restelef)):
             html_table = html_table + '<tr class=\"tr-border\"><th class=\"tbl-td-50\">Paciente</th><th class=\"tbl-td-25\">Teléfono 1</th><th class=\"tbl-td-25\">Teléfono 2</th></tr>\r'
             html_table = html_table + '<tr><td>' + restelef[i][1] + ', ' + restelef[i][2] + '</td><td>' + restelef[i][3] + '</td><td>' + restelef[i][4] + '</td></tr>\r'
             html_table = html_table + '<tr><th>Notificada</th><th>Fecha cita</th><th>Hora cita</th></tr>\r'
             html_table = html_table + '<tr><td><div style=\"width: 15px; height:15px; border: 1px solid #000;\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Notas: </div></td><td>' + restelef[i][7] + '/' + restelef[i][6] + '/' + restelef[i][5] + '</td><td>' + restelef[i][8] + ':' + restelef[i][9] + '</td></tr>\r'
-    
     html_table = html_table + '</table>\r'
+
     html_table = html_table + '<br />\r'
 
-    html_table = html_table + '<div>Citas a notificar por teléfono por errores al enviar email:</div>\r'
-    html_table = html_table + '<div>(día ' + notifydate + ' ' + untilday + ')</div><br />\r'
-
-    html_table = html_table + '<table class=\"tbl-general tbl-60\">\r' 
-
+    # emails2phone
+    html_table = html_table + '<table class=\"tbl-general tbl-55\">\r' 
+    html_table = html_table + '<tr class=\"tr-top\"><th colspan=\"3\">Notificar por teléfono por errores con el email (' + notifydate + ' ' + untilday + '):</th></tr>\r'
     if not emails2phone:
-        html_table = html_table + '<tr><th colspan=\"3\">Ninguna cita pendiente de notificar por errores al enviar email</th></tr>\r'
+        html_table = html_table + '<tr><th colspan=\"3\">Ninguna cita pendiente de notificar.</th></tr>\r'
     else:
-        html_table = html_table + '<tr><th colspan=\"3\">Citas a notificar por teléfono por errores al enviar email:</th></tr>\r'
-        html_table = html_table + '<tr><th colspan=\"3\">(día ' + notifydate + ' ' + untilday + ')</th></tr>\r'        
         for i in range(len(emails2phone)):
             html_table = html_table + '<tr class=\"tr-border\"><th class=\"tbl-td-50\">Paciente</th><th class=\"tbl-td-25\">Teléfono 1</th><th class=\"tbl-td-25\">Teléfono 2</th></tr>\r'
             html_table = html_table + '<tr><td>' + emails2phone[i][1] + ', ' + emails2phone[i][2] + '</td><td>' + emails2phone[i][3] + '</td><td>' + emails2phone[i][4] + '</td></tr>\r'
             html_table = html_table + '<tr><th>Notificada</th><th>Fecha cita</th><th>Hora cita</th></tr>\r'
             html_table = html_table + '<tr><td><div style=\"width: 15px; height:15px; border: 1px solid #000;\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Notas: </div></td><td>' + emails2phone[7] + '/' + emails2phone[6] + '/' + emails2phone[5] + '</td><td>' + emails2phone[8] + ':' + emails2phone[9] + '</td></tr>\r'
-
     html_table = html_table + '</table>\r'
     
     # Parte inferior de la pagina
@@ -392,6 +397,7 @@ def html2pdf(restelef, emails2phone, notifydate, untilday):
     
     # Genera el PDF
     html_page = html_top + html_table + html_bottom
+
     filename = ('Notificaciones_hasta_' + notifydate + '.pdf').replace(' de ', '_')
     html = HTML(string = html_page)
     css = list()

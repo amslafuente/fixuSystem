@@ -18,6 +18,7 @@ from .forms import customNotifDias_form, setnotified_citas_form
 from django.contrib import messages
 from django.db.models import Q
 from fixuSystem.progvars import NOTIFICAR_CON
+from fixuSystem.contextprocs import get_datos_clinica
 from django.forms import forms, fields, widgets
 from django.forms.widgets import NumberInput
 from django.core.mail import send_mail
@@ -852,12 +853,17 @@ class PDF_citas_view(View):
         return None
 
     def post(self, request):
+
+        # Datos de la clinica
+        clinica = get_datos_clinica(request)['clinica']
+
         # Prepara las listas a notificar de modo legible        
         restelef = request.POST.get('restelef', '[]')
         if restelef != '[]':
             restelef = restelef.replace("[", "").replace("(", "").replace(")","").replace("]", "").replace("\'", "").replace("datetime.date", "").replace("datetime.time", "").split(", ")
         else:
             restelef = False
+        
         emails2phone = request.POST.get('emails2phone', '[]')
         if emails2phone != '[]':
             emails2phone = emails2phone.replace("[", "").replace("(", "").replace(")","").replace("]", "").replace("\'", "").replace("datetime.date", "").replace("datetime.time", "").split(", ")
@@ -887,4 +893,4 @@ class PDF_citas_view(View):
             emails2phone = False
 
         # Pasa todo al generador de PDF
-        return html2pdf(restelef, emails2phone, notifydate, untilday)
+        return html2pdf(restelef, emails2phone, notifydate, untilday, clinica)
