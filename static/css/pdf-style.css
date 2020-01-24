@@ -1,0 +1,89 @@
+/*---------- PDF STYLE CSS ----------*/
+
+/*---------- GENERALES ----------*/
+
+body { /*-- COlor de fondo --*/
+    background-color: rgb(255, 255, 255);
+}
+
+/*---------- BASE.HTML ----------*/
+.info-base { /* --- Formato de fecha y hora y otras informaciones --- */
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: normal;
+    text-align: left;
+    color:  ghostwhite;
+    font-weight: bold;
+    line-height: 20px;
+}
+
+/*---------- TABLAS GENERAL ----------*/
+
+.tbl-general { /* --- General de las tablas ---*/
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-size: 11px;
+    padding: 5px;
+    border-style: solid;
+    border-color: black;
+}
+
+/*---------- TABLAS: Seccion Headers ----------*/
+
+.tbl-capt { /* --- Caption header general --- */
+    vertical-align: middle;
+    text-align: center;
+    caption-side: top;
+    font-weight: bold;
+    color: yellow;
+    padding: 10px;
+    background-color: grey;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-right-style: solid;
+    border-color:grey
+}
+
+.tbl-th { /* --- TH header general --- */
+    vertical-align: middle;
+    text-align: center;
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-color:grey;
+    padding: 5px;
+    background-color:rgb(230, 219, 209);
+}
+
+.tbl-th-izq { /* --- TH header izquierda --- */
+    vertical-align: middle;
+    text-align: left;
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    padding: 8px;
+    background-color:rgb(230, 219, 209);
+}
+
+td { /* --- Padding por defecto ---*/
+    padding: 5px;
+}
+
+.tr-border { /* --- Padding por defecto ---*/
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-top-color: darkgrey;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: darkgrey;
+    background-color:rgb(201, 196, 191);
+}
+
+/* --- Tablas de distinta anchura ---*/
+.tbl-100 { width: 100%; }
+.tbl-85 { width: 85%; }
+.tbl-60 { width: 60%; }
+
+/* Distintas anchuras de TD */
+.tbl-td-50 { width: 50%; }
+.tbl-td-25 { width: 25%; }

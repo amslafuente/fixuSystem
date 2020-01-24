@@ -852,13 +852,20 @@ class PDF_citas_view(View):
         return None
 
     def post(self, request):
-
         # Prepara las listas a notificar de modo legible        
-        restelef = request.POST.get('restelef', False).replace("[", "").replace("(", "").replace(")","").replace("]", "").replace("\'", "").replace("datetime.date", "").replace("datetime.time", "").split(", ")
-        emails2phone = request.POST.get('emails2phone', False).replace("[", "").replace("(", "").replace(")","").replace("]", "").replace("\'", "").replace("datetime.date", "").replace("datetime.time", "").split(", ")
-        notifydate = request.POST.get('notifydate', None)
-        untilday = request.POST.get('untilday', None)
-
+        restelef = request.POST.get('restelef', '[]')
+        if restelef != '[]':
+            restelef = restelef.replace("[", "").replace("(", "").replace(")","").replace("]", "").replace("\'", "").replace("datetime.date", "").replace("datetime.time", "").split(", ")
+        else:
+            restelef = False
+        emails2phone = request.POST.get('emails2phone', '[]')
+        if emails2phone != '[]':
+            emails2phone = emails2phone.replace("[", "").replace("(", "").replace(")","").replace("]", "").replace("\'", "").replace("datetime.date", "").replace("datetime.time", "").split(", ")
+        else:
+            emails2phone = False
+        notifydate = request.POST.get('notifydate', '[]')
+        untilday = request.POST.get('untilday', '[]')
+        
         # Crea las tuplas de restelef y emails2phone
         try:
             lista = list()
@@ -868,7 +875,7 @@ class PDF_citas_view(View):
                 contador = contador + 10
             restelef = tuple(lista)
         except:
-            restelef = tuple()
+            restelef = False
         try:
             lista = list()
             contador = 0
@@ -877,7 +884,7 @@ class PDF_citas_view(View):
                 contador = contador + 10
             emails2phone = tuple(lista)
         except:
-            emails2phone = tuple()
+            emails2phone = False
 
         # Pasa todo al generador de PDF
         return html2pdf(restelef, emails2phone, notifydate, untilday)
