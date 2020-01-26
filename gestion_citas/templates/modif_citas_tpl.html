@@ -19,10 +19,10 @@
 
                     <caption class="tbl-capt">Modificación de cita</caption>
                     <tr>
-                        <td>Paciente:</td><td>{{citas.fk_Paciente }}</td>
+                        <td>Paciente:</td><td>{{ citas.fk_Paciente }}</td>
                     </tr>
                     <tr>
-                        <td>Fecha cita:</td><td>{{citas.appdate }}</td>
+                        <td>Fecha cita:</td><td>{{ citas.appdate }}</td>
                     </tr>
                     <tr>
                         <td class="tbl-td-centro grid-naranja" colspan="2">La cita seleccionada ya ha pasado.</td>
@@ -67,14 +67,16 @@
                             </tr>
                             <tr>
                                 <td>Nuevo estado:</td>
-                                    {% if status == 'Pendiente' %}
+                                    {% if status == 'pen' %}
                                         <td class="grid-naranja tbl-td-centro">
-                                    {% elif status == 'Acude' %}
+                                        {{ estados.0.1 }}
+                                    {% elif status == 'att' %}
                                         <td class="grid-azul tbl-td-centro">
+                                        {{ estados.1.1 }}
                                     {% else %}
                                         <td class="grid-verde tbl-td-centro">
+                                        {{ estados.2.1 }}                                           
                                     {% endif %}                                     
-                                    {{ status }}
                                 </td>
                             </tr>
                         {% endif %}

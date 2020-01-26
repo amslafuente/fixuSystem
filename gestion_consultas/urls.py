@@ -22,6 +22,7 @@ urlpatterns = [
     
     # Consulta concreta, consulta a través de cita y consulta a traves de paciente (con fecha o sin fecha)
     path('revisar/<int:idConsulta>/', views.id_consultas_view.as_view(), name = 'id-consultas'),
+    path('revisar/<int:idCita/', views.id_consultas_citas_view.as_view(), name = 'id-consultas-citas'),
     path('modificar/<int:idConsulta>/', views.id_consultas_view.as_view(), name = 'edit-consultas'),    
 
 ]

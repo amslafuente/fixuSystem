@@ -19,7 +19,7 @@ class Paciente(models.Model):
     name = models.CharField("Nombre", max_length = 50)
     familyname = models.CharField("Apellidos", max_length = 100)
     birthdate = models.DateField("Fecha de nacimiento", help_text="DD/MM/AAAA")
-    sex = models.CharField("Sexo", max_length = 50, choices = sexDef, default = 'No declarado')
+    sex = models.CharField("Sexo", max_length = 50, choices = sexDef, default = 'und')
     address = models.CharField("Dirección", max_length = 250)
     postcode = models.PositiveIntegerField("C. Postal")
     city = models.CharField("Ciudad", max_length = 50)
@@ -30,7 +30,7 @@ class Paciente(models.Model):
     phone2 = models.PositiveIntegerField("Teléfono alternativo", null = True, blank = True)
     job = models.CharField("Ocupación", max_length = 20, blank = True)
     notifyappoint = models.BooleanField("Notificar citas", default = False)
-    notifyvia = models.CharField("Notificar por", max_length = 10, choices = modeVia, default = 'Email')
+    notifyvia = models.CharField("Notificar por", max_length = 10, choices = modeVia, default = 'eml')
     picturefile = models.ImageField("Archivo foto", upload_to = 'pacientes/',  null = True, blank = True)
     notes = models.TextField("Notas", blank = True)
     # Campos de control

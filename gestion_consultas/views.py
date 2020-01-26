@@ -106,6 +106,9 @@ class select_paciente_id_edit_consultas_view(View):
 class id_consultas_view(DetailView):
     pass
 
+@method_decorator(login_required, name='dispatch')
+class id_consultas_citas_view(DetailView):
+    pass
 
 @method_decorator(login_required, name='dispatch')
 class edit_consultas_view(UpdateView):

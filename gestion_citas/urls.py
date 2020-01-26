@@ -15,9 +15,8 @@ urlpatterns = [
     #########################################
 
     # Presentación de citas
-    # Hoy o un dia concreto, en lista o en rejilla
+    # Un dia concreto, en lista o en rejilla
     # Por defecto se ofrece HOY, y de ahí se puede avanzar o retrodecer la fecha a mostrar
-    path('hoy/', views.citas_hoy_view.as_view(), name = "citas-hoy"),
     path('dia/l/<int:idPaciente>/<str:date>/', views.citas_dia_view.as_view(), name = "citas-dia"),
     path('dia/r/<int:idPaciente>/<str:date>/', views.citas_dia_grid_view.as_view(), name = "citas-dia-grid"),
     # Vista semanal de las citas

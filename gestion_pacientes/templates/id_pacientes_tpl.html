@@ -43,7 +43,7 @@
          		            </tr>
                	            <tr>
 	               	            <td>{{ pacientes.dni }}</td>
-                                <td>{{ pacientes.sex }}</td>
+                                <td>{{ pacientes.get_sex_display }}</td>
                	            </tr>
                         </table>
                     </td>
@@ -88,7 +88,7 @@
                     <td>{{ pacientes.email }}</td>
            		    <td>Notificar citas / Vía:</td>
                     {% if pacientes.notifyappoint %}
-                        <td class="avail">{{ pacientes.notifyappoint|yesno:'Si,No,Indet.' }} / {{ pacientes.notifyvia }}</td>
+                        <td class="avail">{{ pacientes.notifyappoint|yesno:'Si,No,Indet.' }} / {{ pacientes.get_notifyvia_display }}</td>
                     {% else %}
                         <td class="not-avail">{{ pacientes.notifyappoint|yesno:'Si,No,Indet.' }}</td>
                     {% endif %}                                               

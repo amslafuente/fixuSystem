@@ -22,7 +22,7 @@ class Cita(models.Model):
     # En el Consultorio...
     fk_Consultorio = models.ForeignKey(Consultorio, on_delete = models.PROTECT, related_name = 'consultorios', blank = True, null = True, limit_choices_to = {'officeIsavail': True})
     # Estados de la cita: Pendiente, Acudió, Pasa a consulta, Cancelada, Adelantada o Aplazada
-    status = models.CharField('Estado cita', max_length = 20, choices = citasStatus, default = 'Pendiente')
+    status = models.CharField('Estado cita', max_length = 20, choices = citasStatus, default = 'pen')
     # Indica si la cita ha sido notificada
     appnotified = models.BooleanField('Notificada', default = False)
     # Notas

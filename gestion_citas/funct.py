@@ -2,7 +2,7 @@ import datetime
 import locale
 from django.conf import settings
 from dateutil.relativedelta import relativedelta
-from fixuSystem.progvars import START_TIME, END_TIME, TIME_SPAN
+from fixuSystem.progvars import START_TIME, END_TIME, TIME_SPAN, citasStatus
 from django.shortcuts import reverse
 from django.urls import reverse_lazy    
 from weasyprint import HTML, CSS
@@ -99,7 +99,7 @@ def app_daytimegrid(citas, dia, paciente):
 
     while timegrid_ctrl.time() <= timegrid_end.time():
            
-        tbl_row = tbl_row + '<tr class=\"tr-time-color\">\r'
+        tbl_row = tbl_row + '<tr class=\"tr-time-color\">\n'
         tbl_row = tbl_row + '<th class=\"tbl-td-centro grid-time-color\">'
 
         # Si se pasa un paciente lo incluye en el enlace para crear citas
@@ -118,7 +118,7 @@ def app_daytimegrid(citas, dia, paciente):
             link = reverse('create-citas', kwargs = data)
             tbl_row = tbl_row + '<a href=\"' + link + '\">' + timegrid_ctrl.strftime('%H:%M') + '</a>'
         
-        tbl_row = tbl_row + '</th>\r'
+        tbl_row = tbl_row + '</th>\n'
 
         if citas:
             # Pacientes
@@ -126,7 +126,7 @@ def app_daytimegrid(citas, dia, paciente):
             for cita in citas:
                 # Si la cita es de hoy y de esa franja...
                     if (cita[3] >= timegrid_ctrl.time() and cita[3] < timegrid_ctrl2.time()):
-                        if cita[6] == 'Cancelada':
+                        if cita[6] == 'cnl':
                             tbl_row = tbl_row + '<span class=\"grid-tachado\">'
                         else:
                             tbl_row = tbl_row + '<span>'
@@ -137,7 +137,7 @@ def app_daytimegrid(citas, dia, paciente):
             for cita in citas:
                 # Si la cita es de hoy y de esa franja...
                     if (cita[3] >= timegrid_ctrl.time() and cita[3] < timegrid_ctrl2.time()):
-                        if cita[6] == 'Cancelada':
+                        if cita[6] == 'cnl':
                             tbl_row = tbl_row + '<span class=\"grid-tachado\">'
                         else:
                             tbl_row = tbl_row + '<span>'
@@ -151,7 +151,7 @@ def app_daytimegrid(citas, dia, paciente):
             for cita in citas:
                 # Si la cita es de hoy y de esa franja...
                     if (cita[3] >= timegrid_ctrl.time() and cita[3] < timegrid_ctrl2.time()):
-                        if cita[6] == 'Cancelada':
+                        if cita[6] == 'cnl':
                             tbl_row = tbl_row + '<span class=\"grid-tachado\">'
                         else:
                             tbl_row = tbl_row + '<span>'
@@ -165,7 +165,7 @@ def app_daytimegrid(citas, dia, paciente):
             for cita in citas:
                 # Si la cita es de hoy y de esa franja...
                     if (cita[3] >= timegrid_ctrl.time() and cita[3] < timegrid_ctrl2.time()):
-                        if cita[6] == 'Cancelada':
+                        if cita[6] == 'cnl':
                             tbl_row = tbl_row + '<span class=\"grid-tachado\">'
                         else:
                             tbl_row = tbl_row + '<span>'
@@ -176,7 +176,7 @@ def app_daytimegrid(citas, dia, paciente):
             for cita in citas:
                 # Si la cita es de hoy y de esa franja...
                     if (cita[3] >= timegrid_ctrl.time() and cita[3] < timegrid_ctrl2.time()):
-                        if cita[6] == 'Cancelada':
+                        if cita[6] == 'cnl':
                             tbl_row = tbl_row + '<span class=\"grid-tachado\">'
                         else:
                             tbl_row = tbl_row + '<span>'
@@ -187,52 +187,52 @@ def app_daytimegrid(citas, dia, paciente):
             for cita in citas:
                 # Si la cita es de hoy y de esa franja...
                     if (cita[3] >= timegrid_ctrl.time() and cita[3] < timegrid_ctrl2.time()):
-                        if cita[6] == 'Cancelada':
-                            tbl_row= tbl_row + '<span class=\"grid-rojo\">'
-                        elif cita[6] == 'Acude':
-                            tbl_row = tbl_row + '<span class=\"grid-azul\">'
-                        elif cita[6] == 'Pendiente':
-                            tbl_row = tbl_row + '<span class=\"grid-naranja\">'
+                        if cita[6] == 'cnl':
+                            tbl_row = tbl_row + '<span class=\"grid-rojo\">' + citasStatus[3][1] + '</span><br/>' 
+                        elif cita[6] == 'att':
+                            tbl_row = tbl_row + '<span class=\"grid-azul\">' + citasStatus[1][1] + '</span><br/>'
+                        elif cita[6] == 'pen':
+                            tbl_row = tbl_row + '<span class=\"grid-naranja\">' + citasStatus[0][1] + '</span><br/>'
                         else:
-                            tbl_row = tbl_row + '<span class=\"grid-verde\">'
-                        tbl_row = tbl_row + cita[6] + '</span><br/>'
-            tbl_row = tbl_row + '</td>\r'
+                            tbl_row = tbl_row + '<span class=\"grid-verde\">' + citasStatus[2][1] + '</span><br/>'
+            tbl_row = tbl_row + '</td>\n'
             # Acciones
             tbl_row = tbl_row + '<td class=\"tbl-td-centro grid-smalltxt\">'
             for cita in citas:
                 # Si la cita es de hoy y de esa franja...
                     if (cita[3] >= timegrid_ctrl.time() and cita[3] < timegrid_ctrl2.time()):
-                        if (cita[6] != "Cancelada" and cita[6] != "Pasa a consulta"):
-                            data = dict()
-                            data['idCita'] = int(cita[0])
+                        data = dict()
+                        data['idCita'] = int(cita[0])
+                        if (cita[6] != 'exm'):
                             link = reverse('cancel-citas', kwargs = data)
                             tbl_row = tbl_row + '<a class=\"link-cancelar\" href=\"' + link + '\">Cancelar cita</a><br/>'
                         else:
-                            tbl_row = tbl_row + '<span>&nbsp;</span><br/>'
-            tbl_row = tbl_row + '</td>\r'
+                            link = reverse('id-consultas-citas', kwargs = data)
+                            tbl_row = tbl_row + '<a href=\"' + link + '\">Ficha de consulta</a><br/>'
+            tbl_row = tbl_row + '</td>\n'
         
-        tbl_row = tbl_row + '</tr>\r'            
+        tbl_row = tbl_row + '</tr>\n'            
         timegrid_ctrl = timegrid_ctrl + datetime.timedelta(minutes = TIME_SPAN)
         timegrid_ctrl2 = timegrid_ctrl + datetime.timedelta(minutes = TIME_SPAN)
     
     tbl_body = tbl_row
 
     # Construye header    
-    tbl_header = '<tr>\r'
-    tbl_header = tbl_header + '<th class=\"tbl-th\">Franja horaria</th>\r'
-    tbl_header = tbl_header + '<th class=\"tbl-th-izq tbl-td-20\">Paciente</th>\r'
-    tbl_header = tbl_header + '<th class=\"tbl-th-izq tbl-td-15\">Citado/a por</th>\r'
-    tbl_header = tbl_header + '<th class=\"tbl-th\">Consult.</th>\r'
-    tbl_header = tbl_header + '<th class=\"tbl-th\">Hora</th>\r'
-    tbl_header = tbl_header + '<th class=\"tbl-th-izq\">Notas</th>\r'
-    tbl_header = tbl_header + '<th class=\"tbl-th tbl-td-15\">Estado</th>\r'
-    tbl_header = tbl_header + '<th class=\"tbl-th\">Acciones</th>\r'
-    tbl_header = tbl_header + '</tr>\r'
+    tbl_header = '<tr>\n'
+    tbl_header = tbl_header + '<th class=\"tbl-th\">Franja horaria</th>\n'
+    tbl_header = tbl_header + '<th class=\"tbl-th-izq tbl-td-20\">Paciente</th>\n'
+    tbl_header = tbl_header + '<th class=\"tbl-th-izq tbl-td-15\">Citado/a por</th>\n'
+    tbl_header = tbl_header + '<th class=\"tbl-th\">Consult.</th>\n'
+    tbl_header = tbl_header + '<th class=\"tbl-th\">Hora</th>\n'
+    tbl_header = tbl_header + '<th class=\"tbl-th-izq\">Notas</th>\n'
+    tbl_header = tbl_header + '<th class=\"tbl-th tbl-td-15\">Estado</th>\n'
+    tbl_header = tbl_header + '<th class=\"tbl-th\">Acciones</th>\n'
+    tbl_header = tbl_header + '</tr>\n'
     # Si se pasa un paciente lo coloca en la cabecera
     if paciente[0] > 0:
-        tbl_header = tbl_header + '<tr>\r<td class=\"grid-info-color tr-time-color tbl-td-centro\" colspan=\"8\"> Paciente: ' + paciente[1] + '</td>\r</tr>\r'
+        tbl_header = tbl_header + '<tr>\r<td class=\"grid-info-color tr-time-color tbl-td-centro\" colspan=\"8\"> Paciente: ' + paciente[1] + '</td>\r</tr>\n'
     # Pulsacion para nuevas citas
-    tbl_header = tbl_header + '<tr>\r<td class=\"grid-info2-color tr-time-color tbl-td-centro\" colspan=\"8\">Pulse sobre las franjas horarias para crear nuevas citas</td>\r</tr>\r'
+    tbl_header = tbl_header + '<tr>\r<td class=\"grid-info2-color tr-time-color tbl-td-centro\" colspan=\"8\">Pulse sobre las franjas horarias para crear nuevas citas</td>\r</tr>\n'
 
     resp['daygrid'] = tbl_header + tbl_body
 
@@ -275,8 +275,8 @@ def app_weektimegrid(citas, rango_semana):
     tbl_body = tbl_row = ''
     while timegrid_ctrl.time() <= timegrid_end.time():
        
-        tbl_row = tbl_row + '<tr class=\"tr-time-color\">\r'
-        tbl_row = tbl_row + '<th class=\"tbl-td-centro grid-time-color\">' + timegrid_ctrl.strftime('%H:%M') + '</th>\r'
+        tbl_row = tbl_row + '<tr class=\"tr-time-color\">\n'
+        tbl_row = tbl_row + '<th class=\"tbl-td-centro grid-time-color\">' + timegrid_ctrl.strftime('%H:%M') + '</th>\n'
         
         daygrid_ctrl = rango_semana[0]
         while daygrid_ctrl <= daygrid_end:
@@ -288,10 +288,10 @@ def app_weektimegrid(citas, rango_semana):
                     # Si la cita es de hoy y de esa franja...
                     if (cita[2] == daygrid_ctrl) and (cita[3] >= timegrid_ctrl.time() and cita[3] < timegrid_ctrl2.time()):
                         # Si la cita está cancelada...
-                        if cita[4] == 'Cancelada':
-                            tbl_row = tbl_row + '<span class=\"grid-tachado\">' + cita[3].strftime('%H:%M') + '. ' + str(cita[1]) + ' (' +  cita[4] + ')</span><br/>'    
+                        if cita[4] == 'cnl':
+                            tbl_row = tbl_row + '<span class=\"grid-tachado\">' + cita[3].strftime('%H:%M') + '. ' + str(cita[1]) + '</span><br/>'    
                         else:
-                            tbl_row = tbl_row + cita[3].strftime('%H:%M') + '. ' + str(cita[1]) + ' (' +  cita[4] + ')<br/>'
+                            tbl_row = tbl_row + cita[3].strftime('%H:%M') + '. ' + str(cita[1]) + '<br/>'
             
             # Pone puntos para crear cita
             data = dict()
@@ -299,27 +299,27 @@ def app_weektimegrid(citas, rango_semana):
             data['hour'] = timegrid_ctrl.strftime('%H_%M')
             link = reverse('create-citas', kwargs = data) 
             tbl_row = tbl_row + '<a class=\"grid-smallertxt\" href=\"' + link + '\">[...]</a>'
-            tbl_row = tbl_row + '</td>\r'
+            tbl_row = tbl_row + '</td>\n'
             daygrid_ctrl = daygrid_ctrl + datetime.timedelta(days = 1)        
         
-        tbl_row = tbl_row + '</tr>\r'
+        tbl_row = tbl_row + '</tr>\n'
         timegrid_ctrl = timegrid_ctrl + datetime.timedelta(minutes = TIME_SPAN)
         timegrid_ctrl2 = timegrid_ctrl + datetime.timedelta(minutes = TIME_SPAN)
     
     tbl_body = tbl_row
     
     # Construye header    
-    tbl_header = '<tr>\r'
-    tbl_header = tbl_header + '<th class=\"tbl-th\">Franja<br/>horaria</th>\r'
+    tbl_header = '<tr>\n'
+    tbl_header = tbl_header + '<th class=\"tbl-th\">Franja<br/>horaria</th>\n'
     for i in range(0,7):
         weekday_ = rango_semana[0] + datetime.timedelta(days = i)
         # Si es hoy lo pone en rojo
         if weekday_ == datetime.date.today():
-            tbl_header = tbl_header + '<th class=\"tbl-th-dark tbl-td-12\">' + weekday_.strftime('%A') + '<br/>' + weekday_.strftime('%d/%b/%y')+ '</th>\r'            
+            tbl_header = tbl_header + '<th class=\"tbl-th-dark tbl-td-12\">' + weekday_.strftime('%A') + '<br/>' + weekday_.strftime('%d/%b/%y')+ '</th>\n'            
         else:
-            tbl_header = tbl_header + '<th class=\"tbl-th tbl-td-12\">' + weekday_.strftime('%A') + '<br/>' + weekday_.strftime('%d/%b/%y')+ '</th>\r'
-    tbl_header = tbl_header + '</tr>\r'
-    tbl_header = tbl_header + '<tr>\r<td class=\"grid-info2-color tr-time-color tbl-td-centro\" colspan=\"8\">Pulse sobre los puntos de las celdas para crear nuevas citas</td>\r</tr>\r'
+            tbl_header = tbl_header + '<th class=\"tbl-th tbl-td-12\">' + weekday_.strftime('%A') + '<br/>' + weekday_.strftime('%d/%b/%y')+ '</th>\n'
+    tbl_header = tbl_header + '</tr>\n'
+    tbl_header = tbl_header + '<tr>\r<td class=\"grid-info2-color tr-time-color tbl-td-centro\" colspan=\"8\">Pulse sobre los puntos de las celdas para crear nuevas citas</td>\r</tr>\n'
     
     resp['weekgrid'] = tbl_header + tbl_body
 
@@ -341,59 +341,58 @@ def html2pdf(restelef, emails2phone, notifydate, untilday, clinica):
 
     # Parte superior de la pagina
     html_top = ''
-    html_top = html_top + '<!DOCTYPE html><html lang=\"es\">\r'
-    html_top = html_top + '<head>\r'
-    html_top = html_top + '<meta charset=\"utf-8\">\r'
-    html_top = html_top + '<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">'
-    html_top = html_top + '<link rel=\"stylesheet\" href=\"https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\" />\r'
-    html_top = html_top + '</head>\r'
-    html_top = html_top + '<body>\r'
+    html_top = html_top + '<!DOCTYPE html><html lang=\"es\" />\n'
+    html_top = html_top + '<head>\n'
+    html_top = html_top + '<meta charset=\"utf-8\" />\n'
+    html_top = html_top + '<link rel=\"stylesheet\" media=\"print\" href=\"' + settings.BASE_DIR + '/static/css/pdf-style.css\"' +  ' />\n'
+    html_top = html_top + '</head>\n'
+    html_top = html_top + '<body>\n'
 
     # Datos de la clinica
-    html_top = html_top + '<table class=\"tbl-logo tbl-55\">\r'
-    html_top = html_top + '<tr><th style=\"padding: 5px\">' + clinica.clinicname +'</th></tr>\r'
-    html_top = html_top + '<tr><td>' + clinica.ownerfullname +'</td></tr>\r'
-    html_top = html_top + '<tr><td>' + clinica.fulladdress +'</td></tr>\r'
-    html_top = html_top + '<tr><td>' + str(clinica.postcode) + '-' + clinica.city + ' (' + clinica.province + ')</td></tr>\r'
-    html_top = html_top + '<tr><td>Teléfonos: ' + str(clinica.phone1) + ' / ' + str(clinica.phone2) + '</td></tr>\r'
-    html_top = html_top + '<tr><td>Email: ' + clinica.email + '</td></tr>\r'
-    html_top = html_top + '<tr><td><hr /></td></tr>\r'
-    html_top = html_top + '</table><br />\r'
+    html_top = html_top + '<table class=\"tbl-logo tbl-100\">\n'
+    html_top = html_top + '<tr><th style=\"padding: 5px\">' + clinica.clinicname +'</th></tr>\n'
+    html_top = html_top + '<tr><td>' + clinica.ownerfullname +'</td></tr>\n'
+    html_top = html_top + '<tr><td>' + clinica.fulladdress +'</td></tr>\n'
+    html_top = html_top + '<tr><td>' + str(clinica.postcode) + '-' + clinica.city + ' (' + clinica.province + ')</td></tr>\n'
+    html_top = html_top + '<tr><td>Teléfonos: ' + str(clinica.phone1) + ' / ' + str(clinica.phone2) + '</td></tr>\n'
+    html_top = html_top + '<tr><td>Email: ' + clinica.email + '</td></tr>\n'
+    html_top = html_top + '<tr><td><hr /></td></tr>\n'
+    html_top = html_top + '</table><br />\n'
 
     # Construye la tabla HTML con los datos pasados (restelef y emails2phone)
     html_table = ''
 
     # restelef
-    html_table = html_table + '<table class=\"tbl-general tbl-55\">\r' 
-    html_table = html_table + '<tr class=\"tr-top\"><th colspan=\"3\">Citas a notificar por teléfono (' + notifydate + ' ' + untilday + '):</th></tr>\r'
+    html_table = html_table + '<table class=\"tbl-general tbl-100\">\n' 
+    html_table = html_table + '<tr class=\"tr-top\"><th colspan=\"3\">Citas a notificar por teléfono (' + notifydate + ' ' + untilday + '):</th></tr>\n'
     if not restelef:
-        html_table = html_table + '<tr><th colspan=\"3\">Ninguna cita pendiente de notificar.</th></tr>\r'
+        html_table = html_table + '<tr><th colspan=\"3\">Ninguna cita pendiente de notificar.</th></tr>\n'
     else:
         for i in range(len(restelef)):
-            html_table = html_table + '<tr class=\"tr-border\"><th class=\"tbl-td-50\">Paciente</th><th class=\"tbl-td-25\">Teléfono 1</th><th class=\"tbl-td-25\">Teléfono 2</th></tr>\r'
-            html_table = html_table + '<tr><td>' + restelef[i][1] + ', ' + restelef[i][2] + '</td><td>' + restelef[i][3] + '</td><td>' + restelef[i][4] + '</td></tr>\r'
-            html_table = html_table + '<tr><th>Notificada</th><th>Fecha cita</th><th>Hora cita</th></tr>\r'
-            html_table = html_table + '<tr><td><div style=\"width: 15px; height:15px; border: 1px solid #000;\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Notas: </div></td><td>' + restelef[i][7] + '/' + restelef[i][6] + '/' + restelef[i][5] + '</td><td>' + restelef[i][8] + ':' + restelef[i][9] + '</td></tr>\r'
-    html_table = html_table + '</table>\r'
+            html_table = html_table + '<tr class=\"tr-border\"><th class=\"tbl-td-50\">Paciente</th><th class=\"tbl-td-25\">Teléfono 1</th><th class=\"tbl-td-25\">Teléfono 2</th></tr>\n'
+            html_table = html_table + '<tr><td>' + restelef[i][1] + ', ' + restelef[i][2] + '</td><td>' + restelef[i][3] + '</td><td>' + restelef[i][4] + '</td></tr>\n'
+            html_table = html_table + '<tr><th>Notificada</th><th>Fecha cita</th><th>Hora cita</th></tr>\n'
+            html_table = html_table + '<tr><td><div style=\"width: 15px; height:15px; border: 1px solid #000;\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Notas: </div></td><td>' + restelef[i][7] + '/' + restelef[i][6] + '/' + restelef[i][5] + '</td><td>' + restelef[i][8] + ':' + restelef[i][9] + '</td></tr>\n'
+    html_table = html_table + '</table>\n'
 
-    html_table = html_table + '<br />\r'
+    html_table = html_table + '<br />\n'
 
     # emails2phone
-    html_table = html_table + '<table class=\"tbl-general tbl-55\">\r' 
-    html_table = html_table + '<tr class=\"tr-top\"><th colspan=\"3\">Notificar por teléfono por errores con el email (' + notifydate + ' ' + untilday + '):</th></tr>\r'
+    html_table = html_table + '<table class=\"tbl-general tbl-100\">\n' 
+    html_table = html_table + '<tr class=\"tr-top\"><th colspan=\"3\">Notificar por teléfono por errores con el email (' + notifydate + ' ' + untilday + '):</th></tr>\n'
     if not emails2phone:
-        html_table = html_table + '<tr><th colspan=\"3\">Ninguna cita pendiente de notificar.</th></tr>\r'
+        html_table = html_table + '<tr><th colspan=\"3\">Ninguna cita pendiente de notificar.</th></tr>\n'
     else:
         for i in range(len(emails2phone)):
-            html_table = html_table + '<tr class=\"tr-border\"><th class=\"tbl-td-50\">Paciente</th><th class=\"tbl-td-25\">Teléfono 1</th><th class=\"tbl-td-25\">Teléfono 2</th></tr>\r'
-            html_table = html_table + '<tr><td>' + emails2phone[i][1] + ', ' + emails2phone[i][2] + '</td><td>' + emails2phone[i][3] + '</td><td>' + emails2phone[i][4] + '</td></tr>\r'
-            html_table = html_table + '<tr><th>Notificada</th><th>Fecha cita</th><th>Hora cita</th></tr>\r'
-            html_table = html_table + '<tr><td><div style=\"width: 15px; height:15px; border: 1px solid #000;\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Notas: </div></td><td>' + emails2phone[7] + '/' + emails2phone[6] + '/' + emails2phone[5] + '</td><td>' + emails2phone[8] + ':' + emails2phone[9] + '</td></tr>\r'
-    html_table = html_table + '</table>\r'
+            html_table = html_table + '<tr class=\"tr-border\"><th class=\"tbl-td-50\">Paciente</th><th class=\"tbl-td-25\">Teléfono 1</th><th class=\"tbl-td-25\">Teléfono 2</th></tr>\n'
+            html_table = html_table + '<tr><td>' + emails2phone[i][1] + ', ' + emails2phone[i][2] + '</td><td>' + emails2phone[i][3] + '</td><td>' + emails2phone[i][4] + '</td></tr>\n'
+            html_table = html_table + '<tr><th>Notificada</th><th>Fecha cita</th><th>Hora cita</th></tr>\n'
+            html_table = html_table + '<tr><td><div style=\"width: 15px; height:15px; border: 1px solid #000;\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Notas: </div></td><td>' + emails2phone[7] + '/' + emails2phone[6] + '/' + emails2phone[5] + '</td><td>' + emails2phone[8] + ':' + emails2phone[9] + '</td></tr>\n'
+    html_table = html_table + '</table>\n'
     
     # Parte inferior de la pagina
     html_bottom = ''
-    html_bottom = html_bottom + '</body>\r'
+    html_bottom = html_bottom + '</body>\n'
     
     # Genera el PDF
     html_page = html_top + html_table + html_bottom

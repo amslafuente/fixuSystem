@@ -1,10 +1,12 @@
 ##### VERSION DEL PROGRAMA #####
 
-PROG_VERS = '0.70'
+PROG_VERS = '0.75'
 
 ##### CONFIG: VARIABLES DE LA APP GESTION_PACIENTES #####
 
-### Lista de CHOICES para seleccion de ordenacion en el select_pacientes_form ###
+# Lista de CHOICES para seleccion de ordenacion en el select_pacientes_form
+# List of CHOICES to select record ordering in select_pacientes_form
+# The first item of each pair (eg. nam) is inmutable, but you can customise the second (ie. Name instead of Nombre)
 selOrder = [
     ('fam', 'Apellidos (por defecto)'),
     ('nam', 'Nombre'),
@@ -12,20 +14,22 @@ selOrder = [
     ('idp', 'Paciente ID')
 ]
 
-### Lista de CHOICES para seleccion de sexo en gestion_pacientes/models.py ###
+# Lista de CHOICES para seleccion de sexo en gestion_pacientes/models.py
+# List of CHOICES to select patients' sex
+# The first item of each pair (eg. fem) is inmutable, but you can customise the second (ie. Female instead of Femenino)
 sexDef = [
-    ('No declar.', 'No declar.'),
-    ('Masculino', 'Masculino'),
-    ('Femenino', 'Femenino'),
-    ('Transexual', 'Transexual'),
-    ('Bisexual', 'Bisexual'),
-    ('Otros', 'Otros')
+    ('und', 'No declarado'),
+    ('mal', 'Masculino'),
+    ('fem', 'Femenino'),
+    ('oth', 'Otros')
 ]
 
-### Lista de CHOICES para seleccion de modos de comunicar las citas en gestion_pacientes/models.py ###
+# Lista de CHOICES para seleccion de modos de comunicar las citas en gestion_pacientes/models.py ###
+# List of CHOICES to select how appointments should be notified
+# The first item of each pair is inmutable, but you can customise the second
 modeVia = [
-    ('Email', 'Email'),
-    ('Teléfono', 'Teléfono')
+    ('eml', 'Email'),
+    ('phn', 'Teléfono')
 ]
 
 ##### CONFIG: VARIABLES DE LA APP GESTION_CITAS #####
@@ -44,14 +48,16 @@ NOTIFICAR_CON = 3
 
 ##### Choices para el status de las citas #####
 citasStatus = [
-    ('Pendiente', 'Pendiente'),
-    ('Acude', 'Acude'),
-    ('Pasa a consulta', 'Pasa a consulta'),
-    ('Cancelada', 'Cancelada')
+    ('pen', 'Pendiente'),
+    ('att', 'Acude'),
+    ('exm', 'Pasa a consulta'),
+    ('cnl', 'Cancelada')
 ]
 ##### CONFIG: VARIABLES DE LA APP GESTION_CLINICA #####
 
-##### Choices para el tipo de material/equipamiento #####
+# Lista de CHOICES para seleccion del tipo de equipamiento
+# List of CHOICES to select equipment types
+# Both items of each pair ar fully customisable, and can be adapted to your own needs
 selTipoEquip = [
     ('infor', 'Equipos informáticos'),
     ('muscl', 'Máquinas musculación'),
@@ -64,8 +70,10 @@ selTipoEquip = [
     ('otros', 'Otros'),
 ]
 
-##### Choices para filtro del tidpo de control
+# Lista de CHOICES para seleccion del control del equipamiento
+# List of CHOICES to select equipment conrol
+# The first item of each pair is inmutable, but you can customise the second
 selCtrlEquip = [
-    ('oper', 'Operatividad'),
-    ('stck', 'Stock'),
+    ('ope', 'Operatividad'),
+    ('stk', 'Stock'),
 ]

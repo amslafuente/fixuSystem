@@ -65,43 +65,48 @@
                         <td class="tbl-td-15">{{ cita.notes }}</td>
 
                         <!-- Estatus -->
-                        {% if cita.status == "Pendiente" %}
+                        {% if cita.status == 'pen' %}
                             <td>
                                 <button type="button" class="btn btn-warning btn-sm">P</button>
-                                <a href="{% url 'modif-citas' cita.idCita 'Acude' %}">
+                                <a href="{% url 'modif-citas' cita.idCita 'att' %}">
                                     <button type="button" class="btn btn-outline-info btn-sm">A</button>
                                 </a>
                             </td>
-                        {% elif cita.status == "Acude" %}
+                        {% elif cita.status == 'att' %}
                             <td>
-                                <a href="{% url 'modif-citas' cita.idCita 'Pendiente' %}">
+                                <a href="{% url 'modif-citas' cita.idCita 'pen' %}">
                                     <button type="button" class="btn btn-outline-warning btn-sm">P</button>
                                 </a>
                                 <button type="button" class="btn btn-info btn-sm">A</button>
-                                <a href="{% url 'modif-citas' cita.idCita 'Pasa a consulta' %}">
-                                    <button type="button" class="btn btn-outline-success btn-sm">C</button>
+                                <a href="{% url 'modif-citas' cita.idCita 'exm' %}">
+                                    <button type="button" class="btn btn-outline-success btn-sm">E</button>
                                 </a>
                             </td>
-                        {% elif cita.status == "Pasa a consulta" %}
+                        {% elif cita.status == 'exm' %}
                             <td>
+                                
                                 <button type="button" class="btn btn-outline-warning btn-sm">P</button>
                                 <button type="button" class="btn btn-outline-info btn-sm">A</button>
-                                <a href="{% url 'id-consultas-citas' cita.idCita %}">
-                                    <button type="button" class="btn btn-success btn-sm">C</button>
+                                <a href="{% url 'id-consultas-citas' cita.idCita %}"></a>
+                                    <button type="button" class="btn btn-success btn-sm">E</button>
                                 </a>
                             </td>
-                        {% elif cita.status == "Cancelada" %}
+                        {% elif cita.status == 'cnl' %}
                             <td colspan="3">
                                 <button type="button" class="btn btn-danger btn-sm">C</button>
                             </td>
                         {% endif %}
 
                         <!-- Acciones -->
-                        {% if cita.status == "Pendiente" or cita.status == "Acude" %}
+                        {% if cita.status == 'pen' or cita.status == 'att' %}
                             <td class="tbl-td"><a href="{% url 'cancel-citas' cita.idCita %}"><input type="button" class="btn btn-danger btn-sm" value="Cancelar"></a></td>
                             <td class="tbl-td"><a href="{% url 'edit-citas' cita.idCita %}"><input type="button" class="btn btn-info btn-sm" value="Editar"></a></td>
-                        {% elif cita.status == "Pasa a consulta" %}
-                            <td class="tbl-td" colspan="2"><a href="{% url 'id-consultas-citas' cita.idCita %}"><input type="button" class="btn btn-success btn-sm" value="Ficha de consulta"></a></td>
+                        {% elif cita.status == 'exm' %}
+                            <td class="tbl-td" colspan="2">
+                                <a href="{% url 'id-consultas-citas' cita.idCita %}"></a>
+                                    <button type="button" class="btn btn-success btn-sm">E</button>
+                                </a>
+                           </td>
                         {% endif %}                        
                     </tr>
                 {% endfor %}
@@ -114,7 +119,7 @@
 
     	<!-- Botones de acción -->
         <div class="div-botones">
-            <a href="{% url 'citas-hoy' %}"><input type="button" class="btn btn-info" value="Citas para hoy"></a>
+            <a href="{% url 'citas-dia' 0 0 %}"><input type="button" class="btn btn-info" value="Citas para hoy"></a>
             <a href="{% url 'citas-dia-grid' idPaciente ctx_dias.current_date_url %}"><input type="button" class="btn btn-info" value="Modo rejilla"></a>
             <a href="{% url 'menu-citas' %}"><input type="button" class="btn btn-info" value="Menu de citas"></a>
             <a href="{% url 'citas-dia-grid' idPaciente ctx_dias.current_date_url %}"><input type="button" class="btn btn-danger" value="Nueva cita"></a>

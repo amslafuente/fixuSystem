@@ -17,7 +17,7 @@ from .forms import create_citas_form, create_citas_paciente_form, edit_citas_for
 from .forms import customNotifDias_form, setnotified_citas_form
 from django.contrib import messages
 from django.db.models import Q
-from fixuSystem.progvars import NOTIFICAR_CON
+from fixuSystem.progvars import NOTIFICAR_CON, citasStatus
 from fixuSystem.contextprocs import get_datos_clinica
 from django.forms import forms, fields, widgets
 from django.forms.widgets import NumberInput
@@ -34,33 +34,7 @@ import io
 #                                                       #
 #########################################################
 
-# Citas para hoy
-@method_decorator(login_required, name='dispatch')
-class citas_hoy_view(ListView):
-
-    model = Cita
-    context_object_name = 'citas'
-    template_name = 'citas_dia_tpl.html'
-
-    def get_queryset(self):
- 
-        qs = super().get_queryset()
-        # Limita el queryset a las citas de hoy
-        current_date = datetime.date.today()
-        qs = Cita.objects.filter(appdate__iexact = current_date).order_by('appdate', 'apptime', 'fk_Consultorio')
-        return qs
-
-    def get_context_data(self, **kwargs):
- 
-        ctx = super().get_context_data(**kwargs)
-        # Fuerza el idPaciente = 0 porque no se pasa paciente asociado a este template
-        ctx['idPaciente'] = 0
-        # La fecha de hoy, anteriores y posteriores las prepara para pasar al contexto
-        current_date = datetime.date.today()
-        ctx['ctx_dias'] = contexto_dias(current_date)
-        return ctx
-
-# Citas para un dia concreto NO HOY
+# Citas para un dia concreto
 @method_decorator(login_required, name='dispatch')
 class citas_dia_view(ListView):
 
@@ -70,9 +44,12 @@ class citas_dia_view(ListView):
 
     def get_queryset(self, **kwargs):
 
-        qs = super().get_queryset()
         # Limita el queryset a las citas del dia pasado en kwargs
-        kwarg_date = datetime.datetime.strptime(self.kwargs['date'], '%d_%m_%Y').date()
+        # Si pasa 0 como date, toma el dia de HOY        
+        if self.kwargs['date'] == '0':
+            kwarg_date = datetime.date.today()
+        else:
+            kwarg_date = datetime.datetime.strptime(self.kwargs['date'], '%d_%m_%Y').date()
         qs = Cita.objects.filter(appdate__iexact = kwarg_date).order_by('appdate', 'apptime', 'fk_Consultorio')
         return qs
 
@@ -81,8 +58,11 @@ class citas_dia_view(ListView):
         ctx = super().get_context_data(**kwargs)
         # Fuerza el idPaciente = 0 porque no se pasa paciente asociado a este template
         ctx['idPaciente'] = 0
-        # La fecha indicada en el GET, las anteriores y siguientes, laa prepara para pasar al contexto
-        kwarg_date = datetime.datetime.strptime(self.kwargs['date'], '%d_%m_%Y').date()
+        # Si pasa 0 como date, toma el dia de HOY        
+        if self.kwargs['date'] == '0':
+            kwarg_date = datetime.date.today()
+        else:
+            kwarg_date = datetime.datetime.strptime(self.kwargs['date'], '%d_%m_%Y').date()
         ctx['ctx_dias'] = contexto_dias(kwarg_date)
         return ctx
 
@@ -191,7 +171,6 @@ class citas_paciente_desdefecha_view(ListView):
 
     def get_queryset(self):
 
-        qs =  super().get_queryset()
         current_date = datetime.date.today()
         kwarg_idpaciente = self.kwargs['idPaciente']
         # Selecciona el paciente pasado en kwargs...
@@ -224,7 +203,6 @@ class citas_paciente_hastafecha_view(ListView):
 
     def get_queryset(self):
 
-        qs =  super().get_queryset()
         current_date = datetime.date.today()
         # Selecciona el paciente pasado en kwargs...
         qs = Cita.objects.filter(fk_Paciente__exact = self.kwargs['idPaciente'])
@@ -254,7 +232,7 @@ class citas_paciente_todas_view(ListView):
     template_name = 'citas_paciente_todas_tpl.html'
 
     def get_queryset(self):
-        qs =  super().get_queryset()
+
         qs = Cita.objects.filter(fk_Paciente__exact = self.kwargs['idPaciente']).order_by('appdate', 'apptime', 'fk_Consultorio')
         return qs
 
@@ -421,6 +399,7 @@ class edit_citas_view(View):
         cita = Cita.objects.get(idCita__iexact = kwarg_idcita)
         if cita.appdate < kwarg_today:
             ctx['old_app'] = True
+
         return render(request, 'edit_citas_tpl.html', ctx)
 
     # POST que cambia las notas de la cita
@@ -480,7 +459,7 @@ class cancel_citas_view(DetailView):
         kwarg_next = request.POST['next']
         kwarg_idcita = kwargs['idCita']
         cita = Cita.objects.get(idCita__iexact = kwarg_idcita)
-        cita.status = 'Cancelada'
+        cita.status = 'cnl'
         cita.save()
         # Regresa donde se llamó
         return HttpResponseRedirect(kwarg_next)
@@ -504,6 +483,8 @@ class modif_citas_view(DetailView):
         cita = Cita.objects.get(idCita__iexact = kwarg_idcita)
         if cita.appdate < kwarg_today:
             ctx['old_app'] = True
+        # Pasa los estados de las citas
+        ctx['estados'] = citasStatus
         return ctx
 
     def post(self, request, **kwargs):        

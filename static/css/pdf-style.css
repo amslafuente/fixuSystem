@@ -1,22 +1,36 @@
 /*---------- PDF STYLE CSS ----------*/
 
+@media print {
+  
 /*---------- GENERALES ----------*/
+
 
 body { /*-- Color de fondo --*/
     background-color: rgb(255, 255, 255);
 }
 
+/* --- Documentos --- */
+
+@page {
+    size: A4 portrait;
+    margin: 2.5cm;
+}
+
 /*---------- TABLAS GENERAL ----------*/
 
 .tbl-logo { /* --- General de las tablas ---*/
+    margin-left: 0px;
+    margin-right: auto;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     padding: 5px;
     border-style: none;
     line-height: 0.7em;
 }
 
 .tbl-general { /* --- General de las tablas ---*/
+    margin-left: 0px;
+    margin-right: auto;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     font-size: 11px;
     padding: 5px;
@@ -46,8 +60,9 @@ td { /* --- Padding por defecto ---*/
 
 .tbl-100 { width: 100%; }
 .tbl-85 { width: 85%; }
-.tbl-55 { width: 55%; }
 
 /* Distintas anchuras de TD */
 .tbl-td-50 { width: 50%; }
 .tbl-td-25 { width: 25%; }
+
+}
