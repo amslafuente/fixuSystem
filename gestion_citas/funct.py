@@ -207,8 +207,10 @@ def app_daytimegrid(citas, dia, paciente):
                             link = reverse('cancel-citas', kwargs = data)
                             tbl_row = tbl_row + '<a class=\"link-cancelar\" href=\"' + link + '\">Cancelar cita</a><br/>'
                         else:
-                            link = reverse('id-consultas-citas', kwargs = data)
-                            tbl_row = tbl_row + '<a href=\"' + link + '\">Ficha de consulta</a><br/>'
+                            print('ESTOY AQUI')
+                            #link = reverse('id-consultas-citas', kwargs = data)
+                            #tbl_row = tbl_row + '<a href=\"' + link + '\">Ficha de consulta</a><br/>'
+                            pass
             tbl_row = tbl_row + '</td>\n'
         
         tbl_row = tbl_row + '</tr>\n'            
@@ -291,7 +293,7 @@ def app_weektimegrid(citas, rango_semana):
                         if cita[4] == 'cnl':
                             tbl_row = tbl_row + '<span class=\"grid-tachado\">' + cita[3].strftime('%H:%M') + '. ' + str(cita[1]) + '</span><br/>'    
                         else:
-                            tbl_row = tbl_row + cita[3].strftime('%H:%M') + '. ' + str(cita[1]) + '<br/>'
+                            tbl_row = tbl_row + '<span style=\"color: red;\">' + cita[3].strftime('%H:%M') + '</span>. ' + str(cita[1]) + '<br/>'
             
             # Pone puntos para crear cita
             data = dict()

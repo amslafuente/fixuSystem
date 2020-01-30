@@ -83,11 +83,10 @@
                                 </a>
                             </td>
                         {% elif cita.status == 'exm' %}
-                            <td>
-                                
+                            <td>                                
                                 <button type="button" class="btn btn-outline-warning btn-sm">P</button>
                                 <button type="button" class="btn btn-outline-info btn-sm">A</button>
-                                <a href="{% url 'id-consultas-citas' cita.idCita %}"></a>
+                                <a href="{% url 'id-consultas-citas' cita.idCita %}">
                                     <button type="button" class="btn btn-success btn-sm">E</button>
                                 </a>
                             </td>
@@ -103,10 +102,10 @@
                             <td class="tbl-td"><a href="{% url 'edit-citas' cita.idCita %}"><input type="button" class="btn btn-info btn-sm" value="Editar"></a></td>
                         {% elif cita.status == 'exm' %}
                             <td class="tbl-td" colspan="2">
-                                <a href="{% url 'id-consultas-citas' cita.idCita %}"></a>
-                                    <button type="button" class="btn btn-success btn-sm">E</button>
+                                <a href="{% url 'id-consultas-citas' cita.idCita %}">
+                                    <input type="button" class="btn btn-success btn-sm" value="Ficha de consulta">
                                 </a>
-                           </td>
+                            </td>
                         {% endif %}                        
                     </tr>
                 {% endfor %}

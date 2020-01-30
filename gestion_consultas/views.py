@@ -15,6 +15,8 @@ from django.views import View
 from django.contrib import messages
 from gestion_pacientes.forms import select_pacientes_form
 
+
+
 ############################################
 #                                          #
 #     PROCESO DE CREACION DE CONSULTAS     #
@@ -25,7 +27,6 @@ from gestion_pacientes.forms import select_pacientes_form
 @method_decorator(login_required, name='dispatch')
 class select_paciente_consultas_view(View):   
 
-    # GET
     def get(self, request):
 
         ctx = dict()
@@ -33,9 +34,8 @@ class select_paciente_consultas_view(View):
         form = select_pacientes_form()
         ctx['form'] = form
         return render(request, 'select_paciente_consultas_tpl.html', ctx)
-
-    # Se devuelve el form no por POST, sino por GET
-    # Ese GET pasa los parametros a select_desdepaciente_consultas_view 
+        # Se devuelve este form no por POST, sino por GET
+        # Ese GET pasa los parametros a select_desdepaciente_consultas_view 
 
 # Lista los pacientes seleccionados con sus citas pendientes, ara eleigir una cita
 @method_decorator(login_required, name='dispatch')
@@ -62,7 +62,7 @@ class select_desdepaciente_consultas_view(View):
         if kwarg_familyname != '':
             qs = qs.filter(fk_Paciente__familyname__icontains = kwarg_familyname)
         # Ahora excluye las citas pasadas o que ya tienen ficha
-        qs = qs.exclude(appdate__lt = datetime.date.today()).exclude(status__icontains = 'Pasa a consulta')
+        qs = qs.exclude(appdate__lt = datetime.date.today()).exclude(status__icontains = 'exm')
         # Ahora ordena
         if kwarg_orderby == 'N':
             qs = qs.order_by('fk_Paciente__name', 'appdate', 'apptime')
@@ -72,24 +72,17 @@ class select_desdepaciente_consultas_view(View):
             qs = qs.order_by('fk_Paciente__idPaciente', 'appdate', 'apptime')
         else:
             qs = qs.order_by('fk_Paciente__familyname', 'appdate', 'apptime')
-        
         ctx['citas'] = qs
         ctx['head_order'] = kwarg_orderby
-              
         return render(request, 'select_desdepaciente_consultas_tpl.html', ctx)
-
-
-    # POST
-    def post(self, request):
-
-        # En el POST se entrega la idCita
-        # Con esa idCita se crea la ficha de consulta nueva
-
-
-        pass
 
 # Crea la ficha de consulta a partir de la cita selecionada
 class create_desdecita_consultas_view(View):
+    
+    # Pone la flag de Pasa a consulta en la cita
+    # Crea los datos de antecedentes si no existen
+    # Crea la ficha de consulta
+    
     pass
 
 ############################################

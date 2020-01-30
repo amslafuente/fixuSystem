@@ -1,18 +1,10 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
     	<title>fixuSystem - Fisioterapia - Gestión de consultas</title>
 
     {% endblock title %}
-
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
 
     {% block content %}
 
@@ -20,21 +12,18 @@
 
         <section class="sect-home-page-menu">
 
-            <!-- Tabla mostrando pacientes -->
-            <table class="tbl-general tbl-forms tbl-70 table-striped">
+            <table class="tbl-forms table-striped tbl-general tbl-60">
     
-                <!-- Texto con el contenido -->
                 <caption class="tbl-capt">Listado de pacientes con citas pendientes
                     {% if is_paginated %}
                         <span> - Página {{ page_obj.number }} de {{ paginator.num_pages }}</span>
                     {% endif %}
                 </caption>
     
-                <!-- Cabecera de la tabla -->
                 <tr>
                     <th class="tbl-th-izq">Nombre</th>
                     <th class="tbl-th-izq">Cita</th>
-                    <th class="tbl-th-izq">Acción</th>  
+                    <th class="tbl-th">Acciones</th>  
                 </tr>
 
                 <!-- NO devuelve ningun paciente avisa y cierra la tabla -->
@@ -48,7 +37,6 @@
                 <!-- SI devuelve algun paciente muestra y cierra la tabla -->
                 {% else %}
     
-                    <!-- Devuelve los pacientes en un querySet llamada pacientes -->
                     {% for cita in citas %}
                         <tr>
                             {% if head_order == 'A' %}
@@ -72,7 +60,6 @@
     
             </table>
     
-            <!-- Incluye PAGINADOR-->
             {% include 'paginador.html' %}
     
             <!-- Botones de acción -->

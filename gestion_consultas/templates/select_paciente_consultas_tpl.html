@@ -1,18 +1,10 @@
 {% extends 'base.html' %}
 
-    <!-- **************** -->
-    <!-- Título de página -->
-    <!-- **************** -->
-
     {% block title %}
 
 		<title>fixuSystem - Fisioterapia  - Gestión de consultas</title>
 
     {% endblock title %}
-
-    <!-- **************** -->
-    <!-- Centro de página -->
-    <!-- **************** -->
 
     {% block content %}
 
@@ -20,18 +12,14 @@
 
         {% load static %}
 
-	    <!-- Formulario de entrada de criterios -->
         <form method="GET">
 
             <table class="tbl-forms table-striped tbl-general tbl-35">
 
-                <!-- Texto con el contenido -->
         	    <caption class="tbl-capt">Criterios de selección</caption>
 
-                <!-- Errores en el form -->
                 {% include 'errors_pacientes.html' %}
 
-                <!-- Campos para el contenido -->
                 <tr>
                     <td class="tbl-td">DNI:</td>
                     <td>{{ form.dni.as_widget }}</td>
@@ -53,7 +41,7 @@
 
             <!-- Botones -->
             <div class="div-botones">
-			    <input type="submit" class="btn btn-info" formaction={% url 'select-desdepaciente-consultas' %}" value="Enviar">
+			    <input type="submit" class="btn btn-info" formaction="{% url 'select-desdepaciente-consultas' %}" value="Enviar">
 			    <a href="{% url 'menu-consultas' %}"><input type="button" class="btn btn-info" value="Menu de consultas"></a>
             </div>
 

@@ -25,6 +25,7 @@ from django.core.mail import send_mail
 import locale
 import smtplib
 import io
+from gestion_consultas.funct import create_fichaconsulta
 
 
 
@@ -494,6 +495,8 @@ class modif_citas_view(DetailView):
         cita = Cita.objects.get(idCita__iexact = kwarg_idcita)
         cita.status = kwarg_status
         cita.save()
+        # Crea la ficha del paciente si no existe
+        create_fichaconsulta(cita.fk_Paciente.idPaciente, cita.idCita)
         # Regresa donde se llamó
         return HttpResponseRedirect(kwarg_next)
 

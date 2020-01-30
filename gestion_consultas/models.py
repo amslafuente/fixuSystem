@@ -15,8 +15,10 @@ from gestion_clinica.models import Profesional
 
 class Antecedente(models.Model):
 
+    idAntecedente = models.AutoField(primary_key = True, unique = True)
+
     # OneToOne al paciente
-    oto_Paciente = models.OneToOneField(Paciente, on_delete = models.PROTECT, related_name = 'antecedpaciente', primary_key = True, unique = True)
+    oto_Paciente = models.OneToOneField(Paciente, on_delete = models.PROTECT, related_name = 'antecedpaciente', unique = True)
     
     familyproblems = models.TextField("Antecedentes familiares", blank = True)
     prevsurgery = models.TextField("Cirugías previas", blank = True)
@@ -29,10 +31,10 @@ class Antecedente(models.Model):
     modifiedby = models.CharField("Modificado por", max_length = 50, blank = True, default = 'fixuUser') 
     
     def __str__(self):
-        return 'Antecedentes {}/{}'.format(self.idAntecedente, self.fk_Paciente)
+        return '{}/antec'.format(self.oto_Paciente)
 
     def get_absolute_url(self):
-        return reverse('id-antecedente/', args=[self.idAntecedente])
+        return reverse('id-antecedente/', args=[self.oto_Paciente])
 
 
 
