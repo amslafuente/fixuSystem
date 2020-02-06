@@ -55,11 +55,11 @@ class Consulta(models.Model):
     # Foreignkey del antecedentes
     fk_Antecedente = models.ForeignKey(Antecedente, on_delete = models.PROTECT, related_name = 'antecedentes')
     # Profesional que trató al paciente
-    fk_Profesional = models.ForeignKey(Profesional, on_delete = models.PROTECT, related_name = 'profesional')
+    fk_Profesional = models.ForeignKey(Profesional, on_delete = models.PROTECT, related_name = 'profesional', blank = True, null = True)
 
-    age = models.PositiveIntegerField("Edad", blank = True)
-    mass = models.PositiveIntegerField("Peso (kg)", blank = True)
-    height = models.PositiveIntegerField("Altura (cm)", blank = True)
+    age = models.PositiveIntegerField("Edad", blank = True, default = 999)
+    mass = models.PositiveIntegerField("Peso (kg)", blank = True, default = 999)
+    height = models.PositiveIntegerField("Altura (cm)", blank = True, default = 999)
     physicalexplor = models.TextField("Exploración física", blank = True)
     physicaltest = models.TextField("Pruebas diagnósticas", blank = True)
     diagnostic = models.CharField("Diagnóstico", max_length = 250, blank = True)

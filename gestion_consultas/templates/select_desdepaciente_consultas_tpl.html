@@ -11,55 +11,61 @@
         {% load static %}
 
         <section class="sect-home-page-menu">
+                            
+            <form method="POST">
 
-            <table class="tbl-forms table-striped tbl-general tbl-60">
-    
-                <caption class="tbl-capt">Listado de pacientes con citas pendientes
-                    {% if is_paginated %}
-                        <span> - Página {{ page_obj.number }} de {{ paginator.num_pages }}</span>
-                    {% endif %}
-                </caption>
-    
-                <tr>
-                    <th class="tbl-th-izq">Nombre</th>
-                    <th class="tbl-th-izq">Cita</th>
-                    <th class="tbl-th">Acciones</th>  
-                </tr>
+                {% csrf_token %}
 
-                <!-- NO devuelve ningun paciente avisa y cierra la tabla -->
-                {% if not citas %}
+                <table class="tbl-forms table-striped tbl-general tbl-60">
+    
+                    <caption class="tbl-capt">Listado de pacientes con citas pendientes
+                        {% if is_paginated %}
+                            <span> - Página {{ page_obj.number }} de {{ paginator.num_pages }}</span>
+                        {% endif %}
+                    </caption>
+    
                     <tr>
-                        <th colspan="3" class="field-errors">
-                            <span>Ningún paciente con esos datos</span>
-                        </th>
+                        <th class="tbl-th-izq">Nombre</th>
+                        <th class="tbl-th-izq">Cita</th>
+                        <th class="tbl-th">Acciones</th>  
                     </tr>
-    
-                <!-- SI devuelve algun paciente muestra y cierra la tabla -->
-                {% else %}
-    
-                    {% for cita in citas %}
+
+                    <!-- NO devuelve ningun paciente avisa y cierra la tabla -->
+                    {% if not citas %}
                         <tr>
-                            {% if head_order == 'A' %}
-                                <td>{{ cita.fk_Paciente.familyname }}, {{ cita.fk_Paciente.name }}</td>
-                            {% else %}
-                               <td>{{ cita.fk_Paciente.name }} {{ cita.fk_Paciente.familyname }}</td>
-                            {% endif %}
-                            <td>
-                                {{ cita.appdate|date:'d/b/Y' }} a las {{cita.apptime|date:'H:i'}}
-                            </td>
-                            <!-- Enlaces a crear consulta desde cita -->
-                            <td>
-                                <div class="div-fechas">
-                                    <a href="{% url 'create-desdecita-consultas' cita.idCita %}"><input type="button" class="btn btn-info btn-sm" value="Crear consulta"></a>
-                                </div>
-                            </td>
-                       </tr>
-                    {% endfor %}
+                            <th colspan="3" class="field-errors">
+                                <span>Ningún paciente con esos datos</span>
+                            </th>
+                        </tr>
     
-                  {% endif %}
+                    <!-- SI devuelve algun paciente muestra y cierra la tabla -->
+                    {% else %}
+                        
+                        {% for cita in citas %}
+                            <tr>
+                                {% if head_order == 'A' %}
+                                    <td>{{ cita.fk_Paciente.familyname }}, {{ cita.fk_Paciente.name }}</td>
+                                {% else %}
+                                   <td>{{ cita.fk_Paciente.name }} {{ cita.fk_Paciente.familyname }}</td>
+                                {% endif %}
+                                <td>
+                                    {{ cita.appdate|date:'d/b/Y' }} a las {{cita.apptime|date:'H:i'}}
+                                </td>
+                                <!-- Enlaces a crear consulta desde cita -->
+                                <td>
+                                    <div class="div-fechas">
+                                        <input type="submit" class="btn btn-info btn-sm" formaction="{% url 'create-desdecita-consultas' cita.idCita %}" value="Crear ficha de consulta">                                    
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    
+                    {% endif %}
     
-            </table>
-    
+                </table>
+
+            </form>    
+
             {% include 'paginador.html' %}
     
             <!-- Botones de acción -->

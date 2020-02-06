@@ -496,7 +496,7 @@ class modif_citas_view(DetailView):
         cita.status = kwarg_status
         cita.save()
         # Crea la ficha del paciente si no existe
-        create_fichaconsulta(cita.fk_Paciente.idPaciente, cita.idCita)
+        create_fichaconsulta(request, cita.fk_Paciente.idPaciente, cita.idCita)
         # Regresa donde se llamó
         return HttpResponseRedirect(kwarg_next)
 

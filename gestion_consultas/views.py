@@ -14,6 +14,7 @@ from django.views.generic.detail import DetailView
 from django.views import View
 from django.contrib import messages
 from gestion_pacientes.forms import select_pacientes_form
+from .funct import create_fichaconsulta
 
 
 
@@ -79,11 +80,22 @@ class select_desdepaciente_consultas_view(View):
 # Crea la ficha de consulta a partir de la cita selecionada
 class create_desdecita_consultas_view(View):
     
-    # Pone la flag de Pasa a consulta en la cita
-    # Crea los datos de antecedentes si no existen
-    # Crea la ficha de consulta
-    
-    pass
+    def post(self, request, **kwargs):
+
+        ctx = dict()   
+        # Crea la ficha del paciente si no existe
+        cita = int(self.kwargs['idCita'])
+
+        if cita != 0:
+            create_fichaconsulta(request, cita)
+
+            # Pone la flag de Pasa a consulta en la cita
+            # Crea los datos de antecedentes si no existen
+            # Crea la ficha de consulta
+            return render(request, 'select_desdepaciente_consultas_tpl.html', ctx)
+        else:
+            messages.error(request, 'Error en los parámetros de la cita y/o del paciente')
+            return render(request, 'select_desdepaciente_consultas_tpl.html', ctx)
 
 ############################################
 #                                          #
