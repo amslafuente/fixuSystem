@@ -16,7 +16,7 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from fixuSystem.progfuncts import calculate_age
+from .funct import calculate_age
 from fixuSystem.progvars import selOrder
 
 

@@ -4,7 +4,7 @@ import datetime
 
 #########################################
 #                                       #
-#            FUNCIONES GLOBALES         #
+#        FUNCIONES DE PACIENTES         #
 #                                       #
 #########################################
 

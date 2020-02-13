@@ -2,7 +2,7 @@ from .models import Consulta, Antecedente
 from gestion_citas.models import Cita
 from gestion_pacientes.models import Paciente
 from gestion_clinica.models import Profesional
-from fixuSystem.progfuncts import calculate_age
+from gestion_pacientes.funct import calculate_age
 
 
 
@@ -12,7 +12,7 @@ from fixuSystem.progfuncts import calculate_age
 #                                       #
 #########################################
 
-# Crea la ficha vacia del idPaciente para la idCita pasada
+# Crea la ficha vacia de consulta para la idCita pasada
 def create_fichaconsulta(request, cita):
 
     res = False
@@ -55,6 +55,15 @@ def create_fichaconsulta(request, cita):
             # Guarda
             ficha.save()
             res = True
+            # Cambia el estatus de la cita
+            if res:
+                try:
+                    cita_.status = 'exm'
+                    cita_.save()
+                except Exception as e:
+                    res = False
+                    err = e
+                return (res, err)
     except Exception as e:
         res = False
         err = e

@@ -80,4 +80,4 @@ class Consulta(models.Model):
         return 'Consulta {}/{}'.format(self.idConsulta, self.fk_Paciente)
 
     def get_absolute_url(self):
-        return reverse('id-consultas/', args=[self.idConsulta])
+        return reverse('id-consultas', args=[self.idConsulta])

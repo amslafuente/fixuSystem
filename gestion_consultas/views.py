@@ -87,15 +87,16 @@ class create_desdecita_consultas_view(View):
         cita = int(self.kwargs['idCita'])
 
         if cita != 0:
-            create_fichaconsulta(request, cita)
-
             # Pone la flag de Pasa a consulta en la cita
             # Crea los datos de antecedentes si no existen
             # Crea la ficha de consulta
+            create_fichaconsulta(request, cita)            
             return render(request, 'select_desdepaciente_consultas_tpl.html', ctx)
         else:
-            messages.error(request, 'Error en los parámetros de la cita y/o del paciente')
+            messages.error(request, 'Error en los parámetros de la cita.')
             return render(request, 'select_desdepaciente_consultas_tpl.html', ctx)
+
+
 
 ############################################
 #                                          #

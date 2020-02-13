@@ -492,10 +492,7 @@ class modif_citas_view(DetailView):
         kwarg_idcita = kwargs['idCita']
         kwarg_status = kwargs['status']
         kwarg_next = request.POST['next']
-        cita = Cita.objects.get(idCita__iexact = kwarg_idcita)
-        cita.status = kwarg_status
-        cita.save()
-        # Crea la ficha del paciente si no existe
+        # Crea la ficha de consulta y le cambia el estato
         create_fichaconsulta(request, cita.fk_Paciente.idPaciente, cita.idCita)
         # Regresa donde se llamó
         return HttpResponseRedirect(kwarg_next)
