@@ -121,7 +121,7 @@ systemd-python==234
 Tempita==0.5.1
 tinycss==0.3
 tinycss2==1.0.2
-urllib3==1.25.7
+urllib3==1.25.8
 WeasyPrint==47
 webencodings==0.5.1
 wx-siplib==4.19.19
